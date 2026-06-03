@@ -12,7 +12,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* ФИКСИРОВАННАЯ СВЕТЛАЯ ТЕМА — НЕ ЗАВИСИТ ОТ VK */
         body {
             background: #f5f5f5;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -241,6 +240,7 @@
         return e[n] || n.toLowerCase()+'а';
     }
 
+    // ========== ГЕНЕРАТОРЫ ВОПРОСОВ (С ПЕРЕМЕШИВАНИЕМ) ==========
     function generateMathQuestion(level) {
         let a = Math.floor(Math.random()*9)+2, b = Math.floor(Math.random()*9)+2;
         let ops=['+','-','×']; if(level>=3) ops.push('÷');
@@ -253,18 +253,18 @@
         opts=unique(opts).slice(0,4); while(opts.length<4) opts.push((correct+1).toString());
         return { text, options: shuffle(opts.map(String)), correctHash: simpleHash(correct.toString()), points: 10+Math.floor(level/2) };
     }
-    function generateHistoryQuestion(){ let ev=randomItem(historyQA); let wrongs=historyQA.filter(e=>e.type===ev.type && e.a!==ev.a).map(e=>e.a).slice(0,3); if(wrongs.length<3) wrongs.push(ev.type==='person'?"Иван Грозный":"1500"); let opts=unique([ev.a,...wrongs]).slice(0,4); while(opts.length<4) opts.push(ev.type==='person'?"Александр Невский":"1600"); return { text: ev.q, options: shuffle(opts), correctHash: simpleHash(ev.a), points:10 }; }
-    function generateGeoQuestion(){ let p=randomItem(countryCapital); let text=`Столица ${declineCountry(p[0])}?`; let correct=p[1]; let wrongs=countryCapital.filter(c=>c[0]!==p[0]).map(c=>c[1]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("Лондон"); return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
-    function generateLiteratureQuestion(){ let item=randomItem(authorWorkExtended); let verb=item.gender==="male"?"написал":"написала"; let text=`${item.author} ${verb} произведение ...`; let correct=item.work; let wrongs=authorWorkExtended.filter(w=>w.work!==correct).map(w=>w.work).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("Война и мир"); return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
-    function generateEnglishQuestion(){ let w=randomItem(engWords); let correct=w[1]; let wrongs=engWords.filter(e=>e[1]!==correct).map(e=>e[1]).slice(0,3); if(wrongs.length<3) wrongs.push("unknown"); let opts=unique([correct,...wrongs]).slice(0,4); return { text:`Перевод слова "${w[0]}":`, options: opts, correctHash: simpleHash(correct), points:10 }; }
-    function generateOBZHQuestion(){ let f=randomItem(obzhFacts); let opts=unique([f.correct,...f.wrong]); while(opts.length<4) opts.push("Неизвестно"); return { text: f.q, options: shuffle(opts), correctHash: simpleHash(f.correct), points:10 }; }
-    function generateSocietyQuestion(){ let f=randomItem(societyFacts); let wrongs=societyFacts.filter(s=>s[1]!==f[1]).map(s=>s[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Неизвестно"); return { text: f[0], options: shuffle(opts), correctHash: simpleHash(f[1]), points:10 }; }
-    function generateBiologyQuestion(){ let f=randomItem(biologyFacts); let wrongs=biologyFacts.filter(b=>b[1]!==f[1]).map(b=>b[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Клетка"); return { text: f[0], options: shuffle(opts), correctHash: simpleHash(f[1]), points:10 }; }
-    function generateChemistryQuestion(){ let e=randomItem(elements); let text=`Химический символ ${declineElement(e[1])}?`; let correct=e[0]; let wrongs=elements.filter(el=>el[0]!==correct).map(el=>el[0]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("??"); return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
-    function generatePhysicsQuestion(){ let f=randomItem(physicsFacts); let wrongs=physicsFacts.filter(p=>p[1]!==f[1]).map(p=>p[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Энергия"); return { text: f[0], options: shuffle(opts), correctHash: simpleHash(f[1]), points:10 }; }
-    function generateRussianQuestion(){ let base=randomItem(spellingWords); let opts=[base.word,...base.wrong.slice(0,3)]; while(opts.length<4) opts.push(base.word.slice(0,-2)+"а"); return { text: `Выберите правильное написание слова:`, options: shuffle(opts), correctHash: simpleHash(base.word), points:10 }; }
+    function generateHistoryQuestion(){ let ev=randomItem(historyQA); let wrongs=historyQA.filter(e=>e.type===ev.type && e.a!==ev.a).map(e=>e.a).slice(0,3); if(wrongs.length<3) wrongs.push(ev.type==='person'?"Иван Грозный":"1500"); let opts=unique([ev.a,...wrongs]).slice(0,4); while(opts.length<4) opts.push(ev.type==='person'?"Александр Невский":"1600"); return { text: ev.q, options: shuffle([...opts]), correctHash: simpleHash(ev.a), points:10 }; }
+    function generateGeoQuestion(){ let p=randomItem(countryCapital); let text=`Столица ${declineCountry(p[0])}?`; let correct=p[1]; let wrongs=countryCapital.filter(c=>c[0]!==p[0]).map(c=>c[1]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("Лондон"); return { text, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
+    function generateLiteratureQuestion(){ let item=randomItem(authorWorkExtended); let verb=item.gender==="male"?"написал":"написала"; let text=`${item.author} ${verb} произведение ...`; let correct=item.work; let wrongs=authorWorkExtended.filter(w=>w.work!==correct).map(w=>w.work).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("Война и мир"); return { text, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
+    function generateEnglishQuestion(){ let w=randomItem(engWords); let correct=w[1]; let wrongs=engWords.filter(e=>e[1]!==correct).map(e=>e[1]).slice(0,3); if(wrongs.length<3) wrongs.push("unknown"); let opts=unique([correct,...wrongs]).slice(0,4); return { text:`Перевод слова "${w[0]}":`, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
+    function generateOBZHQuestion(){ let f=randomItem(obzhFacts); let opts=unique([f.correct,...f.wrong]); while(opts.length<4) opts.push("Неизвестно"); return { text: f.q, options: shuffle([...opts]), correctHash: simpleHash(f.correct), points:10 }; }
+    function generateSocietyQuestion(){ let f=randomItem(societyFacts); let wrongs=societyFacts.filter(s=>s[1]!==f[1]).map(s=>s[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Неизвестно"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(f[1]), points:10 }; }
+    function generateBiologyQuestion(){ let f=randomItem(biologyFacts); let wrongs=biologyFacts.filter(b=>b[1]!==f[1]).map(b=>b[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Клетка"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(f[1]), points:10 }; }
+    function generateChemistryQuestion(){ let e=randomItem(elements); let text=`Химический символ ${declineElement(e[1])}?`; let correct=e[0]; let wrongs=elements.filter(el=>el[0]!==correct).map(el=>el[0]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("??"); return { text, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
+    function generatePhysicsQuestion(){ let f=randomItem(physicsFacts); let wrongs=physicsFacts.filter(p=>p[1]!==f[1]).map(p=>p[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Энергия"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(f[1]), points:10 }; }
+    function generateRussianQuestion(){ let base=randomItem(spellingWords); let opts=[base.word,...base.wrong.slice(0,3)]; while(opts.length<4) opts.push(base.word.slice(0,-2)+"а"); return { text: `Выберите правильное написание слова:`, options: shuffle([...opts]), correctHash: simpleHash(base.word), points:10 }; }
 
-    // ========== ПРОГРЕСС И ЛОГИКА ==========
+    // ========== УПРАВЛЕНИЕ ПРОГРЕССОМ ==========
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = {
         math:"Математика", russian:"Русский язык", geo:"География", history:"История",
@@ -585,7 +585,6 @@
         document.getElementById("deleteDataLink").onclick=hardDeleteAllData;
         if(window.vkBridge){
             vkBridge.send("VKWebAppInit").then(()=>{
-                // Не подписываемся на тему, так как у нас фиксированная светлая тема
                 if(!localStorage.getItem('consentGiven')) showConsentModal();
                 else startGameAfterConsent();
             }).catch(()=>{ if(!localStorage.getItem('consentGiven')) showConsentModal(); else startGameAfterConsent(); });
