@@ -12,52 +12,31 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* ФИКСИРОВАННАЯ СВЕТЛАЯ ТЕМА — НЕ ЗАВИСИТ ОТ VK */
         body {
-            min-height: 100vh;
-            background: var(--background_page, #ebedf0);
+            background: #f5f5f5;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 16px;
-            transition: background 0.2s;
         }
 
         body.modal-open {
             overflow: hidden;
         }
 
-        body[scheme="vkcom_dark"], body[scheme="space_gray"] {
-            --background_page: #19191a;
-            --card_background: #222324;
-            --text_primary: #e1e3e6;
-            --text_secondary: #76787a;
-            --border: #3d3e40;
-            --accent: #5c9ce6;
-            --button_primary_background: #5c9ce6;
-        }
-        body[scheme="bright_light"], body:not([scheme]) {
-            --background_page: #ebedf0;
-            --card_background: #ffffff;
-            --text_primary: #000000;
-            --text_secondary: #818c99;
-            --border: #d7d8d9;
-            --accent: #2688eb;
-            --button_primary_background: #2688eb;
-        }
-
         .app-container {
             max-width: 560px;
             width: 100%;
-            background: var(--card_background);
+            background: white;
             border-radius: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: background 0.2s;
         }
 
         .header {
-            background: var(--accent);
+            background: #2688eb;
             padding: 20px 20px 16px;
             text-align: center;
             color: white;
@@ -65,75 +44,73 @@
         .header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 12px; }
         .header h1 span { background: rgba(255,255,255,0.2); font-size: 0.7rem; padding: 4px 8px; border-radius: 20px; margin-left: 8px; }
         .score-board { display: flex; justify-content: space-between; background: rgba(0,0,0,0.15); border-radius: 24px; padding: 8px 16px; margin-top: 8px; }
-        .score-item { font-weight: 600; font-size: 0.9rem; }
+        .score-item { font-weight: 600; font-size: 0.9rem; color: white; }
         .level-progress { margin: 12px 20px 0; background: rgba(255,255,255,0.3); border-radius: 12px; height: 6px; overflow: hidden; }
         .progress-fill { width: 0%; height: 100%; background: #ffd966; transition: width 0.2s; }
 
-        .subjects-wrapper { padding: 12px 16px; background: var(--card_background); border-bottom: 1px solid var(--border); overflow-x: auto; }
+        .subjects-wrapper { padding: 12px 16px; background: white; border-bottom: 1px solid #e0e0e0; overflow-x: auto; }
         .subjects-grid { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
         .subject-btn {
-            background: var(--background_page); border: 1px solid var(--border); padding: 8px 16px; border-radius: 24px;
-            font-weight: 500; font-size: 0.8rem; color: var(--text_primary); cursor: pointer; white-space: nowrap;
+            background: #f0f2f5; border: 1px solid #ccc; padding: 8px 16px; border-radius: 24px;
+            font-weight: 500; font-size: 0.8rem; color: #000; cursor: pointer; white-space: nowrap;
             transition: all 0.1s; word-break: break-word; overflow-wrap: break-word;
         }
-        .subject-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+        .subject-btn.active { background: #2688eb; border-color: #2688eb; color: white; }
 
-        .game-area { padding: 20px; min-height: 400px; }
+        .game-area { padding: 20px; min-height: 400px; background: white; }
         .quest-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .level-badge { background: var(--background_page); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; word-break: break-word; max-width: 70%; }
-        .lives { font-size: 1.4rem; letter-spacing: 2px; }
+        .level-badge { background: #f0f2f5; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: #000; word-break: break-word; max-width: 70%; }
+        .lives { font-size: 1.4rem; letter-spacing: 2px; color: #e64646; }
 
-        .question-card { background: var(--background_page); border-radius: 24px; padding: 24px 20px; margin-bottom: 20px; transition: background 0.2s; }
-        .question-text { font-size: 1.4rem; font-weight: 600; text-align: center; color: var(--text_primary); margin-bottom: 28px; }
+        .question-card { background: #f9f9f9; border-radius: 24px; padding: 24px 20px; margin-bottom: 20px; }
+        .question-text { font-size: 1.4rem; font-weight: 600; text-align: center; color: #000; margin-bottom: 28px; }
         .answers { display: flex; flex-direction: column; gap: 12px; }
         .answer-btn {
-            background: var(--card_background); border: 1px solid var(--border); border-radius: 60px; padding: 14px 18px;
-            font-weight: 500; font-size: 1rem; color: var(--text_primary); text-align: left; cursor: pointer;
-            transition: background 0.1s, border 0.1s;
-            will-change: transform;
+            background: white; border: 1px solid #ccc; border-radius: 60px; padding: 14px 18px;
+            font-weight: 500; font-size: 1rem; color: #000; text-align: left; cursor: pointer;
+            transition: 0.1s;
         }
-        .answer-btn.selected { background: var(--accent); border-color: var(--accent); color: white; }
+        .answer-btn.selected { background: #2688eb; border-color: #2688eb; color: white; }
         .feedback {
-            text-align: center; padding: 12px; background: var(--card_background); border-radius: 20px; margin-top: 16px;
-            font-weight: 500; border: 1px solid var(--border); display: none; transition: opacity 0.2s;
+            text-align: center; padding: 12px; background: #e9ecef; border-radius: 20px; margin-top: 16px;
+            font-weight: 500; border: 1px solid #ccc; display: none;
         }
         .next-btn, .bonus-btn {
             width: 100%; border: none; padding: 14px; border-radius: 40px; font-weight: 600; font-size: 1rem; cursor: pointer;
-            margin-top: 16px; transition: opacity 0.2s;
+            margin-top: 16px;
         }
-        .next-btn { background: var(--button_primary_background); color: white; }
+        .next-btn { background: #2688eb; color: white; }
         .bonus-btn { background: #ff9800; color: white; }
-        .bonus-btn:disabled { background: #bbbbbb; cursor: not-allowed; opacity: 0.6; }
+        .bonus-btn:disabled { background: #bbb; cursor: not-allowed; opacity: 0.6; }
         .hidden { display: none; }
 
-        .result-area { text-align: center; background: var(--card_background); border-radius: 24px; padding: 30px 20px; }
-        .result-score { font-size: 2rem; font-weight: 800; color: var(--accent); margin-bottom: 12px; }
-        .share-btn, .reset-btn { background: var(--background_page); border: 1px solid var(--border); padding: 12px 20px; border-radius: 40px; font-weight: 600; margin: 8px; cursor: pointer; }
-        .share-btn { background: var(--accent); border-color: var(--accent); color: white; }
+        .result-area { text-align: center; background: white; border-radius: 24px; padding: 30px 20px; }
+        .result-score { font-size: 2rem; font-weight: 800; color: #2688eb; margin-bottom: 12px; }
+        .share-btn, .reset-btn { background: #f0f2f5; border: 1px solid #ccc; padding: 12px 20px; border-radius: 40px; font-weight: 600; margin: 8px; cursor: pointer; }
+        .share-btn { background: #2688eb; border-color: #2688eb; color: white; }
 
-        footer { padding: 16px; text-align: center; font-size: 0.75rem; color: var(--text_secondary); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+        footer { padding: 16px; text-align: center; font-size: 0.75rem; color: #666; border-top: 1px solid #e0e0e0; display: flex; flex-direction: column; gap: 8px; background: white; }
         .footer-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
-        .footer-links a, .footer-contact { color: var(--accent); text-decoration: none; cursor: pointer; }
+        .footer-links a, .footer-contact { color: #2688eb; text-decoration: none; cursor: pointer; }
         .footer-contact { font-size: 0.7rem; opacity: 0.7; }
 
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6);
             display: flex; align-items: center; justify-content: center; z-index: 1000;
         }
-        .modal-content { background: var(--card_background); max-width: 340px; width: 90%; border-radius: 20px; padding: 20px; color: var(--text_primary); text-align: left; max-height: 80vh; overflow-y: auto; }
+        .modal-content { background: white; max-width: 340px; width: 90%; border-radius: 20px; padding: 20px; color: #000; text-align: left; max-height: 80vh; overflow-y: auto; }
         .modal-content h4 { margin-bottom: 12px; text-align: center; }
-        .modal-content p { margin-bottom: 12px; font-size: 14px; line-height: 1.4; }
         .modal-buttons { display: flex; justify-content: space-around; margin-top: 16px; }
         .modal-btn { padding: 8px 20px; border-radius: 40px; font-weight: 600; border: none; cursor: pointer; }
         .modal-btn.confirm { background: #ff9800; color: white; }
-        .modal-btn.cancel { background: var(--border); color: var(--text_primary); }
-        .close-modal { background: var(--accent); border: none; padding: 8px 16px; border-radius: 20px; color: white; cursor: pointer; margin-top: 12px; width: 100%; }
+        .modal-btn.cancel { background: #ccc; color: #000; }
+        .close-modal { background: #2688eb; border: none; padding: 8px 16px; border-radius: 20px; color: white; cursor: pointer; margin-top: 12px; width: 100%; }
 
         @keyframes confetti {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
             100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
-        .confetti-piece { position: fixed; width: 10px; height: 20px; top: -20px; z-index: 1000; pointer-events: none; animation: confetti 2s ease-out forwards; will-change: transform; }
+        .confetti-piece { position: fixed; width: 10px; height: 20px; top: -20px; z-index: 1000; pointer-events: none; animation: confetti 2s ease-out forwards; will-change: transform; background: gold; }
     </style>
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 </head>
@@ -161,7 +138,7 @@
 </div>
 
 <script>
-    // ========== ЗАЩИТА ОТ ПРОСМОТРА КОДА И DEVTOOLS ==========
+    // ========== ЗАЩИТА ОТ ПРОСМОТРА КОДА ==========
     (function() {
         document.addEventListener('contextmenu', (e) => e.preventDefault());
         document.addEventListener('keydown', (e) => {
@@ -180,7 +157,7 @@
                 if (devToolsDetectCount >= 2) {
                     localStorage.removeItem('quizProgressV2');
                     localStorage.removeItem('consentGiven');
-                    alert('Обнаружены инструменты разработчика. Прогресс сброшен. Закройте DevTools и перезагрузите страницу.');
+                    alert('Обнаружены инструменты разработчика. Прогресс сброшен.');
                     location.reload();
                 }
             } else {
@@ -221,7 +198,7 @@
         { q: "Номер пожарной службы?", correct: "101", wrong: ["102","103","112"] },
         { q: "Номер скорой помощи?", correct: "103", wrong: ["101","102","112"] },
         { q: "Номер полиции?", correct: "102", wrong: ["101","103","112"] },
-        { q: "Что означает зелёный знак с белым человечком, бегущим к двери?", correct: "Выход", wrong: ["Туалет","Запасный выход","Путь эвакуации"] }
+        { q: "Что означает зелёный знак с белым человечком?", correct: "Выход", wrong: ["Туалет","Запасный выход","Путь эвакуации"] }
     ];
     const societyFacts = [
         ["Высший орган власти РФ?","Президент"],["Что такое референдум?","Всенародное голосование"],
@@ -250,33 +227,20 @@
         { word: "блестящий", wrong: ["блистящий","блестющий","блистющий"] }
     ];
 
-    // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
     function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
     function shuffle(arr) { for (let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
     function unique(arr) { return [...new Set(arr)]; }
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
-    
-    // ИСПРАВЛЕНА ФУНКЦИЯ СКЛОНЕНИЯ СТРАН (баг с "Турцияа" и т.д.)
     function declineCountry(c) {
-        const exceptions = {
-            "Россия":"России", "США":"США", "Франция":"Франции", "Германия":"Германии", "Китай":"Китая",
-            "Япония":"Японии", "Италия":"Италии", "Великобритания":"Великобритании", "Испания":"Испании",
-            "Канада":"Канады", "Бразилия":"Бразилии", "Австралия":"Австралии", "Индия":"Индии",
-            "Египет":"Египта", "Турция":"Турции"
-        };
-        if (exceptions[c]) return exceptions[c];
-        if (c.endsWith('я')) return c.slice(0,-1)+'и';
-        if (c.endsWith('а')) return c.slice(0,-1)+'ы';
-        return c+'а';
+        const e = {"Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая","Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании","Канада":"Канады","Бразилия":"Бразилии","Австралия":"Австралии","Индия":"Индии","Египет":"Египта","Турция":"Турции"};
+        return e[c] || (c.endsWith('я')?c.slice(0,-1)+'и':c.endsWith('а')?c.slice(0,-1)+'ы':c+'а');
     }
-    
     function declineElement(n) {
-        const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа","Свинец":"свинца","Ртуть":"ртути","Кислород":"кислорода","Водород":"водорода","Натрий":"натрия","Хлор":"хлора","Углерод":"углерода","Азот":"азота"};
-        return e[n] || n.toLowerCase()+"а";
+        const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа","Свинец":"свинца","Ртуть":"ртути","Кислород":"кислорода","Водород":"водорода","Натрий":"натрия","Хлор":"хлора"};
+        return e[n] || n.toLowerCase()+'а';
     }
 
-    // ========== ГЕНЕРАТОРЫ ВОПРОСОВ ==========
     function generateMathQuestion(level) {
         let a = Math.floor(Math.random()*9)+2, b = Math.floor(Math.random()*9)+2;
         let ops=['+','-','×']; if(level>=3) ops.push('÷');
@@ -300,7 +264,7 @@
     function generatePhysicsQuestion(){ let f=randomItem(physicsFacts); let wrongs=physicsFacts.filter(p=>p[1]!==f[1]).map(p=>p[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Энергия"); return { text: f[0], options: shuffle(opts), correctHash: simpleHash(f[1]), points:10 }; }
     function generateRussianQuestion(){ let base=randomItem(spellingWords); let opts=[base.word,...base.wrong.slice(0,3)]; while(opts.length<4) opts.push(base.word.slice(0,-2)+"а"); return { text: `Выберите правильное написание слова:`, options: shuffle(opts), correctHash: simpleHash(base.word), points:10 }; }
 
-    // ========== УПРАВЛЕНИЕ ПРОГРЕССОМ ==========
+    // ========== ПРОГРЕСС И ЛОГИКА ==========
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = {
         math:"Математика", russian:"Русский язык", geo:"География", history:"История",
@@ -450,11 +414,10 @@
         document.querySelectorAll(".answer-btn").forEach(btn=>btn.disabled=true);
         const nextBtn = document.getElementById("nextBtn");
         if(nextBtn) {
-            // Убираем возможные дублирующиеся обработчики: заменяем кнопку на её клон, чтобы удалить все старые слушатели
-            const newNextBtn = nextBtn.cloneNode(true);
-            nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
-            newNextBtn.classList.remove("hidden");
-            newNextBtn.onclick = ()=>{ waitingForNext=false; advance(isCorrect); };
+            const newBtn = nextBtn.cloneNode(true);
+            nextBtn.parentNode.replaceChild(newBtn, nextBtn);
+            newBtn.classList.remove("hidden");
+            newBtn.onclick = ()=>{ waitingForNext=false; advance(isCorrect); };
         }
         saveAllProgress();
     }
@@ -462,19 +425,6 @@
         const fb = document.getElementById("feedbackMsg");
         if(fb){ fb.style.display="block"; fb.innerHTML=msg; setTimeout(()=>{ if(fb.innerHTML===msg){ fb.style.display="none"; fb.innerHTML=""; } }, duration); }
     }
-    
-    // Функция принудительного обновления темы после рекламы
-    async function refreshThemeAfterAd() {
-        if(window.vkBridge) {
-            try {
-                const config = await vkBridge.send("VKWebAppGetConfig");
-                if(config && config.scheme) {
-                    document.body.setAttribute('scheme', config.scheme);
-                }
-            } catch(e) { console.warn("Theme refresh error", e); }
-        }
-    }
-    
     async function showRewardedAd(adType) {
         if(!window.vkBridge) return false;
         const now=Date.now();
@@ -483,8 +433,6 @@
         isAdWatching=true; adLastShown=now;
         try{
             const result=await vkBridge.send("VKWebAppShowNativeAds",{ ad_format:"reward" });
-            // Принудительно восстанавливаем тему после рекламы (независимо от успеха)
-            await refreshThemeAfterAd();
             if(result && result.result===true){
                 const p=getCurrentProgress();
                 if(adType==='revive') p.lives=Math.min(p.lives+1, MAX_LIVES);
@@ -494,7 +442,7 @@
                 showTemporaryMessage("❤️ +1 жизнь за просмотр рекламы!");
                 saveAllProgress(); return true;
             } else{ showTemporaryMessage("Реклама не досмотрена"); return false; }
-        } catch(e){ console.error(e); await refreshThemeAfterAd(); return false; } finally{ isAdWatching=false; }
+        } catch(e){ console.error(e); return false; } finally{ isAdWatching=false; }
     }
     function offerAdForRevival() {
         if(!gameActive) return;
@@ -539,7 +487,6 @@
             });
         });
         if(nextBtn) {
-            // Убираем старые обработчики через замену на клон, чтобы избежать двойного клика
             const newNextBtn = nextBtn.cloneNode(true);
             nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
             newNextBtn.onclick = () => {
@@ -592,7 +539,7 @@
     }
     function showTermsModal() {
         const modal=document.createElement('div'); modal.className='modal';
-        modal.innerHTML=`<div class="modal-content"><h4>📄 Пользовательское соглашение</h4><p><strong>1. Общие положения</strong><br>Использование Приложения означает принятие условий.</p><p><strong>2. Контакты</strong><br>vova_polyakov_94@mail.ru</p><button class="close-modal">Закрыть</button></div>`;
+        modal.innerHTML=`<div class="modal-content"><h4>📄 Пользовательское соглашение</h4><p>Использование приложения означает принятие условий.</p><p>Контакты: vova_polyakov_94@mail.ru</p><button class="close-modal">Закрыть</button></div>`;
         document.body.appendChild(modal); document.body.classList.add('modal-open');
         modal.querySelector('.close-modal').onclick=()=>{ modal.remove(); document.body.classList.remove('modal-open'); };
         modal.onclick=(e)=>{ if(e.target===modal){ modal.remove(); document.body.classList.remove('modal-open'); } };
@@ -620,7 +567,7 @@
     }
     function showConsentModal() {
         const modalDiv=document.createElement('div'); modalDiv.className='modal';
-        modalDiv.innerHTML=`<div class="modal-content" style="max-width:340px;"><h4>📋 Добро пожаловать!</h4><p>Продолжая, вы принимаете <strong><a id="termsLinkModal" style="cursor:pointer; color:var(--accent)">Пользовательское соглашение</a></strong> и <strong><a id="privacyLinkModal" style="cursor:pointer; color:var(--accent)">Политику конфиденциальности</a></strong>.</p><p style="font-size:12px;">📧 Контакты: vova_polyakov_94@mail.ru</p><button class="modal-btn confirm" id="acceptBtn" style="width:100%; margin-top:12px;">Принимаю и начинаю</button></div>`;
+        modalDiv.innerHTML=`<div class="modal-content" style="max-width:340px;"><h4>📋 Добро пожаловать!</h4><p>Продолжая, вы принимаете <strong><a id="termsLinkModal" style="cursor:pointer;color:#2688eb">Пользовательское соглашение</a></strong> и <strong><a id="privacyLinkModal" style="cursor:pointer;color:#2688eb">Политику конфиденциальности</a></strong>.</p><p style="font-size:12px;">📧 Контакты: vova_polyakov_94@mail.ru</p><button class="modal-btn confirm" id="acceptBtn" style="width:100%; margin-top:12px;">Принимаю и начинаю</button></div>`;
         document.body.appendChild(modalDiv); document.body.classList.add('modal-open');
         document.getElementById("termsLinkModal").onclick=(e)=>{ e.preventDefault(); showTermsModal(); };
         document.getElementById("privacyLinkModal").onclick=(e)=>{ e.preventDefault(); showPrivacyModal(); };
@@ -638,7 +585,7 @@
         document.getElementById("deleteDataLink").onclick=hardDeleteAllData;
         if(window.vkBridge){
             vkBridge.send("VKWebAppInit").then(()=>{
-                vkBridge.subscribe((e)=>{ if(e.detail.type==='VKWebAppUpdateConfig') document.body.setAttribute('scheme',e.detail.data.scheme); });
+                // Не подписываемся на тему, так как у нас фиксированная светлая тема
                 if(!localStorage.getItem('consentGiven')) showConsentModal();
                 else startGameAfterConsent();
             }).catch(()=>{ if(!localStorage.getItem('consentGiven')) showConsentModal(); else startGameAfterConsent(); });
