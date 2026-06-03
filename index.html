@@ -161,6 +161,42 @@
 </div>
 
 <script>
+    // ========== ЗАЩИТА ОТ ПРОСМОТРА КОДА И DEVTOOLS ==========
+    (function() {
+        // Блокировка контекстного меню (ПКМ)
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        
+        // Блокировка клавиш разработчика
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+                (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Детект открытия DevTools через разницу времени выполнения debugger
+        let devToolsDetectCount = 0;
+        setInterval(() => {
+            const start = performance.now();
+            debugger;
+            const end = performance.now();
+            if (end - start > 100) {
+                devToolsDetectCount++;
+                if (devToolsDetectCount >= 2) {
+                    // Очищаем прогресс и перезагружаем
+                    localStorage.removeItem('quizProgressV2');
+                    localStorage.removeItem('consentGiven');
+                    alert('Обнаружены инструменты разработчика. Прогресс сброшен. Пожалуйста, закройте DevTools и перезагрузите страницу.');
+                    location.reload();
+                }
+            } else {
+                devToolsDetectCount = 0;
+            }
+        }, 5000);
+    })();
+
     // ========== БАЗЫ ДАННЫХ ==========
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
