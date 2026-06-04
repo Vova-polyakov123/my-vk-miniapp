@@ -493,11 +493,16 @@
         waitingForNext=true;
         document.querySelectorAll(".answer-btn").forEach(btn=>btn.disabled=true);
         const nextBtn = document.getElementById("nextBtn");
+        if(nextBtn && nextBtn.classList.contains("hidden")) {
+            nextBtn.classList.remove("hidden");
+        }
         if(nextBtn) {
-            const newBtn = nextBtn.cloneNode(true);
-            nextBtn.parentNode.replaceChild(newBtn, nextBtn);
-            newBtn.classList.remove("hidden");
-            newBtn.onclick = ()=>{ waitingForNext=false; advance(isCorrect); };
+            // Удаляем старые обработчики, чтобы избежать дублирования
+            nextBtn.replaceWith(nextBtn.cloneNode(true));
+            const newNextBtn = document.getElementById("nextBtn");
+            if(newNextBtn) {
+                newNextBtn.onclick = ()=>{ waitingForNext=false; advance(isCorrect); };
+            }
         }
         saveAllProgress();
     }
@@ -597,16 +602,22 @@
                 selectedAnswer=btn.getAttribute("data-answer");
                 btns.forEach(b=>b.classList.remove("selected"));
                 btn.classList.add("selected");
-                if(nextBtn) nextBtn.classList.remove("hidden");
+                // Показать кнопку "Далее" после выбора ответа
+                if(nextBtn && nextBtn.classList.contains("hidden")) {
+                    nextBtn.classList.remove("hidden");
+                }
             });
         });
         if(nextBtn) {
-            const newNextBtn = nextBtn.cloneNode(true);
-            nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
-            newNextBtn.onclick = () => {
-                if(selectedAnswer && !waitingForNext) handleAnswerSubmit();
-                else if(!selectedAnswer) showTemporaryMessage("Выберите вариант ответа");
-            };
+            // Убираем старые обработчики и вешаем новый
+            nextBtn.replaceWith(nextBtn.cloneNode(true));
+            const newNextBtn = document.getElementById("nextBtn");
+            if(newNextBtn) {
+                newNextBtn.onclick = () => {
+                    if(selectedAnswer && !waitingForNext) handleAnswerSubmit();
+                    else if(!selectedAnswer) showTemporaryMessage("Выберите вариант ответа");
+                };
+            }
         }
     }
     function showConfettiAdaptive() {
