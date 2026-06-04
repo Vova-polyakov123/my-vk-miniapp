@@ -153,7 +153,7 @@
         }, 5000);
     })();
 
-    // ========== БАЗЫ ДАННЫХ ==========
+    // ========== БАЗЫ ДАННЫХ (достаточно для генерации) ==========
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -268,7 +268,7 @@
         return { text: `Выберите правильное написание слова:`, options: shuffle(opts.slice(0,4)), correctHash: simpleHash(base.word), points:10 };
     }
 
-    // ========== УПРАВЛЕНИЕ ПРОГРЕССОМ С АВТОСИНХРОНИЗАЦИЕЙ ==========
+    // ========== УПРАВЛЕНИЕ ПРОГРЕССОМ ==========
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = {
         math:"Математика", russian:"Русский язык", geo:"География", history:"История",
@@ -291,7 +291,13 @@
     function initSubjectProgress(subject) {
         if (!progressBySubject[subject]) {
             progressBySubject[subject] = {
-                totalScore: 0, level: 1, lives: 3, combo: 0, qInLevel: 0, levelPerfect: true, usedQuestions: new Set()
+                totalScore: 0,
+                level: 1,
+                lives: 3,
+                combo: 0,
+                qInLevel: 0,
+                levelPerfect: true,
+                usedQuestions: new Set()
             };
         }
     }
@@ -429,7 +435,9 @@
             else if(subject==='chemistry') q=generateChemistryQuestion();
             else if(subject==='physics') q=generatePhysicsQuestion();
             attempts++;
-            if(attempts>maxAttempts) return null;
+            if(attempts>maxAttempts) {
+                return null; // нет новых вопросов
+            }
         } while(p.usedQuestions.has(q.text+q.correctHash));
         p.usedQuestions.add(q.text+q.correctHash);
         return q;
@@ -439,7 +447,10 @@
         const p = getCurrentProgress();
         if(p.lives<=0) { offerAdForRevival(); return; }
         let q = getUniqueQuestion(currentSubject, p.level);
-        if(!q) { finishGame(true); return; }
+        if(!q) {
+            finishGame(true);
+            return;
+        }
         currentQuestion = q;
         selectedAnswer = null;
         renderUI();
@@ -552,10 +563,14 @@
         gameActive=false;
         const p=getCurrentProgress();
         document.getElementById("gameArea").innerHTML=`<div class="result-area"><div class="result-score">${success?"🏆 ПОБЕДА!":"💀 ПОРАЖЕНИЕ"}</div><p style="margin:12px 0">Очки: ${p.totalScore} | Уровень: ${p.level}</p>
-        <button class="share-btn" id="shareBtn">📢 ПОДЕЛИТЬСЯ</button><button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
-        <p style="margin-top:16px;font-size:12px;">Выберите другой предмет вверху</p></div>`;
+        <p style="margin:12px 0; font-size:14px;">Выберите другой предмет вверху или нажмите «НАЧАТЬ ЗАНОВО».</p>
+        <button class="share-btn" id="shareBtn">📢 ПОДЕЛИТЬСЯ</button>
+        <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
+        <button class="reset-btn" id="selectSubjectHint" style="margin-top:8px;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ (вверху)</button>
+        </div>`;
         document.getElementById("shareBtn")?.addEventListener("click",()=>{ let txt=`Я прошёл «${subjectNames[currentSubject]}» с ${p.totalScore} очков, уровень ${p.level}!`; if(window.vkBridge) vkBridge.send("VKWebAppShare",{link:"https://vk.com",attachment:txt}); });
         document.getElementById("resetBtn")?.addEventListener("click",()=>{ resetSubjectProgress(currentSubject); loadNewQuestion(); });
+        document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{ document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth"}); });
     }
     function renderUI() {
         if(!currentQuestion) return;
@@ -566,7 +581,7 @@
         const html=`<div class="quest-header"><div class="level-badge">⚡ Уровень ${p.level} · ${subjectNames[currentSubject]}</div><div class="lives">${hearts}</div></div>
         <div class="question-card"><div class="question-text">${escapeHtml(q.text)}</div><div class="answers" id="answersContainer">${q.options.map(opt=>`<button class="answer-btn" data-answer="${escapeHtml(opt)}">${escapeHtml(opt)}</button>`).join('')}</div>
         <div class="feedback" id="feedbackMsg" style="display:none;"></div>
-        <button class="next-btn" id="nextBtn">➡️ ДАЛЕЕ</button>
+        <button class="next-btn hidden" id="nextBtn">➡️ ДАЛЕЕ</button>
         <button class="bonus-btn" id="bonusLifeBtn" ${bonusDisabled}>❤️ +1 ЖИЗНЬ ЗА РЕКЛАМУ</button></div>`;
         document.getElementById("gameArea").innerHTML=html;
         const btns=document.querySelectorAll(".answer-btn");
@@ -582,6 +597,7 @@
                 selectedAnswer=btn.getAttribute("data-answer");
                 btns.forEach(b=>b.classList.remove("selected"));
                 btn.classList.add("selected");
+                if(nextBtn) nextBtn.classList.remove("hidden");
             });
         });
         if(nextBtn) {
@@ -663,7 +679,6 @@
         modal.onclick=(e)=>{ if(e.target===modal){ modal.remove(); document.body.classList.remove('modal-open'); } };
     }
     function customConfirmDelete() {
-        // ПРАВИЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ
         const modal=document.createElement('div'); modal.className='modal';
         modal.innerHTML=`<div class="modal-content">
             <h4>🗑 Подтверждение удаления</h4>
