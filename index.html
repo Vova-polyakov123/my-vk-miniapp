@@ -87,10 +87,11 @@
         }
         .modal-content { background: white; max-width: 340px; width: 90%; border-radius: 20px; padding: 20px; color: #000; text-align: left; max-height: 80vh; overflow-y: auto; }
         .modal-content h4 { margin-bottom: 12px; text-align: center; }
-        .modal-buttons { display: flex; justify-content: space-around; margin-top: 16px; }
+        .modal-buttons { display: flex; justify-content: space-around; margin-top: 16px; gap: 12px; }
         .modal-btn { padding: 8px 20px; border-radius: 40px; font-weight: 600; border: none; cursor: pointer; }
         .modal-btn.confirm { background: #ff9800; color: white; }
         .modal-btn.cancel { background: #ccc; color: #000; }
+        .modal-btn.danger { background: #e64646; color: white; }
         .close-modal { background: #2688eb; border: none; padding: 8px 16px; border-radius: 20px; color: white; cursor: pointer; margin-top: 12px; width: 100%; }
         @keyframes confetti {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
@@ -267,7 +268,7 @@
         return { text: `Выберите правильное написание слова:`, options: shuffle(opts.slice(0,4)), correctHash: simpleHash(base.word), points:10 };
     }
 
-    // ========== УПРАВЛЕНИЕ ПРОГРЕССОМ С СИНХРОНИЗАЦИЕЙ ЧЕРЕЗ VK STORAGE ==========
+    // ========== УПРАВЛЕНИЕ ПРОГРЕССОМ С АВТОСИНХРОНИЗАЦИЕЙ ==========
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = {
         math:"Математика", russian:"Русский язык", geo:"География", history:"История",
@@ -318,7 +319,6 @@
         return fixed;
     }
 
-    // Функция для сохранения прогресса в VK Storage
     async function saveToVKStorage() {
         if (!window.vkBridge) return;
         const dataToSave = {};
@@ -343,7 +343,6 @@
         } catch(e) { console.warn("VK Storage save error", e); }
     }
 
-    // Загрузка прогресса из VK Storage
     async function loadFromVKStorage() {
         if (!window.vkBridge) return null;
         try {
@@ -361,29 +360,6 @@
             }
             return null;
         } catch(e) { console.warn("VK Storage load error", e); return null; }
-    }
-
-    // Сравнение локального и облачного прогресса
-    let lastSyncTimestamp = 0;
-    async function syncWithCloud(forceLoad = false) {
-        if (!window.vkBridge) return;
-        const cloud = await loadFromVKStorage();
-        const localTimestamp = parseInt(localStorage.getItem('quizProgressTimestamp') || '0');
-        if (cloud && cloud.timestamp > localTimestamp && !forceLoad) {
-            // Облачные данные новее
-            progressBySubject = cloud.data;
-            localStorage.setItem('quizProgressV2', JSON.stringify(cloud.data));
-            localStorage.setItem('quizProgressTimestamp', cloud.timestamp.toString());
-            updateUIFromProgress();
-            loadNewQuestion();
-            showTemporaryMessage("Прогресс синхронизирован с облака", 2000);
-        } else if (forceLoad && cloud) {
-            progressBySubject = cloud.data;
-            localStorage.setItem('quizProgressV2', JSON.stringify(cloud.data));
-            localStorage.setItem('quizProgressTimestamp', cloud.timestamp.toString());
-            updateUIFromProgress();
-            loadNewQuestion();
-        }
     }
 
     function saveAllProgress() {
@@ -404,7 +380,6 @@
         localStorage.setItem('quizProgressV2', JSON.stringify(toSave));
         const now = Date.now();
         localStorage.setItem('quizProgressTimestamp', now.toString());
-        // Сохраняем в облако асинхронно
         saveToVKStorage();
     }
 
@@ -678,7 +653,7 @@
         const modal=document.createElement('div'); modal.className='modal';
         modal.innerHTML=`<div class="modal-content"><h4>🔒 Политика конфиденциальности</h4>
             <p><strong>1. Общие положения</strong><br>Настоящая Политика описывает обработку информации.</p>
-            <p><strong>2. Какие данные собираются</strong><br>Только идентификатор VK и игровой прогресс. Прогресс синхронизируется через VK Storage.</p>
+            <p><strong>2. Какие данные собираются</strong><br>Идентификатор VK и игровой прогресс. Прогресс синхронизируется через VK Storage.</p>
             <p><strong>3. Хранение и передача</strong><br>Данные хранятся в защищённом облаке VK, не передаются третьим лицам.</p>
             <p><strong>4. Права Пользователя</strong><br>Вы можете удалить прогресс через кнопку «Удалить данные».</p>
             <p><strong>5. Контактная информация</strong><br>vova_polyakov_94@mail.ru</p>
@@ -688,11 +663,24 @@
         modal.onclick=(e)=>{ if(e.target===modal){ modal.remove(); document.body.classList.remove('modal-open'); } };
     }
     function customConfirmDelete() {
-        showConfirmModal("Удалить весь прогресс? Это действие необратимо.", async () => {
-            // Очищаем локальное хранилище
+        // ПРАВИЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ
+        const modal=document.createElement('div'); modal.className='modal';
+        modal.innerHTML=`<div class="modal-content">
+            <h4>🗑 Подтверждение удаления</h4>
+            <p>Вы действительно хотите удалить весь прогресс? Это действие необратимо.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn danger" id="confirmDeleteBtn">🗑 Удалить</button>
+                <button class="modal-btn cancel" id="cancelDeleteBtn">Отмена</button>
+            </div>
+        </div>`;
+        document.body.appendChild(modal); document.body.classList.add('modal-open');
+        const confirmBtn = modal.querySelector('#confirmDeleteBtn');
+        const cancelBtn = modal.querySelector('#cancelDeleteBtn');
+        const closeModal = () => { modal.remove(); document.body.classList.remove('modal-open'); };
+        confirmBtn.onclick = async () => {
+            closeModal();
             localStorage.removeItem('quizProgressV2');
             localStorage.removeItem('quizProgressTimestamp');
-            // Очищаем облачное хранилище VK
             if (window.vkBridge) {
                 try {
                     await vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: "" });
@@ -707,7 +695,9 @@
             loadNewQuestion();
             saveAllProgress();
             showTemporaryMessage("Все данные удалены. Игра начата заново.");
-        }, () => {});
+        };
+        cancelBtn.onclick = closeModal;
+        modal.onclick = (e) => { if(e.target === modal) closeModal(); };
     }
     function showConsentModal() {
         const modalDiv=document.createElement('div'); modalDiv.className='modal';
@@ -723,27 +713,22 @@
     }
     async function startGameAfterConsent() {
         buildSubjectsUI();
-        // Сначала загружаем локальный прогресс
         const localExists = loadAllProgress();
-        // Пытаемся загрузить из облака и синхронизировать
         if (window.vkBridge) {
             const cloud = await loadFromVKStorage();
             if (cloud && cloud.data) {
-                // Есть облачные данные
                 const localTimestamp = parseInt(localStorage.getItem('quizProgressTimestamp') || '0');
                 if (cloud.timestamp > localTimestamp) {
-                    // Облачные данные новее – используем их
                     progressBySubject = cloud.data;
                     localStorage.setItem('quizProgressV2', JSON.stringify(cloud.data));
                     localStorage.setItem('quizProgressTimestamp', cloud.timestamp.toString());
-                    showTemporaryMessage("Прогресс восстановлен из облака", 3000);
+                    showTemporaryMessage("Прогресс синхронизирован с облака", 2000);
                 } else if (!localExists && cloud.timestamp > 0) {
                     progressBySubject = cloud.data;
                     localStorage.setItem('quizProgressV2', JSON.stringify(cloud.data));
                     localStorage.setItem('quizProgressTimestamp', cloud.timestamp.toString());
                 }
             } else if (!localExists) {
-                // Нет ни локального, ни облачного – инициализируем
                 for(let s of allSubjects) initSubjectProgress(s);
                 saveAllProgress();
             }
