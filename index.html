@@ -253,7 +253,16 @@
     function generateOBZHQuestion(){ let f=randomItem(obzhFacts); let opts=unique([f.correct,...f.wrong]); while(opts.length<4) opts.push("Неизвестно"); return { text: f.q, options: shuffle([...opts]), correctHash: simpleHash(f.correct), points:10 }; }
     function generateSocietyQuestion(){ let f=randomItem(societyFacts); let wrongs=societyFacts.filter(s=>s[1]!==f[1]).map(s=>s[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Неизвестно"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(f[1]), points:10 }; }
     function generateBiologyQuestion(){ let f=randomItem(biologyFacts); let wrongs=biologyFacts.filter(b=>b[1]!==f[1]).map(b=>b[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Клетка"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(f[1]), points:10 }; }
-    function generateChemistryQuestion(){ let e=randomItem(elements); let text=`Химический символ ${declineElement(e[1])}?`; let correct=e[0]; let wrongs=elements.filter(el=>el[0]!==correct).map(el=>el[0]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("??"); return { text, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
+    // ИСПРАВЛЕННЫЙ ГЕНЕРАТОР ХИМИИ (правильный падеж)
+    function generateChemistryQuestion(){ 
+        let e=randomItem(elements); 
+        let text=`Химический символ ${declineElement(e[1])}?`; 
+        let correct=e[0]; 
+        let wrongs=elements.filter(el=>el[0]!==correct).map(el=>el[0]).slice(0,3); 
+        let opts=unique([correct,...wrongs]); 
+        while(opts.length<4) opts.push("??"); 
+        return { text, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; 
+    }
     function generatePhysicsQuestion(){ let f=randomItem(physicsFacts); let wrongs=physicsFacts.filter(p=>p[1]!==f[1]).map(p=>p[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Энергия"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(f[1]), points:10 }; }
     function generateRussianQuestion(){ 
         let base = randomItem(spellingWords);
@@ -296,27 +305,45 @@
             };
         }
     }
+
+    function validateAndFixProgress(data) {
+        if (!data || typeof data !== 'object') return null;
+        const validKeys = new Set(allSubjects);
+        const fixed = {};
+        for (let key of allSubjects) {
+            if (data[key] && typeof data[key] === 'object') {
+                const subj = data[key];
+                fixed[key] = {
+                    totalScore: typeof subj.totalScore === 'number' ? subj.totalScore : 0,
+                    level: typeof subj.level === 'number' && subj.level > 0 ? subj.level : 1,
+                    lives: typeof subj.lives === 'number' && subj.lives <= MAX_LIVES ? subj.lives : 3,
+                    combo: typeof subj.combo === 'number' ? subj.combo : 0,
+                    qInLevel: typeof subj.qInLevel === 'number' ? subj.qInLevel : 0,
+                    levelPerfect: typeof subj.levelPerfect === 'boolean' ? subj.levelPerfect : true,
+                    usedQuestions: subj.usedQuestions instanceof Set ? subj.usedQuestions : new Set(Array.isArray(subj.usedQuestions) ? subj.usedQuestions : [])
+                };
+            } else {
+                initSubjectProgress(key);
+                fixed[key] = progressBySubject[key];
+            }
+        }
+        return fixed;
+    }
+
     function loadAllProgress() {
         const saved = localStorage.getItem('quizProgressV2');
         if (!saved) return false;
         try {
             const data = JSON.parse(saved);
-            for (let s of allSubjects) {
-                if (data[s]) {
-                    progressBySubject[s] = {
-                        totalScore: data[s].totalScore || 0,
-                        level: data[s].level || 1,
-                        lives: data[s].lives || 3,
-                        combo: data[s].combo || 0,
-                        qInLevel: data[s].qInLevel || 0,
-                        levelPerfect: data[s].levelPerfect !== undefined ? data[s].levelPerfect : true,
-                        usedQuestions: new Set(data[s].usedQuestions || [])
-                    };
-                } else { initSubjectProgress(s); }
+            const fixed = validateAndFixProgress(data);
+            if (fixed) {
+                progressBySubject = fixed;
+                return true;
             }
-            return true;
+            return false;
         } catch(e) { return false; }
     }
+
     function saveAllProgress() {
         const toSave = {};
         for (let s of allSubjects) {
@@ -334,6 +361,7 @@
         }
         localStorage.setItem('quizProgressV2', JSON.stringify(toSave));
     }
+
     function getCurrentProgress() { return progressBySubject[currentSubject]; }
     function updateUIFromProgress() {
         const p = getCurrentProgress();
@@ -432,7 +460,6 @@
         if(fb){ fb.style.display="block"; fb.innerHTML=msg; setTimeout(()=>{ if(fb.innerHTML===msg){ fb.style.display="none"; fb.innerHTML=""; } }, duration); }
     }
 
-    // Обновление таймера на кнопке
     function updateAdButtonTimer() {
         const bonusBtn = document.getElementById("bonusLifeBtn");
         if (!bonusBtn) return;
@@ -446,6 +473,7 @@
             bonusBtn.disabled = false;
             bonusBtn.textContent = `❤️ +1 ЖИЗНЬ ЗА РЕКЛАМУ`;
             if (adTimerInterval) clearInterval(adTimerInterval);
+            adTimerInterval = null;
         }
     }
 
@@ -511,6 +539,7 @@
         const bonusBtn=document.getElementById("bonusLifeBtn");
         if(bonusBtn) {
             bonusBtn.addEventListener("click",async()=>{ if(p.lives>=MAX_LIVES){ showTemporaryMessage("У вас максимум жизней"); return; } await showRewardedAd('bonus'); renderUI(); });
+            // Восстанавливаем таймер на новой кнопке
             updateAdButtonTimer();
         }
         btns.forEach(btn=>{
@@ -574,29 +603,59 @@
     }
     function showTermsModal() {
         const modal=document.createElement('div'); modal.className='modal';
-        modal.innerHTML=`<div class="modal-content"><h4>📄 Пользовательское соглашение</h4><p>Использование приложения означает принятие условий.</p><p>Контакты: vova_polyakov_94@mail.ru</p><button class="close-modal">Закрыть</button></div>`;
+        modal.innerHTML=`<div class="modal-content"><h4>📄 Пользовательское соглашение</h4>
+            <p><strong>1. Общие положения</strong><br>Использование Приложения означает принятие условий.</p>
+            <p><strong>2. Основные термины</strong><br>Приложение – викторина «Битва знаний» в VK Mini Apps.</p>
+            <p><strong>3. Права и обязанности</strong><br>Пользователь обязуется не нарушать работу Приложения. Администрация вправе показывать рекламу и изменять механику.</p>
+            <p><strong>4. Ограничение ответственности</strong><br>Приложение предоставляется «как есть».</p>
+            <p><strong>5. Контактная информация</strong><br>vova_polyakov_94@mail.ru</p>
+            <p><strong>6. Заключительные положения</strong><br>Регулируется законодательством РФ.</p>
+            <button class="close-modal">Закрыть</button></div>`;
         document.body.appendChild(modal); document.body.classList.add('modal-open');
         modal.querySelector('.close-modal').onclick=()=>{ modal.remove(); document.body.classList.remove('modal-open'); };
         modal.onclick=(e)=>{ if(e.target===modal){ modal.remove(); document.body.classList.remove('modal-open'); } };
     }
     function showPrivacyModal() {
         const modal=document.createElement('div'); modal.className='modal';
-        modal.innerHTML=`<div class="modal-content"><h4>🔒 Политика конфиденциальности</h4><p>Данные хранятся локально, не передаются третьим лицам. Контакты: vova_polyakov_94@mail.ru</p><button class="close-modal">Закрыть</button></div>`;
+        modal.innerHTML=`<div class="modal-content"><h4>🔒 Политика конфиденциальности</h4>
+            <p><strong>1. Общие положения</strong><br>Настоящая Политика описывает обработку информации.</p>
+            <p><strong>2. Какие данные собираются</strong><br>Только идентификатор VK и игровой прогресс локально.</p>
+            <p><strong>3. Хранение и передача</strong><br>Данные не передаются третьим лицам.</p>
+            <p><strong>4. Права Пользователя</strong><br>Вы можете удалить прогресс через кнопку «Удалить данные».</p>
+            <p><strong>5. Контактная информация</strong><br>vova_polyakov_94@mail.ru</p>
+            <button class="close-modal">Закрыть</button></div>`;
         document.body.appendChild(modal); document.body.classList.add('modal-open');
         modal.querySelector('.close-modal').onclick=()=>{ modal.remove(); document.body.classList.remove('modal-open'); };
         modal.onclick=(e)=>{ if(e.target===modal){ modal.remove(); document.body.classList.remove('modal-open'); } };
     }
-    // Экспорт/импорт прогресса
+    function getCleanProgressData() {
+        const clean = {};
+        for (let s of allSubjects) {
+            if (progressBySubject[s]) {
+                clean[s] = {
+                    totalScore: progressBySubject[s].totalScore,
+                    level: progressBySubject[s].level,
+                    lives: progressBySubject[s].lives,
+                    combo: progressBySubject[s].combo,
+                    qInLevel: progressBySubject[s].qInLevel,
+                    levelPerfect: progressBySubject[s].levelPerfect,
+                    usedQuestions: Array.from(progressBySubject[s].usedQuestions)
+                };
+            }
+        }
+        return JSON.stringify(clean, null, 2);
+    }
     function showExportImportModal() {
-        const data = localStorage.getItem('quizProgressV2') || '';
+        const currentData = getCleanProgressData();
         const modal = document.createElement('div'); modal.className = 'modal';
         modal.innerHTML = `<div class="modal-content">
             <h4>📦 Экспорт / Импорт прогресса</h4>
             <p>Скопируйте текст ниже, чтобы перенести прогресс на другое устройство, или вставьте скопированный ранее текст и нажмите "Импортировать".</p>
-            <textarea class="export-import" id="exportData" placeholder="Здесь будет ваш прогресс...">${escapeHtml(data)}</textarea>
-            <div style="display:flex; gap:10px; justify-content:center;">
+            <textarea class="export-import" id="exportData" placeholder="Здесь будет ваш прогресс...">${escapeHtml(currentData)}</textarea>
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
                 <button class="modal-btn" id="exportCopyBtn" style="background:#2688eb; color:white;">📋 Копировать</button>
                 <button class="modal-btn" id="importBtn" style="background:#ff9800; color:white;">⬇️ Импортировать</button>
+                <button class="modal-btn" id="repairBtn" style="background:#e64646; color:white;">🔧 Очистить повреждённые данные</button>
             </div>
             <button class="close-modal" style="margin-top:12px;">Закрыть</button>
         </div>`;
@@ -604,6 +663,7 @@
         modal.querySelector('.close-modal').onclick = () => { modal.remove(); document.body.classList.remove('modal-open'); };
         const copyBtn = modal.querySelector('#exportCopyBtn');
         const importBtn = modal.querySelector('#importBtn');
+        const repairBtn = modal.querySelector('#repairBtn');
         const textarea = modal.querySelector('#exportData');
         copyBtn.onclick = () => {
             textarea.select();
@@ -614,10 +674,22 @@
             const newData = textarea.value.trim();
             if (!newData) { showTemporaryMessage("❌ Нет данных для импорта"); return; }
             try {
-                JSON.parse(newData);
-                localStorage.setItem('quizProgressV2', newData);
+                const parsed = JSON.parse(newData);
+                for (let key of Object.keys(parsed)) {
+                    if (!allSubjects.includes(key)) {
+                        showTemporaryMessage("❌ Неверный формат данных: обнаружен посторонний ключ " + key);
+                        return;
+                    }
+                }
+                localStorage.setItem('quizProgressV2', JSON.stringify(parsed));
                 location.reload();
-            } catch(e) { showTemporaryMessage("❌ Неверный формат данных"); }
+            } catch(e) { showTemporaryMessage("❌ Неверный формат данных: невалидный JSON"); }
+        };
+        repairBtn.onclick = () => {
+            if (confirm("Это удалит все повреждённые данные и сбросит прогресс. Продолжить?")) {
+                localStorage.removeItem('quizProgressV2');
+                location.reload();
+            }
         };
     }
     function customConfirmDelete() {
@@ -636,7 +708,11 @@
     }
     function showConsentModal() {
         const modalDiv=document.createElement('div'); modalDiv.className='modal';
-        modalDiv.innerHTML=`<div class="modal-content" style="max-width:340px;"><h4>📋 Добро пожаловать!</h4><p>Продолжая, вы принимаете <strong><a id="termsLinkModal" style="cursor:pointer;color:#2688eb">Пользовательское соглашение</a></strong> и <strong><a id="privacyLinkModal" style="cursor:pointer;color:#2688eb">Политику конфиденциальности</a></strong>.</p><p style="font-size:12px;">📧 Контакты: vova_polyakov_94@mail.ru</p><p style="font-size:12px; margin-top:8px;">💡 Для переноса прогресса на другое устройство используйте <strong>Экспорт/Импорт</strong> в футере.</p><button class="modal-btn confirm" id="acceptBtn" style="width:100%; margin-top:12px;">Принимаю и начинаю</button></div>`;
+        modalDiv.innerHTML=`<div class="modal-content" style="max-width:340px;"><h4>📋 Добро пожаловать!</h4>
+            <p>Продолжая, вы принимаете <strong><a id="termsLinkModal" style="cursor:pointer;color:#2688eb">Пользовательское соглашение</a></strong> и <strong><a id="privacyLinkModal" style="cursor:pointer;color:#2688eb">Политику конфиденциальности</a></strong>.</p>
+            <p style="font-size:12px;">📧 Контакты: vova_polyakov_94@mail.ru</p>
+            <p style="font-size:12px; margin-top:8px;">💡 Для переноса прогресса на другое устройство используйте <strong>Экспорт/Импорт</strong> в футере.</p>
+            <button class="modal-btn confirm" id="acceptBtn" style="width:100%; margin-top:12px;">Принимаю и начинаю</button></div>`;
         document.body.appendChild(modalDiv); document.body.classList.add('modal-open');
         document.getElementById("termsLinkModal").onclick=(e)=>{ e.preventDefault(); showTermsModal(); };
         document.getElementById("privacyLinkModal").onclick=(e)=>{ e.preventDefault(); showPrivacyModal(); };
@@ -644,7 +720,12 @@
     }
     function startGameAfterConsent() {
         buildSubjectsUI();
-        if(!loadAllProgress()){ for(let s of allSubjects) initSubjectProgress(s); saveAllProgress(); }
+        if(!loadAllProgress()){ 
+            localStorage.removeItem('quizProgressV2');
+            for(let s of allSubjects) initSubjectProgress(s); 
+            saveAllProgress(); 
+            showTemporaryMessage("Обнаружены повреждённые данные. Прогресс сброшен.", 4000);
+        }
         updateUIFromProgress();
         loadNewQuestion();
     }
