@@ -41,7 +41,7 @@
             padding: 4px 8px; 
             border-radius: 20px; 
             margin-left: 8px;
-            vertical-align: super;  /* фикс для тега 2026 */
+            vertical-align: super;
         }
         .score-board { display: flex; justify-content: space-between; background: rgba(0,0,0,0.15); border-radius: 24px; padding: 8px 16px; margin-top: 8px; }
         .score-item { font-weight: 600; font-size: 0.9rem; color: white; }
@@ -199,7 +199,6 @@
         ["Нижняя палата парламента РФ?","Государственная дума"],["Срок президентства в РФ?","6 лет"],
         ["Что такое инфляция?","Обесценивание денег"],["Конституция РФ принята в...","1993"]
     ];
-    // Исправленный массив biologyFacts (убрано склонение «хлоропластах», теперь везде именительный падеж)
     const biologyFacts = [
         ["Фотосинтез происходит в ...", "Хлоропласты"],
         ["Самый большой орган человека?", "Кожа"],
@@ -457,6 +456,7 @@
     }
     function loadNewQuestion() {
         if(!gameActive) return;
+        waitingForNext = false;  // важно: разрешаем нажатие "Далее" для нового вопроса
         const p = getCurrentProgress();
         if(p.lives<=0) { offerAdForRevival(); return; }
         let q = getUniqueQuestion(currentSubject, p.level);
@@ -603,12 +603,14 @@
                 selectedAnswer=btn.getAttribute("data-answer");
                 btns.forEach(b=>b.classList.remove("selected"));
                 btn.classList.add("selected");
+                // Показать кнопку "Далее"
                 if(nextBtn && nextBtn.classList.contains("hidden")) {
                     nextBtn.classList.remove("hidden");
                 }
             });
         });
         if(nextBtn) {
+            // Назначаем обработчик (гарантированно один)
             nextBtn.onclick = () => {
                 if(selectedAnswer && !waitingForNext) handleAnswerSubmit();
                 else if(!selectedAnswer) showTemporaryMessage("Выберите вариант ответа");
