@@ -35,11 +35,11 @@
             color: white;
         }
         .header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 12px; }
-        .header h1 span { 
-            background: rgba(255,255,255,0.2); 
-            font-size: 0.7rem; 
-            padding: 4px 8px; 
-            border-radius: 20px; 
+        .header h1 span {
+            background: rgba(255,255,255,0.2);
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 20px;
             margin-left: 8px;
             vertical-align: super;
         }
@@ -229,7 +229,6 @@
     function unique(arr) { return [...new Set(arr)]; }
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
-    
     function declineCountry(c) {
         const e = {"Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая","Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании","Канада":"Канады","Бразилия":"Бразилии","Австралия":"Австралии","Индия":"Индии","Египет":"Египта","Турция":"Турции"};
         return e[c] || (c.endsWith('я')?c.slice(0,-1)+'и':c.endsWith('а')?c.slice(0,-1)+'ы':c+'а');
@@ -265,7 +264,7 @@
     function generateBiologyQuestion(){ let f=randomItem(biologyFacts); let correct=f[1]; let wrongs=biologyFacts.filter(b=>b[1]!==correct).map(b=>b[1]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("Неизвестно"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
     function generateChemistryQuestion(){ let e=randomItem(elements); let text=`Химический символ ${declineElement(e[1])}?`; let correct=e[0]; let wrongs=elements.filter(el=>el[0]!==correct).map(el=>el[0]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("??"); return { text, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
     function generatePhysicsQuestion(){ let f=randomItem(physicsFacts); let wrongs=physicsFacts.filter(p=>p[1]!==f[1]).map(p=>p[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Энергия"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(f[1]), points:10 }; }
-    function generateRussianQuestion(){ 
+    function generateRussianQuestion(){
         let base = randomItem(spellingWords);
         let opts = [base.word, ...base.wrong];
         opts = unique(opts);
@@ -425,10 +424,10 @@
     function updateUISave() { updateUIFromProgress(); saveAllProgress(); }
     function resetSubjectProgress(subject) {
         progressBySubject[subject] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
-        if (subject === currentSubject) { 
+        if (subject === currentSubject) {
             waitingForNext=false; selectedAnswer=null; gameActive=true; isAdWatching=false;
             currentQuestion = null;
-            loadNewQuestion(); 
+            loadNewQuestion();
         }
         saveAllProgress();
     }
@@ -509,6 +508,8 @@
         const nextBtn = document.getElementById("nextBtn");
         if(nextBtn) nextBtn.classList.add("hidden");
         saveAllProgress();
+        // ★★★ КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: переходим к следующему вопросу ★★★
+        advance(isCorrect);
     }
     function showTemporaryMessage(msg, duration=3000) {
         const fb = document.getElementById("feedbackMsg");
@@ -535,11 +536,11 @@
     async function showRewardedAd(adType) {
         if(!window.vkBridge) return false;
         const now=Date.now();
-        if(now-adLastShown<30000){ 
+        if(now-adLastShown<30000){
             const sec = Math.ceil((30000 - (now - adLastShown)) / 1000);
             showTemporaryMessage(`⚠️ Рекламу можно смотреть не чаще 1 раза в 30 секунд. Подождите ${sec} с.`);
             updateAdButtonTimer();
-            return false; 
+            return false;
         }
         if(isAdWatching) return false;
         isAdWatching=true; adLastShown=now;
@@ -594,16 +595,16 @@
         <button class="next-btn hidden" id="nextBtn">➡️ ДАЛЕЕ</button>
         <button class="bonus-btn" id="bonusLifeBtn" ${bonusDisabled}>❤️ +1 ЖИЗНЬ ЗА РЕКЛАМУ</button></div>`;
         document.getElementById("gameArea").innerHTML=html;
-        
+
         const btns=document.querySelectorAll(".answer-btn");
         const nextBtn=document.getElementById("nextBtn");
         const bonusBtn=document.getElementById("bonusLifeBtn");
-        
+
         if(bonusBtn) {
             bonusBtn.addEventListener("click",async()=>{ if(p.lives>=MAX_LIVES){ showTemporaryMessage("У вас максимум жизней"); return; } await showRewardedAd('bonus'); renderUI(); });
             updateAdButtonTimer();
         }
-        
+
         btns.forEach(btn=>{
             btn.addEventListener("click",()=>{
                 if(waitingForNext||!gameActive) return;
@@ -615,7 +616,7 @@
                 }
             });
         });
-        
+
         if(nextBtn) {
             nextBtn.onclick = () => {
                 if(selectedAnswer && !waitingForNext) handleAnswerSubmit();
