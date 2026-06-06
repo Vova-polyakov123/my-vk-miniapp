@@ -11,15 +11,12 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-
         body {
             background: #eef2f5;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             padding: 0;
             margin: 0;
         }
-
-        /* главный контейнер в стиле карточки */
         .app {
             max-width: 500px;
             margin: 0 auto;
@@ -29,7 +26,6 @@
             display: flex;
             flex-direction: column;
         }
-
         /* шапка */
         .header {
             background: linear-gradient(135deg, #1e6fdf 0%, #0a4c9e 100%);
@@ -85,8 +81,7 @@
             font-weight: 800;
             line-height: 1.2;
         }
-
-        /* полоска уровней предметов (скролл) */
+        /* предметы */
         .subjects-strip {
             padding: 12px 16px;
             background: white;
@@ -127,8 +122,7 @@
         .active .subject-level {
             background: rgba(255,255,255,0.25);
         }
-
-        /* основной блок игры */
+        /* игровая область */
         .game-panel {
             padding: 20px;
             flex: 1;
@@ -251,8 +245,7 @@
             font-weight: 500;
             font-size: 0.9rem;
         }
-
-        /* блоки нижней части как на картинке */
+        /* нижние блоки */
         .daily-card, .achievements-card, .top-card, .invite-card, .treasure-card {
             background: #ffffff;
             margin: 0 16px 16px 16px;
@@ -396,7 +389,6 @@
 </head>
 <body>
 <div class="app" id="app">
-    <!-- ШАПКА -->
     <div class="header">
         <div class="header-top">
             <div class="logo">БИТВА ЗНАНИЙ<span>2026</span></div>
@@ -408,33 +400,21 @@
             <div class="stat-card"><div class="stat-label">РЕЙТИНГ</div><div class="stat-value">#<span id="ratingNumber">156</span></div></div>
         </div>
     </div>
-
-    <!-- Предметы с уровнями -->
     <div class="subjects-strip">
         <div class="subjects-flex" id="subjectsList"></div>
     </div>
-
-    <!-- Игровая область -->
-    <div class="game-panel" id="gamePanel">
-        <!-- динамически -->
-    </div>
-
-    <!-- Ежедневная награда -->
+    <div class="game-panel" id="gamePanel"></div>
     <div class="daily-card" id="dailyCard">
         <div class="card-title">📅 Ежедневная награда <span>День <span id="dailyDay">1</span> из 7</span></div>
         <div class="daily-days" id="dailyDaysContainer"></div>
         <button class="claim-btn" id="claimDailyBtn">Забрать награду</button>
     </div>
-
-    <!-- Достижения -->
     <div class="achievements-card">
         <div class="card-title">🏆 Достижения <span style="font-size:12px;">Смотреть все ></span></div>
         <div class="progress-item"><div class="progress-label"><span>📚 Учёный</span><span id="scientistCount">0/100</span></div><div class="progress-bar-bg"><div class="progress-fill-ach" id="scientistFill" style="width:0%"></div></div></div>
         <div class="progress-item"><div class="progress-label"><span>🔥 Неудержимый</span><span id="unstoppableCount">0/10</span></div><div class="progress-bar-bg"><div class="progress-fill-ach" id="unstoppableFill" style="width:0%"></div></div></div>
         <div class="progress-item"><div class="progress-label"><span>🧠 Гений</span><span id="geniusCount">0/10</span></div><div class="progress-bar-bg"><div class="progress-fill-ach" id="geniusFill" style="width:0%"></div></div></div>
     </div>
-
-    <!-- Топ игроков -->
     <div class="top-card">
         <div class="card-title">🏅 Топ игроков <span style="font-size:12px;">Смотреть все ></span></div>
         <div class="top-list">
@@ -445,18 +425,12 @@
             <div class="top-row"><span>5. Алексей</span><span>17500</span></div>
         </div>
     </div>
-
-    <!-- Пригласить друзей -->
     <div class="invite-card">
         <button class="invite-btn" id="inviteFriendsBtn">📢 Пригласить друзей</button>
     </div>
-
-    <!-- Собери сундук знаний! -->
     <div class="treasure-card">
         ⭐ Собери сундук знаний! ⭐<br>Отвечай на вопросы и получай награды!
     </div>
-
-    <!-- Нижняя навигация -->
     <div class="bottom-nav">
         <div class="nav-item">🏠 Главная</div>
         <div class="nav-item">🏆 Достижения</div>
@@ -464,7 +438,6 @@
         <div class="nav-item">📋 Задания</div>
         <div class="nav-item">👤 Профиль</div>
     </div>
-
     <div class="footer-links">
         <span id="termsLink">Пользовательское соглашение</span>
         <span id="privacyLink">Политика конфиденциальности</span>
@@ -474,14 +447,14 @@
 </div>
 
 <script>
-    // --- Импорт логики из оригинального кода (генераторы вопросов, прогресс, VK) + новый интерфейс ---
+    // --- ПОЛНОСТЬЮ РАБОЧАЯ ВЕРСИЯ ДЛЯ VK MINI APP (ТЕЛЕФОН/ПК) ---
     (function(){
-        // защита от f12
+        // лёгкая защита от клавиш разработчика (без debugger)
         document.addEventListener('contextmenu', e=>e.preventDefault());
         document.addEventListener('keydown', e=>{ if(e.key==='F12'||(e.ctrlKey&&(e.key==='I'||e.key==='J'))) e.preventDefault(); });
     })();
 
-    // ---------- БАЗЫ ДАННЫХ (полностью из оригинала) ----------
+    // ------------------- БАЗЫ ДАННЫХ -------------------
     const countryCapital = [["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],["Бразилия","Бразилиа"],["Австралия","Канберра"],["Индия","Нью-Дели"],["Египет","Каир"],["Турция","Анкара"],["Швеция","Стокгольм"],["Норвегия","Осло"],["Финляндия","Хельсинки"],["Польша","Варшава"],["Украина","Киев"],["Греция","Афины"],["Нидерланды","Амстердам"],["Швейцария","Берн"],["Бельгия","Брюссель"],["Аргентина","Буэнос-Айрес"],["Португалия","Лиссабон"],["Чехия","Прага"],["Венгрия","Будапешт"],["Австрия","Вена"],["Дания","Копенгаген"],["Ирландия","Дублин"],["Новая Зеландия","Веллингтон"],["ЮАР","Претория"],["Мексика","Мехико"],["Индонезия","Джакарта"],["Пакистан","Исламабад"],["Бангладеш","Дакка"],["Нигерия","Абуджа"],["Колумбия","Богота"],["Перу","Лима"],["Чили","Сантьяго"],["Алжир","Алжир"],["Израиль","Иерусалим"],["ОАЭ","Абу-Даби"],["Казахстан","Астана"],["Беларусь","Минск"],["Узбекистан","Ташкент"],["Вьетнам","Ханой"],["Таиланд","Бангкок"],["Малайзия","Куала-Лумпур"]];
     const historyQA = [{q:"В каком году Христофор Колумб открыл Америку?",a:"1492"},{q:"Когда началась Великая Отечественная война?",a:"1941"},{q:"Кто был первым императором России?",a:"Пётр I"},{q:"Когда распался СССР?",a:"1991"},{q:"Кто был первым президентом США?",a:"Джордж Вашингтон"},{q:"Когда началась Первая мировая война?",a:"1914"},{q:"Когда произошло Крещение Руси?",a:"988"},{q:"Когда состоялась Куликовская битва?",a:"1380"}];
     const authorWorkExtended = [{author:"Лев Толстой",work:"Война и мир"},{author:"Александр Пушкин",work:"Евгений Онегин"},{author:"Фёдор Достоевский",work:"Преступление и наказание"},{author:"Николай Гоголь",work:"Мёртвые души"},{author:"Михаил Булгаков",work:"Собачье сердце"},{author:"Джоан Роулинг",work:"Гарри Поттер"}];
@@ -492,44 +465,43 @@
     const elements = [["Au","Золото"],["Ag","Серебро"],["Fe","Железо"]];
     const physicsFacts = [["Единица измерения силы?","Ньютон"],["Закон всемирного тяготения открыл?","Ньютон"],["Скорость света в вакууме?","300000"]];
     const spellingWords = [{word:"прекрасный",wrong:["прекрастный"]},{word:"участвовать",wrong:["учавствовать"]}];
-    function randomItem(arr){return arr[Math.floor(Math.random()*arr.length)];}
-    function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
-    function simpleHash(str){let h=0;for(let i=0;i<str.length;i++)h=((h<<5)-h)+str.charCodeAt(i),h|=0;return h;}
-    function declineCountry(c){return c.endsWith('я')?c.slice(0,-1)+'и':c+'а';}
-    
-    // Генераторы
-    function generateMathQuestion(lvl){let a=Math.floor(Math.random()*10)+3,b=Math.floor(Math.random()*10)+3;let correct=a+b;return{text:`${a} + ${b} = ?`,options:shuffle([correct,correct+1,correct-1,correct+2].map(String)),correctHash:simpleHash(correct.toString()),points:10};}
-    function generateGeoQuestion(){let p=randomItem(countryCapital);let correct=p[1];let wrongs=countryCapital.filter(c=>c[0]!==p[0]).map(c=>c[1]).slice(0,3);let opts=unique([correct,...wrongs]);return{text:`Столица ${declineCountry(p[0])}?`,options:shuffle(opts),correctHash:simpleHash(correct),points:10};}
-    function generateHistoryQuestion(){let q=randomItem(historyQA);let wrongs=historyQA.filter(h=>h.a!==q.a).map(h=>h.a).slice(0,3);return{text:q.q,options:shuffle(unique([q.a,...wrongs])),correctHash:simpleHash(q.a),points:10};}
-    function generateLiteratureQuestion(){let item=randomItem(authorWorkExtended);let correct=item.work;let wrongs=authorWorkExtended.filter(w=>w.work!==correct).map(w=>w.work).slice(0,3);return{text:`${item.author} написал произведение ...`,options:shuffle(unique([correct,...wrongs])),correctHash:simpleHash(correct),points:10};}
-    function generateEnglishQuestion(){let w=randomItem(engWords);let correct=w[1];let wrongs=engWords.filter(e=>e[1]!==correct).map(e=>e[1]).slice(0,3);return{text:`Перевод "${w[0]}"`,options:shuffle(unique([correct,...wrongs])),correctHash:simpleHash(correct),points:10};}
-    function generateOBZHQuestion(){let f=randomItem(obzhFacts);return{text:f.q,options:shuffle(unique([f.correct,...f.wrong])),correctHash:simpleHash(f.correct),points:10};}
-    function generateSocietyQuestion(){let f=randomItem(societyFacts);return{text:f[0],options:shuffle(unique([f[1],...societyFacts.filter(s=>s[1]!==f[1]).map(s=>s[1]).slice(0,3)])),correctHash:simpleHash(f[1]),points:10};}
-    function generateBiologyQuestion(){let f=randomItem(biologyFacts);return{text:f[0],options:shuffle(unique([f[1],...biologyFacts.filter(b=>b[1]!==f[1]).map(b=>b[1]).slice(0,3)])),correctHash:simpleHash(f[1]),points:10};}
-    function generateChemistryQuestion(){let e=randomItem(elements);let correct=e[0];let wrongs=elements.filter(el=>el[0]!==correct).map(el=>el[0]);return{text:`Символ ${e[1].toLowerCase()}?`,options:shuffle(unique([correct,...wrongs])),correctHash:simpleHash(correct),points:10};}
-    function generatePhysicsQuestion(){let f=randomItem(physicsFacts);return{text:f[0],options:shuffle(unique([f[1],...physicsFacts.filter(p=>p[1]!==f[1]).map(p=>p[1]).slice(0,3)])),correctHash:simpleHash(f[1]),points:10};}
-    function generateRussianQuestion(){let base=randomItem(spellingWords);let opts=unique([base.word,...base.wrong]);return{text:"Выберите правильное написание:",options:shuffle(opts.slice(0,4)),correctHash:simpleHash(base.word),points:10};}
-    function unique(arr){return[...new Set(arr)];}
-    
+
+    // вспомогательные функции (объявлены до использования)
+    function randomItem(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+    function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+    function simpleHash(str){ let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
+    function declineCountry(c){ return c.endsWith('я')?c.slice(0,-1)+'и':c+'а'; }
+    function unique(arr){ return [...new Set(arr)]; }
+    function escapeHtml(str){ return String(str).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+
+    // генераторы вопросов
+    function generateMathQuestion(lvl){ let a=Math.floor(Math.random()*10)+3,b=Math.floor(Math.random()*10)+3; let correct=a+b; return{text:`${a} + ${b} = ?`,options:shuffle([correct,correct+1,correct-1,correct+2].map(String)),correctHash:simpleHash(correct.toString()),points:10};}
+    function generateGeoQuestion(){ let p=randomItem(countryCapital); let correct=p[1]; let wrongs=countryCapital.filter(c=>c[0]!==p[0]).map(c=>c[1]).slice(0,3); let opts=unique([correct,...wrongs]); return{text:`Столица ${declineCountry(p[0])}?`,options:shuffle(opts),correctHash:simpleHash(correct),points:10};}
+    function generateHistoryQuestion(){ let q=randomItem(historyQA); let wrongs=historyQA.filter(h=>h.a!==q.a).map(h=>h.a).slice(0,3); return{text:q.q,options:shuffle(unique([q.a,...wrongs])),correctHash:simpleHash(q.a),points:10};}
+    function generateLiteratureQuestion(){ let item=randomItem(authorWorkExtended); let correct=item.work; let wrongs=authorWorkExtended.filter(w=>w.work!==correct).map(w=>w.work).slice(0,3); return{text:`${item.author} написал произведение ...`,options:shuffle(unique([correct,...wrongs])),correctHash:simpleHash(correct),points:10};}
+    function generateEnglishQuestion(){ let w=randomItem(engWords); let correct=w[1]; let wrongs=engWords.filter(e=>e[1]!==correct).map(e=>e[1]).slice(0,3); return{text:`Перевод "${w[0]}"`,options:shuffle(unique([correct,...wrongs])),correctHash:simpleHash(correct),points:10};}
+    function generateOBZHQuestion(){ let f=randomItem(obzhFacts); return{text:f.q,options:shuffle(unique([f.correct,...f.wrong])),correctHash:simpleHash(f.correct),points:10};}
+    function generateSocietyQuestion(){ let f=randomItem(societyFacts); let wrongs=societyFacts.filter(s=>s[1]!==f[1]).map(s=>s[1]).slice(0,3); return{text:f[0],options:shuffle(unique([f[1],...wrongs])),correctHash:simpleHash(f[1]),points:10};}
+    function generateBiologyQuestion(){ let f=randomItem(biologyFacts); let wrongs=biologyFacts.filter(b=>b[1]!==f[1]).map(b=>b[1]).slice(0,3); return{text:f[0],options:shuffle(unique([f[1],...wrongs])),correctHash:simpleHash(f[1]),points:10};}
+    function generateChemistryQuestion(){ let e=randomItem(elements); let correct=e[0]; let wrongs=elements.filter(el=>el[0]!==correct).map(el=>el[0]); return{text:`Символ ${e[1].toLowerCase()}?`,options:shuffle(unique([correct,...wrongs])),correctHash:simpleHash(correct),points:10};}
+    function generatePhysicsQuestion(){ let f=randomItem(physicsFacts); let wrongs=physicsFacts.filter(p=>p[1]!==f[1]).map(p=>p[1]).slice(0,3); return{text:f[0],options:shuffle(unique([f[1],...wrongs])),correctHash:simpleHash(f[1]),points:10};}
+    function generateRussianQuestion(){ let base=randomItem(spellingWords); let opts=unique([base.word,...base.wrong]); return{text:"Выберите правильное написание:",options:shuffle(opts.slice(0,4)),correctHash:simpleHash(base.word),points:10};}
+
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = {math:"Математика",russian:"Русский",geo:"География",history:"История",literature:"Литература",english:"Английский",obzh:"ОБЖ",society:"Обществознание",biology:"Биология",chemistry:"Химия",physics:"Физика"};
-    
+
     let progressBySubject = {};
     let currentSubject = "biology";
     let currentQuestion = null;
     let selectedAnswer = null;
     let waitingForNext = false;
     let gameActive = true;
-    let fiftyUsed = false;
-    let hintUsed = false;
-    let bonusUsed = false;
-    let totalAnswersAll = 0;
-    let maxComboEver = 0;
-    let perfectLevelsCount = 0;
-    
-    function initSubject(s){if(!progressBySubject[s])progressBySubject[s]={totalScore:0,level:1,lives:3,combo:0,qInLevel:0,levelPerfect:true,usedQuestions:new Set()};}
+    let fiftyUsed = false, hintUsed = false, bonusUsed = false;
+    let totalAnswersAll = 0, maxComboEver = 0, perfectLevelsCount = 0;
+
+    function initSubject(s){ if(!progressBySubject[s]) progressBySubject[s]={totalScore:0,level:1,lives:3,combo:0,qInLevel:0,levelPerfect:true,usedQuestions:new Set()}; }
     allSubjects.forEach(s=>initSubject(s));
-    function getCurrent(){return progressBySubject[currentSubject];}
+    function getCurrent(){ return progressBySubject[currentSubject]; }
     function updateUIFromProgress(){
         let p=getCurrent();
         document.getElementById("totalScore").innerText=p.totalScore;
@@ -537,7 +509,6 @@
         let ratingVal = Math.floor(p.totalScore/100)+100;
         document.getElementById("ratingNumber").innerText=ratingVal;
         document.getElementById("globalRank").innerText=ratingVal;
-        // достижения
         document.getElementById("scientistCount").innerText=`${totalAnswersAll}/100`;
         document.getElementById("scientistFill").style.width=Math.min(100,(totalAnswersAll/100)*100)+"%";
         document.getElementById("unstoppableCount").innerText=`${maxComboEver}/10`;
@@ -545,30 +516,90 @@
         document.getElementById("geniusCount").innerText=`${perfectLevelsCount}/10`;
         document.getElementById("geniusFill").style.width=Math.min(100,(perfectLevelsCount/10)*100)+"%";
     }
-    function saveProgress(){localStorage.setItem('battleProgress',JSON.stringify({progress:progressBySubject,totalAnswersAll,maxComboEver,perfectLevelsCount}));}
-    function loadProgress(){let d=localStorage.getItem('battleProgress');if(d){let parsed=JSON.parse(d);if(parsed.progress)progressBySubject=parsed.progress;totalAnswersAll=parsed.totalAnswersAll||0;maxComboEver=parsed.maxComboEver||0;perfectLevelsCount=parsed.perfectLevelsCount||0;}allSubjects.forEach(s=>initSubject(s));updateUIFromProgress();}
-    
+    function saveProgress(){ localStorage.setItem('battleProgress',JSON.stringify({progress:progressBySubject,totalAnswersAll,maxComboEver,perfectLevelsCount})); }
+    function loadProgress(){ let d=localStorage.getItem('battleProgress'); if(d){ let parsed=JSON.parse(d); if(parsed.progress)progressBySubject=parsed.progress; totalAnswersAll=parsed.totalAnswersAll||0; maxComboEver=parsed.maxComboEver||0; perfectLevelsCount=parsed.perfectLevelsCount||0; } allSubjects.forEach(s=>initSubject(s)); updateUIFromProgress(); }
+
     function getUniqueQuestion(subj,level){
         let p=progressBySubject[subj];
-        let q=null;let attempts=0;
+        let q=null, attempts=0;
         while(attempts<30){
-            if(subj==='math')q=generateMathQuestion(level);
-            else if(subj==='russian')q=generateRussianQuestion();
-            else if(subj==='geo')q=generateGeoQuestion();
-            else if(subj==='history')q=generateHistoryQuestion();
-            else if(subj==='literature')q=generateLiteratureQuestion();
-            else if(subj==='english')q=generateEnglishQuestion();
-            else if(subj==='obzh')q=generateOBZHQuestion();
-            else if(subj==='society')q=generateSocietyQuestion();
-            else if(subj==='biology')q=generateBiologyQuestion();
-            else if(subj==='chemistry')q=generateChemistryQuestion();
-            else if(subj==='physics')q=generatePhysicsQuestion();
-            if(!p.usedQuestions.has(q.text+q.correctHash)){p.usedQuestions.add(q.text+q.correctHash);return q;}
+            if(subj==='math') q=generateMathQuestion(level);
+            else if(subj==='russian') q=generateRussianQuestion();
+            else if(subj==='geo') q=generateGeoQuestion();
+            else if(subj==='history') q=generateHistoryQuestion();
+            else if(subj==='literature') q=generateLiteratureQuestion();
+            else if(subj==='english') q=generateEnglishQuestion();
+            else if(subj==='obzh') q=generateOBZHQuestion();
+            else if(subj==='society') q=generateSocietyQuestion();
+            else if(subj==='biology') q=generateBiologyQuestion();
+            else if(subj==='chemistry') q=generateChemistryQuestion();
+            else if(subj==='physics') q=generatePhysicsQuestion();
+            if(!p.usedQuestions.has(q.text+q.correctHash)){ p.usedQuestions.add(q.text+q.correctHash); return q; }
             attempts++;
         }
         return q;
     }
-    
+
+    function showFeedback(msg,isGood){
+        let fb=document.getElementById("feedbackArea");
+        if(fb){ fb.innerHTML=msg; fb.style.display="block"; fb.style.background=isGood?"#dcfce7":"#fee2e2"; setTimeout(()=>fb.style.display="none",1500); }
+    }
+
+    function handleAnswer(){
+        let p=getCurrent();
+        let isCorrect=(simpleHash(selectedAnswer)===currentQuestion.correctHash);
+        waitingForNext=true;
+        totalAnswersAll++;
+        if(isCorrect){
+            let earn=currentQuestion.points;
+            p.totalScore+=earn;
+            p.combo++;
+            if(p.combo>maxComboEver) maxComboEver=p.combo;
+            if(p.combo>=3) p.totalScore+=15;
+            p.qInLevel++;
+            showFeedback(`✅ Верно! +${earn} очков, комбо ${p.combo}`,true);
+            if(p.qInLevel>=3){
+                let bonusLevel=50;
+                p.totalScore+=bonusLevel;
+                if(p.levelPerfect){ perfectLevelsCount++; showFeedback(`🎉 Идеальный уровень! +${bonusLevel} бонуса!`,true); }
+                p.level++; p.qInLevel=0; p.levelPerfect=true;
+            }
+        } else {
+            p.combo=0;
+            p.lives--;
+            p.levelPerfect=false;
+            let correctAns=currentQuestion.options.find(opt=>simpleHash(opt)===currentQuestion.correctHash);
+            showFeedback(`❌ Ошибка! Правильно: ${correctAns}. Жизней: ${p.lives}`,false);
+            if(p.lives<=0){ gameActive=false; showFeedback("💀 Жизни кончились. Начните новый предмет.",false); setTimeout(()=>resetSubject(),2000); return; }
+        }
+        updateUIFromProgress();
+        saveProgress();
+        setTimeout(()=>{ waitingForNext=false; fiftyUsed=false; hintUsed=false; bonusUsed=false; let newQ=getUniqueQuestion(currentSubject,getCurrent().level); if(newQ) currentQuestion=newQ; renderGameUI(); },1200);
+    }
+
+    function useFifty(){
+        if(fiftyUsed||waitingForNext) return;
+        let wrongs=currentQuestion.options.filter(opt=>simpleHash(opt)!==currentQuestion.correctHash);
+        if(wrongs.length>=2){ let toRemove=wrongs.slice(0,2); let newOpts=currentQuestion.options.filter(opt=>!toRemove.includes(opt)); currentQuestion.options=newOpts; fiftyUsed=true; renderGameUI(); showFeedback("50/50: два неверных варианта убраны!",true); }
+    }
+    function showHint(){
+        if(hintUsed||waitingForNext) return;
+        let correctText=currentQuestion.options.find(opt=>simpleHash(opt)===currentQuestion.correctHash);
+        showFeedback(`💡 Подсказка: правильный вариант начинается на "${correctText[0]}"`,true);
+        hintUsed=true;
+    }
+    function addBonusPoints(){
+        if(bonusUsed||waitingForNext) return;
+        let p=getCurrent();
+        p.totalScore+=25;
+        updateUIFromProgress();
+        saveProgress();
+        showFeedback("✨ +25 бонусных очков!",true);
+        bonusUsed=true;
+        let btn=document.getElementById("bonusPointsBtn"); if(btn) btn.disabled=true;
+    }
+    function resetSubject(){ let p=getCurrent(); p.lives=3; p.combo=0; p.qInLevel=0; p.totalScore=0; p.level=1; gameActive=true; waitingForNext=false; selectedAnswer=null; currentQuestion=getUniqueQuestion(currentSubject,1); renderGameUI(); updateUIFromProgress(); saveProgress(); }
+
     function renderGameUI(){
         let p=getCurrent();
         let hearts="❤️".repeat(p.lives)+"🖤".repeat(5-p.lives);
@@ -581,92 +612,46 @@
         <div class="bonus-ad-row"><button class="bonus-life-btn" id="extraLifeBtn">❤️ +1 жизнь за рекламу</button></div>
         <div class="feedback hidden" id="feedbackArea"></div></div>`;
         document.getElementById("gamePanel").innerHTML=html;
-        attachGameEvents();
-        document.querySelectorAll(".answer-btn").forEach(btn=>btn.addEventListener("click",(e)=>{if(waitingForNext||!gameActive)return;selectedAnswer=btn.getAttribute("data-ans");document.querySelectorAll(".answer-btn").forEach(b=>b.classList.remove("selected"));btn.classList.add("selected");document.getElementById("nextQuestionBtn")?.classList.remove("hidden");}));
-        document.getElementById("nextQuestionBtn")?.addEventListener("click",()=>{if(selectedAnswer&&!waitingForNext)handleAnswer();else showFeedback("Выберите ответ!",false);});
-        document.getElementById("fiftyBtn")?.addEventListener("click",()=>useFifty());
-        document.getElementById("hintBtn")?.addEventListener("click",()=>showHint());
-        document.getElementById("bonusPointsBtn")?.addEventListener("click",()=>addBonusPoints());
-        document.getElementById("extraLifeBtn")?.addEventListener("click",()=>{if(window.vkBridge)vkBridge.send("VKWebAppShowNativeAds",{ad_format:"reward"}).then(()=>{let p2=getCurrent();if(p2.lives<5)p2.lives++;saveProgress();renderGameUI();});});
+        document.querySelectorAll(".answer-btn").forEach(btn=>btn.addEventListener("click",(e)=>{ if(waitingForNext||!gameActive)return; selectedAnswer=btn.getAttribute("data-ans"); document.querySelectorAll(".answer-btn").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected"); document.getElementById("nextQuestionBtn")?.classList.remove("hidden"); }));
+        document.getElementById("nextQuestionBtn")?.addEventListener("click",()=>{ if(selectedAnswer&&!waitingForNext) handleAnswer(); else showFeedback("Выберите ответ!",false); });
+        document.getElementById("fiftyBtn")?.addEventListener("click",useFifty);
+        document.getElementById("hintBtn")?.addEventListener("click",showHint);
+        document.getElementById("bonusPointsBtn")?.addEventListener("click",addBonusPoints);
+        document.getElementById("extraLifeBtn")?.addEventListener("click",async ()=>{
+            if(!window.vkBridge){ showFeedback("Реклама недоступна в этом окружении",false); return; }
+            try{
+                let result=await vkBridge.send("VKWebAppShowNativeAds",{ ad_format:"reward" });
+                if(result && result.result===true){ let p2=getCurrent(); if(p2.lives<5) p2.lives++; saveProgress(); renderGameUI(); showFeedback("❤️ +1 жизнь за просмотр рекламы!",true); }
+                else showFeedback("Реклама не досмотрена",false);
+            }catch(e){ showFeedback("Ошибка показа рекламы",false); }
+        });
     }
-    function attachGameEvents(){}
-    function escapeHtml(str){return String(str).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
-    function showFeedback(msg,isGood){let fb=document.getElementById("feedbackArea");if(fb){fb.innerHTML=msg;fb.style.display="block";fb.style.background=isGood?"#dcfce7":"#fee2e2";setTimeout(()=>fb.style.display="none",1500);}}
-    function handleAnswer(){
-        let p=getCurrent();
-        let isCorrect=(simpleHash(selectedAnswer)===currentQuestion.correctHash);
-        waitingForNext=true;
-        totalAnswersAll++;
-        if(isCorrect){
-            let earn=currentQuestion.points;
-            p.totalScore+=earn;
-            p.combo++;
-            if(p.combo>maxComboEver)maxComboEver=p.combo;
-            if(p.combo>=3)p.totalScore+=15;
-            p.qInLevel++;
-            showFeedback(`✅ Верно! +${earn} очков, комбо ${p.combo}`,true);
-            if(p.qInLevel>=3){
-                let bonusLevel=50;
-                p.totalScore+=bonusLevel;
-                if(p.levelPerfect){perfectLevelsCount++;showFeedback(`🎉 Идеальный уровень! +${bonusLevel} бонуса!`,true);}
-                p.level++;p.qInLevel=0;p.levelPerfect=true;
-            }
-        } else {
-            p.combo=0;
-            p.lives--;
-            p.levelPerfect=false;
-            let correctAns=currentQuestion.options.find(opt=>simpleHash(opt)===currentQuestion.correctHash);
-            showFeedback(`❌ Ошибка! Правильно: ${correctAns}. Жизней: ${p.lives}`,false);
-            if(p.lives<=0){gameActive=false;showFeedback("💀 Жизни кончились. Начните новый предмет.",false);setTimeout(()=>resetSubject(),2000);return;}
-        }
-        updateUIFromProgress();
-        saveProgress();
-        setTimeout(()=>{waitingForNext=false;fiftyUsed=false;hintUsed=false;bonusUsed=false;let newQ=getUniqueQuestion(currentSubject,getCurrent().level);if(newQ)currentQuestion=newQ;renderGameUI();},1200);
-    }
-    function useFifty(){
-        if(fiftyUsed||waitingForNext)return;
-        let wrongs=currentQuestion.options.filter(opt=>simpleHash(opt)!==currentQuestion.correctHash);
-        if(wrongs.length>=2){let toRemove=wrongs.slice(0,2);let newOpts=currentQuestion.options.filter(opt=>!toRemove.includes(opt));currentQuestion.options=newOpts;fiftyUsed=true;renderGameUI();showFeedback("50/50: два неверных варианта убраны!",true);}
-    }
-    function showHint(){
-        if(hintUsed||waitingForNext)return;
-        let correctText=currentQuestion.options.find(opt=>simpleHash(opt)===currentQuestion.correctHash);
-        showFeedback(`💡 Подсказка: правильный вариант начинается на "${correctText[0]}"`,true);
-        hintUsed=true;
-    }
-    function addBonusPoints(){
-        if(bonusUsed||waitingForNext)return;
-        let p=getCurrent();
-        p.totalScore+=25;
-        updateUIFromProgress();
-        saveProgress();
-        showFeedback("✨ +25 бонусных очков!",true);
-        bonusUsed=true;
-        document.getElementById("bonusPointsBtn").disabled=true;
-    }
-    function resetSubject(){let p=getCurrent();p.lives=3;p.combo=0;p.qInLevel=0;p.totalScore=0;p.level=1;gameActive=true;waitingForNext=false;selectedAnswer=null;currentQuestion=getUniqueQuestion(currentSubject,1);renderGameUI();updateUIFromProgress();saveProgress();}
-    
+
     function buildSubjectsUI(){
-        let container=document.getElementById("subjectsList");container.innerHTML="";
-        allSubjects.forEach(s=>{let p=progressBySubject[s];let btn=document.createElement("div");btn.className=`subject-chip ${currentSubject===s?"active":""}`;btn.innerHTML=`${subjectNames[s]} <span class="subject-level">ур. ${p.level}</span>`;btn.onclick=()=>{if(currentSubject===s)return;currentSubject=s;waitingForNext=false;gameActive=true;fiftyUsed=false;hintUsed=false;bonusUsed=false;currentQuestion=getUniqueQuestion(s,getCurrent().level);renderGameUI();updateUIFromProgress();buildSubjectsUI();};container.appendChild(btn);});
+        let container=document.getElementById("subjectsList"); container.innerHTML="";
+        allSubjects.forEach(s=>{ let p=progressBySubject[s]; let btn=document.createElement("div"); btn.className=`subject-chip ${currentSubject===s?"active":""}`; btn.innerHTML=`${subjectNames[s]} <span class="subject-level">ур. ${p.level}</span>`; btn.onclick=()=>{ if(currentSubject===s)return; currentSubject=s; waitingForNext=false; gameActive=true; fiftyUsed=false; hintUsed=false; bonusUsed=false; currentQuestion=getUniqueQuestion(s,getCurrent().level); renderGameUI(); updateUIFromProgress(); buildSubjectsUI(); }; container.appendChild(btn); });
     }
-    // Daily
+
+    // daily
     let dailyDay=1;
-    function updateDailyUI(){let daysDiv=document.getElementById("dailyDaysContainer");daysDiv.innerHTML="";for(let i=1;i<=7;i++){let d=document.createElement("div");d.className=`day-box ${i<=dailyDay?"active":""}`;d.innerText=i;daysDiv.appendChild(d);}document.getElementById("dailyDay").innerText=dailyDay;}
-    document.getElementById("claimDailyBtn").onclick=()=>{let p=getCurrent();p.totalScore+=50;updateUIFromProgress();saveProgress();showFeedback("🎁 Получена ежедневная награда: 50 очков!",true);dailyDay=Math.min(7,dailyDay+1);updateDailyUI();};
-    document.getElementById("inviteFriendsBtn").onclick=()=>{if(window.vkBridge)vkBridge.send("VKWebAppShare",{link:"https://vk.com",attachment:"Битва знаний – проверь себя!"});};
-    
-    function initGame(){
+    function updateDailyUI(){ let daysDiv=document.getElementById("dailyDaysContainer"); daysDiv.innerHTML=""; for(let i=1;i<=7;i++){ let d=document.createElement("div"); d.className=`day-box ${i<=dailyDay?"active":""}`; d.innerText=i; daysDiv.appendChild(d); } document.getElementById("dailyDay").innerText=dailyDay; }
+    document.getElementById("claimDailyBtn").onclick=()=>{ let p=getCurrent(); p.totalScore+=50; updateUIFromProgress(); saveProgress(); showFeedback("🎁 Получена ежедневная награда: 50 очков!",true); dailyDay=Math.min(7,dailyDay+1); updateDailyUI(); };
+    document.getElementById("inviteFriendsBtn").onclick=()=>{ if(window.vkBridge) vkBridge.send("VKWebAppShare",{link:"https://vk.com",attachment:"Битва знаний – проверь себя!"}); else alert("Поделиться можно внутри VK"); };
+
+    function initApp(){
         loadProgress();
         buildSubjectsUI();
         currentQuestion=getUniqueQuestion(currentSubject,getCurrent().level);
         renderGameUI();
         updateDailyUI();
-        document.getElementById("termsLink").onclick=()=>alert("Пользовательское соглашение (клик)");
+        document.getElementById("termsLink").onclick=()=>alert("Пользовательское соглашение (демо)");
         document.getElementById("privacyLink").onclick=()=>alert("Политика конфиденциальности");
-        document.getElementById("deleteDataLink").onclick=()=>{localStorage.clear();location.reload();};
+        document.getElementById("deleteDataLink").onclick=()=>{ if(confirm("Удалить весь прогресс?")){ localStorage.clear(); location.reload(); } };
+        if(window.vkBridge){
+            vkBridge.send("VKWebAppInit").catch(e=>console.warn("VK init warning",e));
+        }
     }
-    initGame();
+    initApp();
 </script>
 </body>
 </html>
