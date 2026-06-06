@@ -413,25 +413,83 @@
         }, 5000);
     })();
     
-    // ======================= БАЗЫ ВОПРОСОВ (СОКРАЩЁННЫЕ, НО РАБОЧИЕ) =======================
-    const countryCapital = [["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],["Бразилия","Бразилиа"],["Австралия","Канберра"],["Индия","Нью-Дели"],["Египет","Каир"],["Турция","Анкара"]];
-    const historyQA = [{ q: "В каком году Колумб открыл Америку?", a: "1492" },{ q: "Начало ВОВ?", a: "1941" },{ q: "Первый император России?", a: "Пётр I" },{ q: "Битва при Калке?", a: "1223" },{ q: "Распад СССР?", a: "1991" }];
-    const authorWork = [{ author: "Толстой", work: "Война и мир" },{ author: "Пушкин", work: "Евгений Онегин" },{ author: "Достоевский", work: "Преступление и наказание" }];
-    const engWords = [["собака","dog"],["кошка","cat"],["красный","red"],["яблоко","apple"]];
-    const obzhFacts = [{ q: "Номер пожарной службы?", correct: "101", wrong: ["102","103"] }];
-    const societyFacts = [["Высший орган власти РФ?", "Президент"],["Конституция РФ принята?", "1993"]];
-    const biologyFacts = [["Сколько костей у взрослого человека?", "206"],["Сколько камер в сердце?", "4"]];
-    const elements = [["Au","Золото"],["Ag","Серебро"],["Fe","Железо"]];
-    const physicsFacts = [["Единица измерения силы?", "Ньютон"],["Скорость света (км/с)?", "300000"]];
-    const spellingWords = [{ word: "прекрасный", wrong: ["прекрастный","прекрасны"] }];
+    // ======================= БАЗЫ ВОПРОСОВ =======================
+    const countryCapital = [
+        ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
+        ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
+        ["Бразилия","Бразилиа"],["Австралия","Канберра"],["Индия","Нью-Дели"],["Египет","Каир"],["Турция","Анкара"],
+        ["ОАЭ","Абу-Даби"],["Израиль","Иерусалим"]
+    ];
+    const historyQA = [
+        { q: "В каком году Колумб открыл Америку?", a: "1492" },
+        { q: "Начало ВОВ?", a: "1941" },
+        { q: "Первый император России?", a: "Пётр I" },
+        { q: "Битва при Калке?", a: "1223" },
+        { q: "Распад СССР?", a: "1991" }
+    ];
+    const authorWork = [
+        { author: "Толстой", work: "Война и мир" },
+        { author: "Пушкин", work: "Евгений Онегин" },
+        { author: "Достоевский", work: "Преступление и наказание" }
+    ];
+    const engWords = [
+        ["собака","dog"],["кошка","cat"],["красный","red"],["яблоко","apple"]
+    ];
+    const obzhFacts = [
+        { q: "Номер пожарной службы?", correct: "101", wrong: ["102","103"] }
+    ];
+    const societyFacts = [
+        ["Высший орган власти РФ?", "Президент"],
+        ["Конституция РФ принята?", "1993"]
+    ];
+    const biologyFacts = [
+        ["Сколько костей у взрослого человека?", "206"],
+        ["Сколько камер в сердце?", "4"]
+    ];
+    const elements = [
+        ["Au","Золото"],["Ag","Серебро"],["Fe","Железо"]
+    ];
+    const physicsFacts = [
+        ["Единица измерения силы?", "Ньютон"],
+        ["Скорость света (км/с)?", "300000"]
+    ];
+    const spellingWords = [
+        { word: "прекрасный", wrong: ["прекрастный","прекрасны"] }
+    ];
     
     function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
     function shuffle(arr) { for (let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
     function unique(arr) { return [...new Set(arr)]; }
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
-    function declineCountry(c) { const e = {"Россия":"России","США":"США","Франция":"Франции","Германия":"Германии"}; return e[c] || c+'ы'; }
-    function declineElement(n) { const e = {"Золото":"золота"}; return e[n] || n; }
+    
+    // ИСПРАВЛЕННАЯ функция склонения стран
+    function declineCountry(c) {
+        const exceptions = {
+            "Россия": "России",
+            "США": "США",
+            "Франция": "Франции",
+            "Германия": "Германии",
+            "Китай": "Китая",
+            "Япония": "Японии",
+            "Италия": "Италии",
+            "Великобритания": "Великобритании",
+            "Испания": "Испании",
+            "Канада": "Канады",
+            "Бразилия": "Бразилии",
+            "Австралия": "Австралии",
+            "Индия": "Индии",
+            "Египет": "Египта",
+            "Турция": "Турции",
+            "ОАЭ": "ОАЭ",          // не склоняется
+            "Израиль": "Израиля"
+        };
+        return exceptions[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а'));
+    }
+    function declineElement(n) {
+        const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа"};
+        return e[n] || n;
+    }
     
     function generateMathQuestion(level) {
         let a = Math.floor(Math.random()*10)+2, b = Math.floor(Math.random()*10)+2;
@@ -439,7 +497,15 @@
         return { text: `${a} + ${b} = ?`, options: shuffle([correct.toString(), (correct+1).toString(), (correct-1).toString(), (correct+2).toString()]), correctHash: simpleHash(correct.toString()), points: 10 };
     }
     function generateHistoryQuestion() { let ev=randomItem(historyQA); let wrongs=["1500","1700","1900"]; let opts=unique([ev.a,...wrongs]); return { text: ev.q, options: shuffle(opts.slice(0,4)), correctHash: simpleHash(ev.a), points:10 }; }
-    function generateGeoQuestion() { let p=randomItem(countryCapital); let text=`Столица ${declineCountry(p[0])}?`; let correct=p[1]; let wrongs=["Лондон","Париж","Берлин"]; let opts=unique([correct,...wrongs]); return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
+    function generateGeoQuestion() { 
+        let p = randomItem(countryCapital); 
+        let text = `Столица ${declineCountry(p[0])}?`; 
+        let correct = p[1]; 
+        let wrongs = countryCapital.filter(c => c[0] !== p[0]).map(c => c[1]).slice(0,3);
+        let opts = unique([correct, ...wrongs]);
+        while(opts.length < 4) opts.push("Лондон");
+        return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; 
+    }
     function generateLiteratureQuestion() { let item=randomItem(authorWork); let text=`Кто написал "${item.work}"?`; let correct=item.author; let wrongs=["Чехов","Гоголь","Булгаков"]; let opts=unique([correct,...wrongs]); return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
     function generateEnglishQuestion() { let w=randomItem(engWords); let correct=w[1]; let wrongs=["cat","dog","car"]; let opts=unique([correct,...wrongs]); return { text:`Перевод слова "${w[0]}":`, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
     function generateOBZHQuestion() { let f=randomItem(obzhFacts); let opts=unique([f.correct,...f.wrong]); return { text: f.q, options: shuffle(opts), correctHash: simpleHash(f.correct), points:10 }; }
@@ -480,7 +546,6 @@
                 if (user && user.id) {
                     currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок' };
                 }
-                // Загружаем прогресс из VK Storage
                 const storageRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress"] });
                 if (storageRes && storageRes.keys && storageRes.keys[0] && storageRes.keys[0].value) {
                     try {
@@ -492,7 +557,6 @@
                         }
                     } catch(e) {}
                 }
-                // Загружаем локальный топ из VK Storage
                 const leaderRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["globalLeaderboard"] });
                 if (leaderRes && leaderRes.keys && leaderRes.keys[0] && leaderRes.keys[0].value) {
                     try {
@@ -502,7 +566,6 @@
                 }
             } catch(e) { console.warn(e); }
         }
-        // Загружаем локальный прогресс (если нет облачного)
         const local = localStorage.getItem('quizProgressV7');
         if (local) {
             try {
@@ -797,7 +860,6 @@
         overlay.querySelector('.close-modal').onclick = () => { overlay.remove(); localStorage.setItem('tutorialShown','true'); };
     }
     
-    // Документы
     const userAgreement = `<strong>Пользовательское соглашение</strong><br><br>1. Настоящее соглашение регулирует отношения между разработчиком и пользователем мини-приложения "Битва знаний".<br>2. Использование приложения означает полное согласие с условиями.<br>3. Разработчик не несёт ответственности за возможные убытки.<br>4. Пользователь обязуется не нарушать работу приложения.<br>5. Контактная информация: vova_polyakov_94@mail.ru`;
     const privacyPolicy = `<strong>Политика конфиденциальности</strong><br><br>1. Приложение собирает только идентификатор VK и имя пользователя для отображения в таблице лидеров и сохранения прогресса.<br>2. Данные хранятся в защищённом облаке VK Storage.<br>3. Пользователь может удалить все свои данные кнопкой "Удалить данные".<br>4. Данные не передаются третьим лицам.<br>5. По всем вопросам: vova_polyakov_94@mail.ru`;
     
