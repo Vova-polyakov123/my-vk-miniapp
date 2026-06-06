@@ -118,9 +118,16 @@
             color: #ffd966;
         }
         .lives {
-            font-size: 1.8rem;
-            letter-spacing: 3px;
+            font-size: 1.6rem;
+            letter-spacing: 5px;
+            display: flex;
+            gap: 6px;
         }
+        .lives i {
+            font-size: 1.8rem;
+        }
+        .fa-heart { color: #ff3366; text-shadow: 0 0 3px #ff6699; }
+        .fa-heart-broken { color: #555; opacity: 0.6; }
         .question-card {
             background: rgba(255,255,255,0.08);
             backdrop-filter: blur(16px);
@@ -291,9 +298,19 @@
         }
         .result-area {
             text-align: center;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.7);
             border-radius: 40px;
             padding: 32px 20px;
+            border: 1px solid rgba(255,215,0,0.5);
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+        .result-score {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #ffcc00;
+            text-shadow: 0 0 8px #ff9900;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
         }
         .share-btn, .reset-btn {
             border: none;
@@ -302,9 +319,10 @@
             font-weight: 700;
             margin: 8px;
             cursor: pointer;
+            font-size: 1rem;
         }
         .share-btn { background: #2688eb; color: white; }
-        .reset-btn { background: #f56b2c; color: white; }
+        .reset-btn { background: #f56b2c; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
@@ -330,7 +348,7 @@
             <a id="deleteDataLink" style="color:#ff6b6b">🗑 Удалить данные</a>
         </div>
         <div class="audio-controls">
-            <button id="musicToggleBtn"><i class="fas fa-music"></i></button>
+            <button id="musicToggleBtn"><i class="fas fa-music"></i> 🎵 1/5</button>
             <div class="volume-slider">
                 <i class="fas fa-volume-down"></i>
                 <input type="range" id="globalVolume" min="0" max="100" value="25">
@@ -342,49 +360,94 @@
 </div>
 
 <script>
-    // ======================= ФОНОВАЯ МУЗЫКА =======================
-    const musicUrls = [
-        'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3',
-        'https://cdn.pixabay.com/download/audio/2021/08/04/audio_b3a2e6b234.mp3?filename=lofi-study-112191.mp3'
+    // ======================= МУЗЫКАЛЬНЫЙ ПЛЕЙЛИСТ (5 треков, надёжные ссылки) =======================
+    const playlist = [
+        { name: "Lofi Study", url: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_dd6f3c3b2a.mp3?filename=lofi-study-112191.mp3" },
+        { name: "Good Beginning", url: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3" },
+        { name: "Ambient Dream", url: "https://cdn.pixabay.com/download/audio/2022/03/17/audio_06e44f2c4b.mp3?filename=ambient-dream-111179.mp3" },
+        { name: "Calm Piano", url: "https://cdn.pixabay.com/download/audio/2022/02/02/audio_8b8c5c3f3c.mp3?filename=calm-piano-103687.mp3" },
+        { name: "Relaxing Guitar", url: "https://cdn.pixabay.com/download/audio/2022/06/06/audio_5e2c6f9d3a.mp3?filename=relaxing-guitar-115400.mp3" }
     ];
+    let currentTrackIndex = 0;
     const bgMusic = new Audio();
     bgMusic.loop = true;
     bgMusic.volume = 0.3;
-    let currentTrack = 0;
     let musicEnabled = true;
     
-    function setMusicTrack(index) {
-        bgMusic.src = musicUrls[index];
-        if (musicEnabled && !bgMusic.paused) bgMusic.play().catch(e => console.log('play error'));
+    function loadTrack(index) {
+        if (index >= playlist.length) index = 0;
+        if (index < 0) index = playlist.length - 1;
+        currentTrackIndex = index;
+        bgMusic.src = playlist[currentTrackIndex].url;
+        bgMusic.load();
+        if (musicEnabled && !bgMusic.paused) {
+            bgMusic.play().catch(e => console.log("play error", e));
+        }
+        updateMusicButtonText();
     }
-    setMusicTrack(0);
+    
+    function updateMusicButtonText() {
+        const btn = document.getElementById("musicToggleBtn");
+        if (btn) {
+            btn.innerHTML = musicEnabled ? `<i class="fas fa-music"></i> 🎵 ${currentTrackIndex+1}/${playlist.length}` : `<i class="fas fa-volume-mute"></i> 🔇`;
+        }
+    }
     
     function playMusic() {
         if (musicEnabled && bgMusic.paused) {
             bgMusic.play().catch(e => {
-                if (currentTrack === 0) {
-                    currentTrack = 1;
-                    setMusicTrack(1);
-                }
+                console.log("Ошибка воспроизведения, пробуем следующий трек");
+                nextTrack();
             });
         }
     }
     function stopMusic() { bgMusic.pause(); }
     
     const musicBtn = document.getElementById("musicToggleBtn");
+    function nextTrack() {
+        let newIndex = currentTrackIndex + 1;
+        if (newIndex >= playlist.length) newIndex = 0;
+        loadTrack(newIndex);
+        if (musicEnabled && bgMusic.paused) playMusic();
+    }
     musicBtn.onclick = () => {
-        musicEnabled = !musicEnabled;
-        if (musicEnabled) playMusic(); else stopMusic();
-        musicBtn.innerHTML = musicEnabled ? '<i class="fas fa-music"></i>' : '<i class="fas fa-volume-mute"></i>';
+        if (musicEnabled) {
+            nextTrack();
+        } else {
+            musicEnabled = true;
+            playMusic();
+            updateMusicButtonText();
+            document.getElementById("muteBtn").innerHTML = '<i class="fas fa-volume-up"></i>';
+        }
     };
-    // Автозапуск после первого касания
+    
+    // Кнопка mute/unmute
+    const muteBtn = document.createElement('button');
+    muteBtn.id = "muteBtn";
+    muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+    muteBtn.style.marginLeft = '5px';
+    muteBtn.onclick = () => {
+        musicEnabled = !musicEnabled;
+        if (musicEnabled) {
+            playMusic();
+            muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        } else {
+            stopMusic();
+            muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        }
+        updateMusicButtonText();
+    };
+    const audioDiv = document.querySelector('.audio-controls');
+    audioDiv.appendChild(muteBtn);
+    
+    // Автозапуск музыки после любого клика по странице (на ПК и телефоне)
     const startAudio = () => {
         if (musicEnabled && bgMusic.paused) playMusic();
-        document.body.removeEventListener('click', startAudio);
-        document.body.removeEventListener('touchstart', startAudio);
     };
     document.body.addEventListener('click', startAudio);
     document.body.addEventListener('touchstart', startAudio);
+    
+    loadTrack(0);
     
     const volSlider = document.getElementById("globalVolume");
     volSlider.addEventListener("input", (e) => { bgMusic.volume = e.target.value / 100; });
@@ -413,7 +476,7 @@
         }, 5000);
     })();
     
-    // ======================= БАЗЫ ВОПРОСОВ =======================
+    // ======================= БАЗЫ ВОПРОСОВ (география исправлена) =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -463,26 +526,12 @@
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
     
-    // ИСПРАВЛЕННАЯ функция склонения стран
     function declineCountry(c) {
         const exceptions = {
-            "Россия": "России",
-            "США": "США",
-            "Франция": "Франции",
-            "Германия": "Германии",
-            "Китай": "Китая",
-            "Япония": "Японии",
-            "Италия": "Италии",
-            "Великобритания": "Великобритании",
-            "Испания": "Испании",
-            "Канада": "Канады",
-            "Бразилия": "Бразилии",
-            "Австралия": "Австралии",
-            "Индия": "Индии",
-            "Египет": "Египта",
-            "Турция": "Турции",
-            "ОАЭ": "ОАЭ",          // не склоняется
-            "Израиль": "Израиля"
+            "Россия": "России", "США": "США", "Франция": "Франции", "Германия": "Германии",
+            "Китай": "Китая", "Япония": "Японии", "Италия": "Италии", "Великобритания": "Великобритании",
+            "Испания": "Испании", "Канада": "Канады", "Бразилия": "Бразилии", "Австралия": "Австралии",
+            "Индия": "Индии", "Египет": "Египта", "Турция": "Турции", "ОАЭ": "ОАЭ", "Израиль": "Израиля"
         };
         return exceptions[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а'));
     }
@@ -537,7 +586,6 @@
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
     }
     
-    // VK Bridge инициализация + VK Storage
     async function initVK() {
         if (window.vkBridge) {
             try {
@@ -763,24 +811,50 @@
     function finishGame(success) {
         gameActive=false;
         const p=getCurrentProgress();
-        document.getElementById("gameArea").innerHTML=`<div class="result-area"><div class="result-score">${success?"🏆 ПОБЕДА!":"💀 ПОРАЖЕНИЕ"}</div><p>Очки: ${p.totalScore} | Уровень: ${p.level}</p>
+        const resultText = success ? "🏆 ПОБЕДА!" : "💀 ПОРАЖЕНИЕ";
+        document.getElementById("gameArea").innerHTML=`<div class="result-area"><div class="result-score">${resultText}</div><p style="margin:12px 0; color:white; font-size:1.2rem;">Очки: ${p.totalScore} | Уровень: ${p.level}</p>
         <button class="share-btn" id="shareBtn">📢 ПОДЕЛИТЬСЯ</button>
-        <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button></div>`;
+        <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
+        <button class="reset-btn" id="selectSubjectHint" style="margin-top:8px; background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
+        </div>`;
         document.getElementById("shareBtn")?.addEventListener("click",()=>{ if(window.vkBridge) vkBridge.send("VKWebAppShare",{link:"https://vk.com",attachment:`Я прошёл ${subjectNames[currentSubject]} с ${p.totalScore} очков!`}); });
-        document.getElementById("resetBtn")?.addEventListener("click",()=>{ resetSubjectProgress(currentSubject); loadNewQuestion(); });
+        document.getElementById("resetBtn")?.addEventListener("click",()=>{
+            resetSubjectProgress(currentSubject);
+        });
+        document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{
+            document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth"});
+        });
     }
     
     function resetSubjectProgress(subject) {
+        // Полный сброс прогресса для данного предмета
         progressBySubject[subject] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
-        if(subject === currentSubject) { waitingForNext=false; selectedAnswer=null; gameActive=true; currentQuestion=null; loadNewQuestion(); }
-        saveAllProgress(); updateUI();
+        if(subject === currentSubject) {
+            waitingForNext = false;
+            selectedAnswer = null;
+            gameActive = true;
+            currentQuestion = null;
+            saveAllProgress();
+            updateUI();
+            loadNewQuestion();
+        } else {
+            saveAllProgress();
+        }
     }
     
     function renderUI() {
         if(!currentQuestion) return;
         const p = getCurrentProgress();
-        const hearts = "❤️".repeat(p.lives) + "🖤".repeat(MAX_LIVES-p.lives);
-        const html = `<div class="quest-header"><div class="level-badge">⚡ Уровень ${p.level} · ${subjectNames[currentSubject]}</div><div class="lives">${hearts}</div></div>
+        // Красивые иконки жизней
+        let livesHtml = '';
+        for (let i = 0; i < MAX_LIVES; i++) {
+            if (i < p.lives) {
+                livesHtml += '<i class="fas fa-heart"></i>';
+            } else {
+                livesHtml += '<i class="fas fa-heart-broken"></i>';
+            }
+        }
+        const html = `<div class="quest-header"><div class="level-badge">⚡ Уровень ${p.level} · ${subjectNames[currentSubject]}</div><div class="lives">${livesHtml}</div></div>
         <div class="question-card"><div class="question-text">${escapeHtml(currentQuestion.text)}</div><div class="answers" id="answersContainer">${currentQuestion.options.map(opt=>`<button class="answer-btn" data-answer="${escapeHtml(opt)}">${escapeHtml(opt)}</button>`).join('')}</div>
         <div class="feedback" id="feedbackMsg" style="display:none;"></div>
         <button class="next-btn hidden" id="nextBtn">➡️ ДАЛЕЕ</button>
@@ -855,7 +929,7 @@
     function startTutorial() {
         if(localStorage.getItem('tutorialShown')) return;
         const overlay = document.createElement('div'); overlay.className = 'modal';
-        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 сохраняется в облаке VK</p><button class="close-modal">Начать</button></div>`;
+        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 сохраняется в облаке VK<br>• Музыку можно переключать по значку 🎵</p><button class="close-modal">Начать</button></div>`;
         document.body.appendChild(overlay);
         overlay.querySelector('.close-modal').onclick = () => { overlay.remove(); localStorage.setItem('tutorialShown','true'); };
     }
@@ -867,7 +941,6 @@
     document.getElementById("privacyLink").onclick = () => showInfoModal("Политика конфиденциальности", privacyPolicy);
     document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: "" }); location.reload(); }, () => {});
     
-    // Запуск
     initVK();
 </script>
 </body>
