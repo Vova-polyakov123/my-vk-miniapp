@@ -119,13 +119,10 @@
         }
         .lives {
             font-size: 1.6rem;
-            letter-spacing: 5px;
             display: flex;
             gap: 6px;
         }
-        .lives i {
-            font-size: 1.8rem;
-        }
+        .lives i { font-size: 1.8rem; }
         .fa-heart { color: #ff3366; text-shadow: 0 0 3px #ff6699; }
         .fa-heart-broken { color: #555; opacity: 0.6; }
         .question-card {
@@ -292,7 +289,7 @@
             background: none;
             border: none;
             color: #ffaa66;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             cursor: pointer;
         }
         .volume-slider {
@@ -366,7 +363,7 @@
             <a id="deleteDataLink" style="color:#ff6b6b">🗑 Удалить данные</a>
         </div>
         <div class="audio-controls">
-            <button id="musicToggleBtn"><i class="fas fa-music"></i> 🎵 1/5</button>
+            <button id="musicToggleBtn"><i class="fas fa-music"></i> Вкл/Выкл</button>
             <div class="volume-slider">
                 <i class="fas fa-volume-down"></i>
                 <input type="range" id="globalVolume" min="0" max="100" value="25">
@@ -378,96 +375,44 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКАЛЬНЫЙ ПЛЕЙЛИСТ (5 треков) =======================
-    const playlist = [
-        { name: "Lofi Study", url: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_dd6f3c3b2a.mp3?filename=lofi-study-112191.mp3" },
-        { name: "Good Beginning", url: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3" },
-        { name: "Ambient Dream", url: "https://cdn.pixabay.com/download/audio/2022/03/17/audio_06e44f2c4b.mp3?filename=ambient-dream-111179.mp3" },
-        { name: "Calm Piano", url: "https://cdn.pixabay.com/download/audio/2022/02/02/audio_8b8c5c3f3c.mp3?filename=calm-piano-103687.mp3" },
-        { name: "Relaxing Guitar", url: "https://cdn.pixabay.com/download/audio/2022/06/06/audio_5e2c6f9d3a.mp3?filename=relaxing-guitar-115400.mp3" }
-    ];
-    let currentTrackIndex = 0;
-    const bgMusic = new Audio();
+    // ======================= ПРОСТАЯ МУЗЫКА =======================
+    const musicUrl = 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_dd6f3c3b2a.mp3?filename=lofi-study-112191.mp3';
+    const bgMusic = new Audio(musicUrl);
     bgMusic.loop = true;
     bgMusic.volume = 0.3;
     let musicEnabled = true;
     
-    function loadTrack(index) {
-        if (index >= playlist.length) index = 0;
-        if (index < 0) index = playlist.length - 1;
-        currentTrackIndex = index;
-        bgMusic.src = playlist[currentTrackIndex].url;
-        bgMusic.load();
-        if (musicEnabled && !bgMusic.paused) {
-            bgMusic.play().catch(e => console.log("play error", e));
-        }
-        updateMusicButtonText();
-    }
-    
-    function updateMusicButtonText() {
-        const btn = document.getElementById("musicToggleBtn");
-        if (btn) {
-            btn.innerHTML = musicEnabled ? `<i class="fas fa-music"></i> 🎵 ${currentTrackIndex+1}/${playlist.length}` : `<i class="fas fa-volume-mute"></i> 🔇`;
-        }
-    }
-    
     function playMusic() {
         if (musicEnabled && bgMusic.paused) {
-            bgMusic.play().catch(e => {
-                console.log("Ошибка воспроизведения, пробуем следующий трек");
-                nextTrack();
-            });
+            bgMusic.play().catch(e => console.log("Автовоспроизведение заблокировано"));
         }
     }
     function stopMusic() { bgMusic.pause(); }
     
     const musicBtn = document.getElementById("musicToggleBtn");
-    function nextTrack() {
-        let newIndex = currentTrackIndex + 1;
-        if (newIndex >= playlist.length) newIndex = 0;
-        loadTrack(newIndex);
-        if (musicEnabled && bgMusic.paused) playMusic();
-    }
     musicBtn.onclick = () => {
-        if (musicEnabled) {
-            nextTrack();
-        } else {
-            musicEnabled = true;
-            playMusic();
-            updateMusicButtonText();
-            document.getElementById("muteBtn").innerHTML = '<i class="fas fa-volume-up"></i>';
-        }
-    };
-    
-    const muteBtn = document.createElement('button');
-    muteBtn.id = "muteBtn";
-    muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-    muteBtn.style.marginLeft = '5px';
-    muteBtn.onclick = () => {
         musicEnabled = !musicEnabled;
         if (musicEnabled) {
             playMusic();
-            muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            musicBtn.innerHTML = '<i class="fas fa-music"></i> Вкл/Выкл';
         } else {
             stopMusic();
-            muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i> Вкл/Выкл';
         }
-        updateMusicButtonText();
     };
-    const audioDiv = document.querySelector('.audio-controls');
-    audioDiv.appendChild(muteBtn);
     
     const startAudio = () => {
         if (musicEnabled && bgMusic.paused) playMusic();
+        document.body.removeEventListener('click', startAudio);
+        document.body.removeEventListener('touchstart', startAudio);
     };
     document.body.addEventListener('click', startAudio);
     document.body.addEventListener('touchstart', startAudio);
     
-    loadTrack(0);
     const volSlider = document.getElementById("globalVolume");
     volSlider.addEventListener("input", (e) => { bgMusic.volume = e.target.value / 100; });
     
-    // ======================= ЗАЩИТА ОТ ПРОСМОТРА КОДА =======================
+    // ======================= ЗАЩИТА =======================
     (function() {
         document.addEventListener('contextmenu', (e) => e.preventDefault());
         document.addEventListener('keydown', (e) => {
@@ -491,7 +436,7 @@
         }, 5000);
     })();
     
-    // ======================= БАЗЫ ВОПРОСОВ (география исправлена) =======================
+    // ======================= БАЗЫ ВОПРОСОВ =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -542,13 +487,13 @@
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
     
     function declineCountry(c) {
-        const exceptions = {
-            "Россия": "России", "США": "США", "Франция": "Франции", "Германия": "Германии",
-            "Китай": "Китая", "Япония": "Японии", "Италия": "Италии", "Великобритания": "Великобритании",
-            "Испания": "Испании", "Канада": "Канады", "Бразилия": "Бразилии", "Австралия": "Австралии",
-            "Индия": "Индии", "Египет": "Египта", "Турция": "Турции", "ОАЭ": "ОАЭ", "Израиль": "Израиля"
+        const exc = {
+            "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
+            "Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании",
+            "Канада":"Канады","Бразилия":"Бразилии","Австралия":"Австралии","Индия":"Индии",
+            "Египет":"Египта","Турция":"Турции","ОАЭ":"ОАЭ","Израиль":"Израиля"
         };
-        return exceptions[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а'));
+        return exc[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а'));
     }
     function declineElement(n) {
         const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа"};
@@ -875,11 +820,8 @@
         const p = getCurrentProgress();
         let livesHtml = '';
         for (let i = 0; i < MAX_LIVES; i++) {
-            if (i < p.lives) {
-                livesHtml += '<i class="fas fa-heart"></i>';
-            } else {
-                livesHtml += '<i class="fas fa-heart-broken"></i>';
-            }
+            if (i < p.lives) livesHtml += '<i class="fas fa-heart"></i>';
+            else livesHtml += '<i class="fas fa-heart-broken"></i>';
         }
         const html = `<div class="quest-header"><div class="level-badge">⚡ Уровень ${p.level} · ${subjectNames[currentSubject]}</div><div class="lives">${livesHtml}</div></div>
         <div class="question-card"><div class="question-text">${escapeHtml(currentQuestion.text)}</div><div class="answers" id="answersContainer">${currentQuestion.options.map(opt=>`<button class="answer-btn" data-answer="${escapeHtml(opt)}">${escapeHtml(opt)}</button>`).join('')}</div>
@@ -956,7 +898,7 @@
     function startTutorial() {
         if(localStorage.getItem('tutorialShown')) return;
         const overlay = document.createElement('div'); overlay.className = 'modal';
-        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 сохраняется в облаке VK с аватарками<br>• Музыку можно переключать по значку 🎵</p><button class="close-modal">Начать</button></div>`;
+        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 сохраняется в облаке VK с аватарками<br>• Музыка включается/выключается кнопкой</p><button class="close-modal">Начать</button></div>`;
         document.body.appendChild(overlay);
         overlay.querySelector('.close-modal').onclick = () => { overlay.remove(); localStorage.setItem('tutorialShown','true'); };
     }
