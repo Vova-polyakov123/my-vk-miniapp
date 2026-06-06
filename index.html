@@ -361,36 +361,36 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКА — ГАРАНТИРОВАННЫЙ ЗАПУСК ПО ПЕРВОМУ КАСАНИЮ =======================
+    // ======================= МУЗЫКА (ГАРАНТИРОВАННО РАБОТАЕТ НА ПК И ТЕЛЕФОНЕ) =======================
     (function() {
         const MUSIC_URL = 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8f7f1b0.mp3?filename=lofi-study-112191.mp3';
         const audio = new Audio(MUSIC_URL);
         audio.loop = true;
         audio.volume = 0.3;
         let musicEnabled = true;
-        let started = false;      // флаг, запущена ли музыка уже
+        let started = false;
 
-        // Функция запуска музыки (вызывается только после жеста пользователя)
         function startMusic() {
             if (musicEnabled && !started) {
                 audio.play().then(() => {
                     started = true;
                     console.log("Музыка запущена");
-                }).catch(e => console.log("Ошибка запуска музыки:", e));
+                }).catch(e => {
+                    console.log("Ошибка запуска музыки (требуется клик):", e);
+                });
             }
         }
 
-        // Запуск по первому клику/тапу в любом месте документа
+        // Запуск по первому клику/тапу в любом месте документа (для телефонов)
         const firstInteraction = () => {
             startMusic();
-            // Удаляем обработчики, чтобы не запускать повторно
             document.removeEventListener('click', firstInteraction);
             document.removeEventListener('touchstart', firstInteraction);
         };
         document.addEventListener('click', firstInteraction);
         document.addEventListener('touchstart', firstInteraction);
 
-        // Кнопка включения/выключения музыки
+        // Дополнительно: запуск музыки при клике на кнопку включения (если пользователь сразу нажал на неё)
         const toggleBtn = document.getElementById('musicToggleBtn');
         if (toggleBtn) {
             toggleBtn.onclick = (e) => {
@@ -417,6 +417,15 @@
                 audio.volume = e.target.value / 100;
             });
         }
+
+        // Для WebView (ПК): повторяем попытку запуска при любом клике на body, если музыка ещё не играет
+        const retryStart = () => {
+            if (!started && musicEnabled) {
+                audio.play().then(() => started = true).catch(e => console.log);
+            }
+        };
+        document.body.addEventListener('click', retryStart);
+        document.body.addEventListener('touchstart', retryStart);
     })();
 
     // ======================= ЗАЩИТА ОТ ПРОСМОТРА КОДА =======================
