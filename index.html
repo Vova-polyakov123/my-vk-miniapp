@@ -361,71 +361,75 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКА - ФИНАЛЬНАЯ ВЕРСИЯ =======================
+    // ======================= МУЗЫКА (ИСПРАВЛЕНО ДЛЯ ПК) =======================
     (function() {
-        const MUSIC_URL = 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8f7f1b0.mp3?filename=lofi-study-112191.mp3';
-        const audio = new Audio(MUSIC_URL);
+        const musicURL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3';
+        const audio = new Audio(musicURL);
         audio.loop = true;
         audio.volume = 0.3;
         let musicEnabled = true;
         let started = false;
 
-        function startMusic() {
+        // Функция запуска
+        function playMusic() {
             if (musicEnabled && !started) {
                 audio.play().then(() => {
                     started = true;
-                    console.log("Музыка запущена");
-                }).catch(e => {
-                    console.log("Ошибка запуска музыки (требуется клик):", e);
-                });
+                }).catch(e => console.log("Нужен клик для музыки"));
             }
         }
 
-        // ЗАПУСК ПО ПЕРВОМУ КЛИКУ/ТАПУ
-        const firstInteraction = () => {
-            startMusic();
-            document.removeEventListener('click', firstInteraction);
-            document.removeEventListener('touchstart', firstInteraction);
+        // Запуск по первому клику/тапу на документ (телефон)
+        const startOnInteraction = () => {
+            if (!started) {
+                audio.play().then(() => {
+                    started = true;
+                }).catch(e => console.log("Автовоспроизведение заблокировано"));
+            }
+            document.removeEventListener('click', startOnInteraction);
+            document.removeEventListener('touchstart', startOnInteraction);
         };
-        document.addEventListener('click', firstInteraction);
-        document.addEventListener('touchstart', firstInteraction);
+        document.addEventListener('click', startOnInteraction);
+        document.addEventListener('touchstart', startOnInteraction);
 
-        // УПРАВЛЕНИЕ КНОПКОЙ
-        const toggleBtn = document.getElementById('musicToggleBtn');
-        if (toggleBtn) {
-            toggleBtn.onclick = (e) => {
+        // Дополнительно: запуск при клике на любую кнопку (ПК)
+        const forceStartOnClick = (e) => {
+            if (!started && musicEnabled) {
+                audio.play().then(() => {
+                    started = true;
+                }).catch(e => console.log);
+            }
+        };
+        document.body.addEventListener('click', forceStartOnClick);
+        document.body.addEventListener('touchstart', forceStartOnClick);
+
+        // Кнопка вкл/выкл
+        const musicBtn = document.getElementById('musicToggleBtn');
+        if (musicBtn) {
+            musicBtn.onclick = (e) => {
                 e.stopPropagation();
                 musicEnabled = !musicEnabled;
                 if (musicEnabled) {
                     if (!started) {
-                        audio.play().then(() => started = true).catch(e => console.log);
+                        audio.play().then(() => started = true).catch(e=>console.log);
                     } else {
-                        audio.play().catch(e => console.log);
+                        audio.play().catch(e=>console.log);
                     }
-                    toggleBtn.innerHTML = '<i class="fas fa-music"></i> Вкл/Выкл';
+                    musicBtn.innerHTML = '<i class="fas fa-music"></i> Вкл/Выкл';
                 } else {
                     audio.pause();
-                    toggleBtn.innerHTML = '<i class="fas fa-volume-mute"></i> Вкл/Выкл';
+                    musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i> Вкл/Выкл';
                 }
             };
         }
 
-        // РЕГУЛЯТОР ГРОМКОСТИ
+        // Регулятор громкости
         const volSlider = document.getElementById('globalVolume');
         if (volSlider) {
             volSlider.addEventListener('input', (e) => {
                 audio.volume = e.target.value / 100;
             });
         }
-
-        // ПОВТОРНЫЙ ЗАПУСК ПРИ КЛИКЕ НА ЛЮБУЮ КНОПКУ
-        const retryStart = () => {
-            if (!started && musicEnabled) {
-                audio.play().then(() => started = true).catch(e => console.log);
-            }
-        };
-        document.body.addEventListener('click', retryStart);
-        document.body.addEventListener('touchstart', retryStart);
     })();
 
     // ======================= ЗАЩИТА ОТ ПРОСМОТРА КОДА =======================
@@ -452,7 +456,7 @@
         }, 5000);
     })();
 
-    // ======================= БАЗЫ ДАННЫХ (РАСШИРЕННЫЕ, ИСПРАВЛЕННЫЕ) =======================
+    // ======================= БАЗЫ ВОПРОСОВ (РАСШИРЕННЫЕ) =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -487,11 +491,7 @@
         { q: "В каком году произошла Октябрьская революция?", a: "1917", type: "date" },
         { q: "В каком году началась Великая Отечественная война?", a: "1941", type: "date" },
         { q: "В каком году закончилась Вторая мировая война?", a: "1945", type: "date" },
-        { q: "В каком году распался СССР?", a: "1991", type: "date" },
-        { q: "В каком году произошло Бородинское сражение?", a: "1812", type: "date" },
-        { q: "В каком году произошло Ледовое побоище?", a: "1242", type: "date" },
-        { q: "В каком году началась Гражданская война в России?", a: "1918", type: "date" },
-        { q: "В каком году был первый полёт человека в космос?", a: "1961", type: "date" }
+        { q: "В каком году распался СССР?", a: "1991", type: "date" }
     ];
     const authorWork = [
         { author: "Лев Толстой", work: "Война и мир" },
@@ -1019,7 +1019,7 @@
     function startTutorial() {
         if(localStorage.getItem('tutorialShown')) return;
         const overlay = document.createElement('div'); overlay.className = 'modal';
-        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 сохраняется в облаке VK с аватарками<br>• Музыка запустится после первого касания экрана</p><button class="close-modal">Начать</button></div>`;
+        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 сохраняется в облаке VK с аватарками<br>• Музыка включается/выключается кнопкой</p><button class="close-modal">Начать</button></div>`;
         document.body.appendChild(overlay);
         overlay.querySelector('.close-modal').onclick = () => { overlay.remove(); localStorage.setItem('tutorialShown','true'); };
     }
