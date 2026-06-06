@@ -5,520 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Битва знаний — VK Mini App</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background: #0a0e17;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            color: #fff;
-        }
-
-        .app {
-            max-width: 500px;
-            margin: 0 auto;
-            background: #0f131c;
-            min-height: 100vh;
-            padding-bottom: 70px;
-            position: relative;
-        }
-
-        /* Верхняя панель */
-        .stats-bar {
-            background: #131a24;
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #2a2f3a;
-        }
-        .stat {
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #ffc107;
-        }
-        .stat-label {
-            font-size: 0.7rem;
-            color: #8e9aaf;
-        }
-
-        /* Блок уровня */
-        .level-info {
-            background: #1e2532;
-            margin: 16px;
-            padding: 12px 16px;
-            border-radius: 16px;
-        }
-        .level-number {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #ffc107;
-        }
-        .progress-bar {
-            background: #2a323f;
-            border-radius: 20px;
-            height: 8px;
-            margin: 8px 0;
-            overflow: hidden;
-        }
-        .progress-fill {
-            background: #ffc107;
-            width: 0%;
-            height: 100%;
-        }
-        .next-level {
-            font-size: 0.7rem;
-            color: #8e9aaf;
-        }
-
-        /* Горизонтальный список предметов */
-        .subjects-row {
-            overflow-x: auto;
-            white-space: nowrap;
-            padding: 8px 16px;
-            display: flex;
-            gap: 12px;
-            scrollbar-width: thin;
-        }
-        .subject-card {
-            background: #1a212d;
-            border-radius: 20px;
-            padding: 10px 16px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            border: 1px solid #2f3748;
-            transition: 0.1s;
-        }
-        .subject-card.active {
-            border-color: #ffc107;
-            background: #2a3548;
-        }
-        .subject-icon {
-            width: 28px;
-            height: 28px;
-        }
-        .subject-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .subject-level {
-            font-size: 0.7rem;
-            color: #ffc107;
-            margin-left: 6px;
-        }
-
-        /* Карточка вопроса */
-        .quiz-card {
-            background: #0f131c;
-            margin: 16px;
-            padding: 20px;
-            border-radius: 28px;
-        }
-        .quiz-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            color: #8e9aaf;
-            font-size: 0.8rem;
-        }
-        .combo-badge {
-            background: #ffc10720;
-            color: #ffc107;
-            padding: 4px 12px;
-            border-radius: 20px;
-        }
-        .question-text {
-            font-size: 1.4rem;
-            font-weight: 600;
-            line-height: 1.3;
-            margin-bottom: 28px;
-            text-align: center;
-        }
-        .answers-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .answer-btn {
-            background: #1a212d;
-            border: none;
-            color: white;
-            padding: 14px;
-            border-radius: 60px;
-            font-size: 1rem;
-            font-weight: 500;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid #2f3748;
-            transition: 0.1s;
-        }
-        .answer-btn.selected {
-            background: #ffc107;
-            color: #0a0e17;
-            border-color: #ffc107;
-        }
-        .answer-btn.disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-        .feedback {
-            background: #1a212d;
-            border-radius: 20px;
-            padding: 12px;
-            margin: 16px 0;
-            text-align: center;
-            font-size: 0.9rem;
-            display: none;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 8px;
-        }
-        .btn {
-            flex: 1;
-            background: #2a3548;
-            border: none;
-            color: white;
-            padding: 12px;
-            border-radius: 60px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .btn-primary {
-            background: #ffc107;
-            color: #0a0e17;
-        }
-        .btn-warning {
-            background: #e67e22;
-        }
-        .btn-icon {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Блоки достижений, топа, ежедневной награды */
-        .section {
-            background: #1a212d;
-            margin: 16px;
-            padding: 16px;
-            border-radius: 24px;
-        }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        .section-title {
-            font-weight: 600;
-        }
-        .view-all {
-            font-size: 0.7rem;
-            color: #ffc107;
-            cursor: pointer;
-        }
-        .daily-rewards {
-            display: flex;
-            justify-content: space-between;
-            margin: 16px 0;
-        }
-        .day-box {
-            width: 40px;
-            height: 40px;
-            background: #2a323f;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: #8e9aaf;
-        }
-        .day-box.active {
-            background: #ffc107;
-            color: #0a0e17;
-        }
-        .day-box.claimed {
-            background: #2a3548;
-            color: #ffc107;
-        }
-        .claim-btn {
-            background: #ffc107;
-            color: #0a0e17;
-            width: 100%;
-            margin-top: 12px;
-        }
-        .achievement-item, .top-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #2a323f;
-        }
-        .achievement-name {
-            font-weight: 500;
-        }
-        .achievement-progress {
-            font-size: 0.7rem;
-            color: #ffc107;
-        }
-        .top-rank {
-            font-weight: 600;
-            color: #ffc107;
-            width: 30px;
-        }
-        .top-name {
-            flex: 1;
-        }
-        .top-score {
-            font-weight: 600;
-        }
-        .invite-friends {
-            background: #ffc10720;
-            text-align: center;
-            padding: 12px;
-            border-radius: 40px;
-            color: #ffc107;
-            margin-top: 12px;
-            cursor: pointer;
-        }
-
-        /* Нижнее меню */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            max-width: 500px;
-            margin: 0 auto;
-            background: #0f131c;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 16px 20px;
-            border-top: 1px solid #2a2f3a;
-        }
-        .nav-item {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #8e9aaf;
-            cursor: pointer;
-        }
-        .nav-item.active {
-            color: #ffc107;
-        }
-        .nav-icon {
-            width: 24px;
-            height: 24px;
-            display: block;
-            margin: 0 auto 4px;
-        }
-
-        /* Модальное окно */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: #1a212d;
-            max-width: 300px;
-            width: 80%;
-            border-radius: 24px;
-            padding: 20px;
-            text-align: center;
-        }
-        .modal-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-            justify-content: center;
-        }
-        .modal-btn {
-            padding: 8px 20px;
-            border-radius: 40px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: #0a0e17; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #fff; }
+        .app { max-width: 500px; margin: 0 auto; background: #0f131c; min-height: 100vh; padding-bottom: 70px; position: relative; }
+        .stats-bar { background: #131a24; padding: 16px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid #2a2f3a; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 1.3rem; font-weight: 700; color: #ffc107; }
+        .stat-label { font-size: 0.7rem; color: #8e9aaf; }
+        .level-info { background: #1e2532; margin: 16px; padding: 12px 16px; border-radius: 16px; }
+        .level-number { font-size: 1.6rem; font-weight: 800; color: #ffc107; }
+        .progress-bar { background: #2a323f; border-radius: 20px; height: 8px; margin: 8px 0; overflow: hidden; }
+        .progress-fill { background: #ffc107; width: 0%; height: 100%; }
+        .next-level { font-size: 0.7rem; color: #8e9aaf; }
+        .subjects-row { overflow-x: auto; white-space: nowrap; padding: 8px 16px; display: flex; gap: 12px; }
+        .subject-card { background: #1a212d; border-radius: 20px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid #2f3748; }
+        .subject-card.active { border-color: #ffc107; background: #2a3548; }
+        .subject-name { font-weight: 600; font-size: 0.9rem; }
+        .subject-level { font-size: 0.7rem; color: #ffc107; margin-left: 6px; }
+        .quiz-card { background: #0f131c; margin: 16px; padding: 20px; border-radius: 28px; }
+        .quiz-header { display: flex; justify-content: space-between; margin-bottom: 20px; color: #8e9aaf; font-size: 0.8rem; }
+        .combo-badge { background: #ffc10720; color: #ffc107; padding: 4px 12px; border-radius: 20px; }
+        .question-text { font-size: 1.4rem; font-weight: 600; text-align: center; margin-bottom: 28px; }
+        .answers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .answer-btn { background: #1a212d; border: none; color: white; padding: 14px; border-radius: 60px; font-size: 1rem; cursor: pointer; border: 1px solid #2f3748; text-align: center; }
+        .answer-btn.selected { background: #ffc107; color: #0a0e17; }
+        .feedback { background: #1a212d; border-radius: 20px; padding: 12px; margin: 16px 0; text-align: center; display: none; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 8px; }
+        .btn { flex: 1; background: #2a3548; border: none; color: white; padding: 12px; border-radius: 60px; font-weight: 600; cursor: pointer; }
+        .btn-primary { background: #ffc107; color: #0a0e17; }
+        .btn-warning { background: #e67e22; }
+        .section { background: #1a212d; margin: 16px; padding: 16px; border-radius: 24px; }
+        .section-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .section-title { font-weight: 600; }
+        .view-all { font-size: 0.7rem; color: #ffc107; cursor: pointer; }
+        .daily-rewards { display: flex; justify-content: space-between; margin: 16px 0; }
+        .day-box { width: 40px; height: 40px; background: #2a323f; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #8e9aaf; }
+        .day-box.active { background: #ffc107; color: #0a0e17; }
+        .day-box.claimed { background: #2a3548; color: #ffc107; }
+        .claim-btn { background: #ffc107; color: #0a0e17; width: 100%; margin-top: 12px; }
+        .achievement-item, .top-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2a323f; }
+        .achievement-name { font-weight: 500; }
+        .achievement-progress { font-size: 0.7rem; color: #ffc107; }
+        .top-rank { font-weight: 600; color: #ffc107; width: 30px; }
+        .top-name { flex: 1; }
+        .top-score { font-weight: 600; }
+        .invite-friends { background: #ffc10720; text-align: center; padding: 12px; border-radius: 40px; color: #ffc107; margin-top: 12px; cursor: pointer; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 500px; margin: 0 auto; background: #0f131c; display: flex; justify-content: space-around; padding: 10px 16px 20px; border-top: 1px solid #2a2f3a; }
+        .nav-item { text-align: center; font-size: 0.7rem; color: #8e9aaf; cursor: pointer; }
+        .nav-item.active { color: #ffc107; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: #1a212d; max-width: 300px; width: 80%; border-radius: 24px; padding: 20px; text-align: center; }
+        .modal-btn { padding: 8px 20px; border-radius: 40px; border: none; font-weight: 600; cursor: pointer; margin: 8px; }
         .modal-btn.confirm { background: #ffc107; color: #000; }
-        .modal-btn.cancel { background: #2a3548; color: #fff; }
-
         .hidden { display: none; }
     </style>
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 </head>
 <body>
 <div class="app" id="app">
-    <!-- Верхняя панель -->
     <div class="stats-bar">
-        <div class="stat">
-            <div class="stat-value" id="scoreValue">0</div>
-            <div class="stat-label">Очки</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value" id="comboValue">0</div>
-            <div class="stat-label">Комбо</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value" id="ratingValue">#0</div>
-            <div class="stat-label">Рейтинг</div>
-        </div>
+        <div class="stat"><div class="stat-value" id="scoreValue">0</div><div class="stat-label">Очки</div></div>
+        <div class="stat"><div class="stat-value" id="comboValue">0</div><div class="stat-label">Комбо</div></div>
+        <div class="stat"><div class="stat-value" id="ratingValue">#0</div><div class="stat-label">Рейтинг</div></div>
     </div>
-
     <div class="level-info">
         <div class="level-number" id="globalLevel">1</div>
         <div class="progress-bar"><div class="progress-fill" id="globalProgress"></div></div>
         <div class="next-level" id="nextLevelHint">До след. уровня: 0 очков</div>
     </div>
-
-    <!-- Горизонтальные предметы -->
     <div class="subjects-row" id="subjectsRow"></div>
-
-    <!-- Карточка вопроса (видна всегда) -->
     <div class="quiz-card">
-        <div class="quiz-header">
-            <span id="subjectLevelDisplay">Уровень 1 • Математика</span>
-            <span class="combo-badge" id="comboBadge">СЕРИЯ 0</span>
-        </div>
+        <div class="quiz-header"><span id="subjectLevelDisplay">Уровень 1 • Математика</span><span class="combo-badge" id="comboBadge">СЕРИЯ 0</span></div>
         <div class="question-text" id="questionText">Загрузка...</div>
         <div class="answers-grid" id="answersGrid"></div>
         <div class="feedback" id="feedbackMsg"></div>
         <div class="action-buttons">
-            <button class="btn" id="fiftyBtn"><img src="icons/hint.png" class="btn-icon" alt=""> 50/50</button>
-            <button class="btn btn-warning" id="bonusBtn"><img src="icons/coin.png" class="btn-icon" alt=""> Бонус +25</button>
+            <button class="btn" id="fiftyBtn">🎲 50/50</button>
+            <button class="btn btn-warning" id="bonusBtn">💰 Бонус +25</button>
             <button class="btn btn-primary" id="nextBtn">Далее</button>
         </div>
     </div>
-
-    <!-- Блоки, которые переключаются вкладками (показываются/скрываются) -->
-    <div id="sectionsContainer">
-        <!-- Главная (изначально видна) -->
-        <div id="mainSection">
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">Ежедневная награда</span>
-                    <span class="view-all" id="dailyInfo">День 3 из 7</span>
-                </div>
-                <div class="daily-rewards" id="dailyRewards"></div>
-                <button class="btn claim-btn" id="claimDailyBtn">Забрать награду</button>
-            </div>
-
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">Достижения</span>
-                    <span class="view-all" id="achievementsViewAll">Смотреть все ></span>
-                </div>
-                <div id="achievementsList"></div>
-            </div>
-
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">Топ игроков</span>
-                    <span class="view-all" id="topViewAll">Смотреть все ></span>
-                </div>
-                <div id="topList"></div>
-            </div>
-
-            <div class="invite-friends" id="inviteFriendsBtn">📢 Пригласить друзей</div>
+    <div id="mainSection">
+        <div class="section"><div class="section-header"><span class="section-title">Ежедневная награда</span><span class="view-all" id="dailyInfo">День 3 из 7</span></div>
+            <div class="daily-rewards" id="dailyRewards"></div>
+            <button class="btn claim-btn" id="claimDailyBtn">Забрать награду</button>
         </div>
-
-        <!-- Достижения (полный список) -->
-        <div id="achievementsFullSection" style="display:none;">
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">Все достижения</span>
-                    <span class="view-all" id="backToMainFromAchievements">← Назад</span>
-                </div>
-                <div id="achievementsFullList"></div>
-            </div>
+        <div class="section"><div class="section-header"><span class="section-title">Достижения</span><span class="view-all" id="achievementsViewAll">Смотреть все ></span></div>
+            <div id="achievementsList"></div>
         </div>
-
-        <!-- Рейтинг (полный топ) -->
-        <div id="ratingFullSection" style="display:none;">
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">Топ игроков</span>
-                    <span class="view-all" id="backToMainFromRating">← Назад</span>
-                </div>
-                <div id="topFullList"></div>
-            </div>
+        <div class="section"><div class="section-header"><span class="section-title">Топ игроков</span><span class="view-all" id="topViewAll">Смотреть все ></span></div>
+            <div id="topList"></div>
         </div>
-
-        <!-- Задания (заглушка) -->
-        <div id="tasksSection" style="display:none;">
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">Ежедневные задания</span>
-                    <span class="view-all" id="backToMainFromTasks">← Назад</span>
-                </div>
-                <p>Ответь на 10 вопросов – 100 очков</p>
-                <p>Получи комбо x5 – 50 очков</p>
-                <p>Повысь уровень предмета – 30 очков</p>
-            </div>
-        </div>
-
-        <!-- Профиль (заглушка) -->
-        <div id="profileSection" style="display:none;">
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">Профиль</span>
-                    <span class="view-all" id="backToMainFromProfile">← Назад</span>
-                </div>
-                <p>Ваш ID: <span id="vkUserId"></span></p>
-                <p>Всего очков: <span id="profileScore">0</span></p>
-                <button class="btn" id="logoutBtn" style="background:#e64646;">Очистить данные</button>
-            </div>
-        </div>
+        <div class="invite-friends" id="inviteFriendsBtn">📢 Пригласить друзей</div>
     </div>
+    <div id="achievementsFullSection" style="display:none;"><div class="section"><div class="section-header"><span class="section-title">Все достижения</span><span class="view-all" id="backToMainFromAchievements">← Назад</span></div><div id="achievementsFullList"></div></div></div>
+    <div id="ratingFullSection" style="display:none;"><div class="section"><div class="section-header"><span class="section-title">Топ игроков</span><span class="view-all" id="backToMainFromRating">← Назад</span></div><div id="topFullList"></div></div></div>
+    <div id="tasksSection" style="display:none;"><div class="section"><div class="section-header"><span class="section-title">Ежедневные задания</span><span class="view-all" id="backToMainFromTasks">← Назад</span></div><p>Ответь на 10 вопросов – 100 очков</p><p>Получи комбо x5 – 50 очков</p><p>Повысь уровень предмета – 30 очков</p></div></div>
+    <div id="profileSection" style="display:none;"><div class="section"><div class="section-header"><span class="section-title">Профиль</span><span class="view-all" id="backToMainFromProfile">← Назад</span></div><p>Ваш ID: <span id="vkUserId"></span></p><p>Всего очков: <span id="profileScore">0</span></p><button class="btn" id="logoutBtn" style="background:#e64646;">Очистить данные</button></div></div>
 
-    <!-- Нижнее меню -->
     <div class="bottom-nav">
-        <div class="nav-item" data-nav="main">
-            <img src="icons/home.svg" class="nav-icon" alt="Главная">
-            <span>Главная</span>
-        </div>
-        <div class="nav-item" data-nav="achievements">
-            <img src="icons/achievements.svg" class="nav-icon" alt="Достижения">
-            <span>Достижения</span>
-        </div>
-        <div class="nav-item" data-nav="rating">
-            <img src="icons/rating.svg" class="nav-icon" alt="Рейтинг">
-            <span>Рейтинг</span>
-        </div>
-        <div class="nav-item" data-nav="tasks">
-            <img src="icons/tasks.svg" class="nav-icon" alt="Задания">
-            <span>Задания</span>
-        </div>
-        <div class="nav-item" data-nav="profile">
-            <img src="icons/profile.svg" class="nav-icon" alt="Профиль">
-            <span>Профиль</span>
-        </div>
+        <div class="nav-item" data-nav="main"><span style="font-size:1.4rem;">🏠</span><div>Главная</div></div>
+        <div class="nav-item" data-nav="achievements"><span style="font-size:1.4rem;">🏆</span><div>Достижения</div></div>
+        <div class="nav-item" data-nav="rating"><span style="font-size:1.4rem;">📊</span><div>Рейтинг</div></div>
+        <div class="nav-item" data-nav="tasks"><span style="font-size:1.4rem;">📋</span><div>Задания</div></div>
+        <div class="nav-item" data-nav="profile"><span style="font-size:1.4rem;">👤</span><div>Профиль</div></div>
     </div>
 </div>
 
 <script>
-    // ---------- БАЗЫ ДАННЫХ ВОПРОСОВ (сокращённые, но достаточные) ----------
+    // ========== БАЗЫ ВОПРОСОВ ==========
     const countryCapital = [["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"]];
     const historyQA = [
         { q: "В каком году Христофор Колумб открыл Америку?", a: "1492", type:"date" },
@@ -577,51 +172,32 @@
     let globalScore = 0, globalLevel = 1, combo = 0;
     let currentSubject = "math";
     let currentQuestion = null, selectedAnswer = null, waitingForNext = false, gameActive = true;
-    let adLastShown = 0, isAdWatching = false, adTimerInterval = null;
+    let adLastShown = 0, isAdWatching = false;
     let subjectLevels = {}, usedQuestions = {};
     let achievements = { totalCorrect: 0, maxCombo: 0, perfectLevels: 0 };
-    let dailyClaimed = null; // день, который уже забрали (храним метку)
-    let dailyDay = 1; // текущий день от 1 до 7
-    let lastDailyClaimDate = null; // строка даты
-
+    let dailyDay = 1, lastDailyClaimDate = null;
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = {
         math:"Математика", russian:"Русский язык", geo:"География", history:"История",
         literature:"Литература", english:"Английский", obzh:"ОБЖ", society:"Обществознание",
         biology:"Биология", chemistry:"Химия", physics:"Физика"
     };
-    const subjectIcons = {
-        math:"math.svg", russian:"literature.svg", geo:"geography.svg", history:"history.svg",
-        literature:"literature.svg", english:"english.svg", obzh:"obzh.svg", society:"society.svg",
-        biology:"biology.svg", chemistry:"chemistry.svg", physics:"physics.svg"
-    };
-    // Инициализация
     for(let s of allSubjects) { subjectLevels[s] = 1; usedQuestions[s] = new Set(); }
 
-    // ---------- СОХРАНЕНИЕ / ЗАГРУЗКА ----------
-    async function saveToVKStorage(key, value) {
-        if(window.vkBridge) {
-            try { await vkBridge.send("VKWebAppStorageSet", { key, value: JSON.stringify(value) }); } catch(e) {}
-        }
-    }
-    async function loadFromVKStorage(key) {
-        if(window.vkBridge) {
-            try {
-                const res = await vkBridge.send("VKWebAppStorageGet", { keys: [key] });
-                if(res.keys[0]) return JSON.parse(res.keys[0].value);
-            } catch(e) {}
-        }
-        return null;
-    }
     function saveAllProgress() {
         const data = { globalScore, globalLevel, combo, subjectLevels, achievements, dailyDay, lastDailyClaimDate };
         localStorage.setItem('quizNewProgress', JSON.stringify(data));
-        saveToVKStorage('quizNewProgress', data);
+        if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizNewProgress", value: JSON.stringify(data) }).catch(e=>console.warn);
     }
     async function loadAllProgress() {
         let data = null;
         try { data = JSON.parse(localStorage.getItem('quizNewProgress')); } catch(e) {}
-        if(!data && window.vkBridge) data = await loadFromVKStorage('quizNewProgress');
+        if(!data && window.vkBridge) {
+            try {
+                const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizNewProgress"] });
+                if(res.keys[0]) data = JSON.parse(res.keys[0].value);
+            } catch(e) {}
+        }
         if(data) {
             globalScore = data.globalScore || 0;
             globalLevel = data.globalLevel || 1;
@@ -631,39 +207,29 @@
             dailyDay = data.dailyDay || 1;
             lastDailyClaimDate = data.lastDailyClaimDate || null;
             for(let s of allSubjects) if(!subjectLevels[s]) subjectLevels[s] = 1;
-            // проверяем дату для сброса ежедневной награды
             const today = new Date().toDateString();
-            if(lastDailyClaimDate !== today) dailyDay = 1; // новый день – сброс прогресса наград
+            if(lastDailyClaimDate !== today) dailyDay = 1;
             else if(dailyDay > 7) dailyDay = 1;
-        } else {
-            for(let s of allSubjects) subjectLevels[s] = 1;
-            achievements = { totalCorrect:0, maxCombo:0, perfectLevels:0 };
-            dailyDay = 1;
-            lastDailyClaimDate = null;
         }
         updateUIStats();
         renderSubjects();
         renderDailyRewards();
         renderAchievements();
         renderTop();
-        if(currentQuestion) renderUI();
+        loadNewQuestion();
     }
 
-    // ---------- UI ОБНОВЛЕНИЯ ----------
     function updateUIStats() {
         document.getElementById("scoreValue").innerText = globalScore;
         document.getElementById("comboValue").innerText = combo;
-        let rating = "#" + Math.floor(globalScore / 10);
-        document.getElementById("ratingValue").innerText = rating;
+        document.getElementById("ratingValue").innerText = "#" + Math.floor(globalScore / 10);
         document.getElementById("globalLevel").innerText = globalLevel;
-        let nextThreshold = globalLevel * 100;
         let progress = ((globalScore % 100) / 100) * 100;
         document.getElementById("globalProgress").style.width = progress + "%";
-        let needed = nextThreshold - globalScore;
+        let needed = globalLevel * 100 - globalScore;
         document.getElementById("nextLevelHint").innerHTML = `До след. уровня: ${needed} очков`;
         document.getElementById("comboBadge").innerHTML = `СЕРИЯ ${combo}`;
         document.getElementById("profileScore").innerText = globalScore;
-        if(window.vkUserId) document.getElementById("vkUserId").innerText = window.vkUserId;
     }
     function renderSubjects() {
         const row = document.getElementById("subjectsRow");
@@ -672,11 +238,7 @@
             const card = document.createElement("div");
             card.className = "subject-card";
             if(s === currentSubject) card.classList.add("active");
-            card.innerHTML = `
-                <img src="icons/${subjectIcons[s] || 'math.svg'}" class="subject-icon" alt="">
-                <span class="subject-name">${subjectNames[s]}</span>
-                <span class="subject-level">Ур. ${subjectLevels[s]}</span>
-            `;
+            card.innerHTML = `<span class="subject-name">${subjectNames[s]}</span><span class="subject-level">Ур. ${subjectLevels[s]}</span>`;
             card.onclick = () => {
                 if(s === currentSubject) return;
                 saveAllProgress();
@@ -721,20 +283,17 @@
         });
     }
     function renderTop() {
-        // Топ храним в localStorage общий для всех пользователей (имитация)
         let topPlayers = JSON.parse(localStorage.getItem('topPlayers')) || [
             { name:"Иван", score:25800 }, { name:"Анна", score:24000 }, { name:"Максим", score:22000 },
             { name:"Елизавета", score:19800 }, { name:"Алексей", score:17500 }
         ];
-        // Обновляем топ текущим пользователем, если его очки выше пятого места
         let currentName = "Вы";
         if(window.vkBridge && window.vkUserId) currentName = `User${window.vkUserId.slice(-4)}`;
         let userEntry = { name: currentName, score: globalScore };
-        topPlayers.push(userEntry);
-        topPlayers.sort((a,b)=>b.score - a.score);
-        topPlayers = topPlayers.slice(0,5);
+        let allPlayers = [...topPlayers, userEntry];
+        allPlayers.sort((a,b)=>b.score - a.score);
+        topPlayers = allPlayers.slice(0,5);
         localStorage.setItem('topPlayers', JSON.stringify(topPlayers));
-
         const renderList = (container) => {
             container.innerHTML = "";
             topPlayers.forEach((p,idx) => {
@@ -747,11 +306,10 @@
         renderList(document.getElementById("topList"));
         renderList(document.getElementById("topFullList"));
     }
-    // ---------- ИГРОВАЯ МЕХАНИКА ----------
     function getUniqueQuestion(subject, lvl) {
         if(!usedQuestions[subject]) usedQuestions[subject] = new Set();
         let attempts=0, q;
-        while(attempts<50) {
+        while(attempts<30) {
             if(subject==='math') q=generateMathQuestion(lvl);
             else if(subject==='russian') q=generateRussianQuestion();
             else if(subject==='geo') q=generateGeoQuestion();
@@ -775,7 +333,7 @@
     function loadNewQuestion() {
         if(!gameActive) return;
         let q = getUniqueQuestion(currentSubject, subjectLevels[currentSubject]);
-        if(!q) { /* вопросы кончились – можно повысить уровень или завершить */ return; }
+        if(!q) { /* вопросы кончились – можно ничего не делать */ return; }
         currentQuestion = q;
         selectedAnswer = null;
         waitingForNext = false;
@@ -815,13 +373,11 @@
             combo++;
             achievements.totalCorrect++;
             if(combo > achievements.maxCombo) achievements.maxCombo = combo;
-            // бонус за серию
             if(combo >= 3) {
                 let bonus = 15;
                 globalScore += bonus;
                 showTemporaryMessage(`+${bonus} бонус за серию!`);
             }
-            // повышение уровня предмета после 3 правильных ответов подряд? Упростим: каждые 3 правильных ответа в предмете повышаем уровень
             if(!window.subjectProgress) window.subjectProgress = {};
             if(!window.subjectProgress[currentSubject]) window.subjectProgress[currentSubject] = 0;
             window.subjectProgress[currentSubject]++;
@@ -852,7 +408,6 @@
         fb.innerHTML = msg;
         setTimeout(() => fb.style.display = "none", duration);
     }
-    // Бонус +25 (с рекламой)
     async function claimBonus() {
         if(!window.vkBridge) { globalScore += 25; updateUIStats(); saveAllProgress(); showTemporaryMessage("Бонус +25"); return; }
         const now = Date.now();
@@ -871,7 +426,6 @@
         } catch(e) { console.error(e); }
         isAdWatching = false;
     }
-    // 50/50 подсказка
     function fiftyFifty() {
         if(waitingForNext || !currentQuestion) return;
         let wrongOptions = currentQuestion.options.filter(opt => simpleHash(opt) !== currentQuestion.correctHash);
@@ -884,7 +438,6 @@
         });
         showTemporaryMessage("Два неверных варианта удалены");
     }
-    // Ежедневная награда
     function claimDaily() {
         const today = new Date().toDateString();
         if(lastDailyClaimDate === today) { showTemporaryMessage("Сегодня вы уже получили награду"); return; }
@@ -898,19 +451,18 @@
         renderDailyRewards();
         showTemporaryMessage(`Вы получили ${reward} очков!`);
     }
-    // Пригласить друзей
     function inviteFriends() {
         if(window.vkBridge) {
             vkBridge.send("VKWebAppShare", { link: "https://vk.com", attachment: "Играйте в Битву знаний!" });
         } else alert("Поделитесь ссылкой на приложение");
     }
-    // Очистка данных
     function clearData() {
-        localStorage.clear();
-        location.reload();
+        if(confirm("Удалить весь прогресс?")) {
+            localStorage.clear();
+            location.reload();
+        }
     }
 
-    // ---------- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ----------
     function setActiveTab(tab) {
         document.querySelectorAll(".nav-item").forEach(nav => nav.classList.remove("active"));
         document.querySelector(`.nav-item[data-nav="${tab}"]`).classList.add("active");
@@ -921,27 +473,14 @@
             tasks: ["tasksSection", "mainSection", "achievementsFullSection", "ratingFullSection", "profileSection"],
             profile: ["profileSection", "mainSection", "achievementsFullSection", "ratingFullSection", "tasksSection"]
         };
-        for(let sec of sections[tab]) {
-            document.getElementById(sec).style.display = "block";
-        }
-        for(let sec of sections[tab].slice(1)) {
-            document.getElementById(sec).style.display = "none";
-        }
+        for(let sec of sections[tab]) document.getElementById(sec).style.display = "block";
+        for(let sec of sections[tab].slice(1)) document.getElementById(sec).style.display = "none";
         if(tab === "achievements") renderAchievements();
         if(tab === "rating") renderTop();
     }
 
-    // ---------- ИНИЦИАЛИЗАЦИЯ ----------
     async function startGame() {
         await loadAllProgress();
-        loadNewQuestion();
-        // Подписываемся на получение ID пользователя
-        if(window.vkBridge) {
-            try {
-                const user = await vkBridge.send("VKWebAppGetUserInfo");
-                if(user && user.id) window.vkUserId = user.id;
-            } catch(e) {}
-        }
         document.getElementById("bonusBtn").onclick = claimBonus;
         document.getElementById("fiftyBtn").onclick = fiftyFifty;
         document.getElementById("claimDailyBtn").onclick = claimDaily;
@@ -953,12 +492,17 @@
         document.getElementById("backToMainFromRating").onclick = () => setActiveTab("main");
         document.getElementById("backToMainFromTasks").onclick = () => setActiveTab("main");
         document.getElementById("backToMainFromProfile").onclick = () => setActiveTab("main");
-        document.querySelectorAll(".nav-item").forEach(nav => {
-            nav.onclick = () => setActiveTab(nav.getAttribute("data-nav"));
-        });
+        document.querySelectorAll(".nav-item").forEach(nav => nav.onclick = () => setActiveTab(nav.getAttribute("data-nav")));
         setActiveTab("main");
+        if(window.vkBridge) {
+            try {
+                const user = await vkBridge.send("VKWebAppGetUserInfo");
+                if(user && user.id) window.vkUserId = user.id;
+                document.getElementById("vkUserId").innerText = window.vkUserId || "неизвестно";
+            } catch(e) {}
+        }
     }
-    // Согласие с политикой
+
     function showConsentModal() {
         const modalDiv = document.createElement("div"); modalDiv.className = "modal";
         modalDiv.innerHTML = `<div class="modal-content"><h4>📋 Добро пожаловать!</h4><p>Продолжая, вы принимаете <strong><a id="termsLinkModal" style="color:#ffc107;">Пользовательское соглашение</a></strong> и <strong><a id="privacyLinkModal" style="color:#ffc107;">Политику конфиденциальности</a></strong>.</p><p style="font-size:12px;">📧 Контакты: vova_polyakov_94@mail.ru</p><button class="modal-btn confirm" id="acceptBtn">Принимаю и начинаю</button></div>`;
@@ -971,6 +515,7 @@
             startGame();
         };
     }
+
     if(window.vkBridge) {
         vkBridge.send("VKWebAppInit").then(() => {
             if(!localStorage.getItem('consentGiven')) showConsentModal();
