@@ -20,6 +20,7 @@
         .subjects-row { overflow-x: auto; white-space: nowrap; padding: 8px 16px; display: flex; gap: 12px; }
         .subject-card { background: #1a212d; border-radius: 20px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid #2f3748; }
         .subject-card.active { border-color: #ffc107; background: #2a3548; }
+        .subject-icon { width: 24px; height: 24px; object-fit: contain; }
         .subject-name { font-weight: 600; font-size: 0.9rem; }
         .subject-level { font-size: 0.7rem; color: #ffc107; margin-left: 6px; }
         .quiz-card { background: #0f131c; margin: 16px; padding: 20px; border-radius: 28px; }
@@ -31,9 +32,10 @@
         .answer-btn.selected { background: #ffc107; color: #0a0e17; }
         .feedback { background: #1a212d; border-radius: 20px; padding: 12px; margin: 16px 0; text-align: center; display: none; }
         .action-buttons { display: flex; gap: 12px; margin-top: 8px; }
-        .btn { flex: 1; background: #2a3548; border: none; color: white; padding: 12px; border-radius: 60px; font-weight: 600; cursor: pointer; }
+        .btn { flex: 1; background: #2a3548; border: none; color: white; padding: 12px; border-radius: 60px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-primary { background: #ffc107; color: #0a0e17; }
         .btn-warning { background: #e67e22; }
+        .btn-icon { width: 20px; height: 20px; }
         .section { background: #1a212d; margin: 16px; padding: 16px; border-radius: 24px; }
         .section-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
         .section-title { font-weight: 600; }
@@ -53,6 +55,7 @@
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 500px; margin: 0 auto; background: #0f131c; display: flex; justify-content: space-around; padding: 10px 16px 20px; border-top: 1px solid #2a2f3a; }
         .nav-item { text-align: center; font-size: 0.7rem; color: #8e9aaf; cursor: pointer; }
         .nav-item.active { color: #ffc107; }
+        .nav-icon { width: 24px; height: 24px; display: block; margin: 0 auto 4px; object-fit: contain; }
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: #1a212d; max-width: 300px; width: 80%; border-radius: 24px; padding: 20px; text-align: center; }
         .modal-btn { padding: 8px 20px; border-radius: 40px; border: none; font-weight: 600; cursor: pointer; margin: 8px; }
@@ -80,8 +83,8 @@
         <div class="answers-grid" id="answersGrid"></div>
         <div class="feedback" id="feedbackMsg"></div>
         <div class="action-buttons">
-            <button class="btn" id="fiftyBtn">🎲 50/50</button>
-            <button class="btn btn-warning" id="bonusBtn">💰 Бонус +25</button>
+            <button class="btn" id="fiftyBtn"><img src="icons/hint.png" class="btn-icon" alt=""> 50/50</button>
+            <button class="btn btn-warning" id="bonusBtn"><img src="icons/coin.png" class="btn-icon" alt=""> Бонус +25</button>
             <button class="btn btn-primary" id="nextBtn">Далее</button>
         </div>
     </div>
@@ -104,16 +107,16 @@
     <div id="profileSection" style="display:none;"><div class="section"><div class="section-header"><span class="section-title">Профиль</span><span class="view-all" id="backToMainFromProfile">← Назад</span></div><p>Ваш ID: <span id="vkUserId"></span></p><p>Всего очков: <span id="profileScore">0</span></p><button class="btn" id="logoutBtn" style="background:#e64646;">Очистить данные</button></div></div>
 
     <div class="bottom-nav">
-        <div class="nav-item" data-nav="main"><span style="font-size:1.4rem;">🏠</span><div>Главная</div></div>
-        <div class="nav-item" data-nav="achievements"><span style="font-size:1.4rem;">🏆</span><div>Достижения</div></div>
-        <div class="nav-item" data-nav="rating"><span style="font-size:1.4rem;">📊</span><div>Рейтинг</div></div>
-        <div class="nav-item" data-nav="tasks"><span style="font-size:1.4rem;">📋</span><div>Задания</div></div>
-        <div class="nav-item" data-nav="profile"><span style="font-size:1.4rem;">👤</span><div>Профиль</div></div>
+        <div class="nav-item" data-nav="main"><img src="icons/home.svg" class="nav-icon" alt="Главная"><div>Главная</div></div>
+        <div class="nav-item" data-nav="achievements"><img src="icons/achievements.svg" class="nav-icon" alt="Достижения"><div>Достижения</div></div>
+        <div class="nav-item" data-nav="rating"><img src="icons/rating.svg" class="nav-icon" alt="Рейтинг"><div>Рейтинг</div></div>
+        <div class="nav-item" data-nav="tasks"><img src="icons/tasks.svg" class="nav-icon" alt="Задания"><div>Задания</div></div>
+        <div class="nav-item" data-nav="profile"><img src="icons/profile.svg" class="nav-icon" alt="Профиль"><div>Профиль</div></div>
     </div>
 </div>
 
 <script>
-    // ========== БАЗЫ ВОПРОСОВ ==========
+    // ========== БАЗЫ ВОПРОСОВ (полные, как в предыдущей версии) ==========
     const countryCapital = [["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"]];
     const historyQA = [
         { q: "В каком году Христофор Колумб открыл Америку?", a: "1492", type:"date" },
@@ -182,6 +185,20 @@
         literature:"Литература", english:"Английский", obzh:"ОБЖ", society:"Обществознание",
         biology:"Биология", chemistry:"Химия", physics:"Физика"
     };
+    // Карта иконок для предметов (укажите правильные имена ваших файлов)
+    const subjectIcons = {
+        math: "math.svg",
+        russian: "literature.svg",
+        geo: "geography.svg",
+        history: "history.svg",
+        literature: "literature.svg",
+        english: "english.svg",
+        obzh: "obzh.svg",
+        society: "society.svg",
+        biology: "biology.svg",
+        chemistry: "chemistry.svg",
+        physics: "physics.svg"
+    };
     for(let s of allSubjects) { subjectLevels[s] = 1; usedQuestions[s] = new Set(); }
 
     function saveAllProgress() {
@@ -238,7 +255,12 @@
             const card = document.createElement("div");
             card.className = "subject-card";
             if(s === currentSubject) card.classList.add("active");
-            card.innerHTML = `<span class="subject-name">${subjectNames[s]}</span><span class="subject-level">Ур. ${subjectLevels[s]}</span>`;
+            const iconPath = `icons/${subjectIcons[s]}`;
+            card.innerHTML = `
+                <img src="${iconPath}" class="subject-icon" alt="${subjectNames[s]}" onerror="this.style.display='none'">
+                <span class="subject-name">${subjectNames[s]}</span>
+                <span class="subject-level">Ур. ${subjectLevels[s]}</span>
+            `;
             card.onclick = () => {
                 if(s === currentSubject) return;
                 saveAllProgress();
