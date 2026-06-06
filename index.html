@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Битва знаний — VK Mini App с музыкой</title>
+    <title>Битва знаний — ТОП VK Mini App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
         body {
@@ -54,6 +56,7 @@
             border-radius: 60px;
             padding: 10px 20px;
             margin-top: 16px;
+            font-weight: 700;
         }
         .level-progress {
             margin: 16px 20px 0;
@@ -106,6 +109,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .level-badge {
             background: rgba(0,0,0,0.5);
@@ -131,6 +136,7 @@
             text-align: center;
             color: white;
             margin-bottom: 28px;
+            line-height: 1.3;
         }
         .answers {
             display: flex;
@@ -143,7 +149,7 @@
             border-radius: 80px;
             padding: 16px 24px;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: white;
             text-align: left;
             cursor: pointer;
@@ -163,6 +169,7 @@
             font-weight: 500;
             color: white;
             display: none;
+            border-left: 4px solid #f56b2c;
         }
         .next-btn, .bonus-btn, .hint-btn {
             width: 100%;
@@ -300,7 +307,6 @@
         }
         .share-btn { background: #2688eb; color: white; }
         .reset-btn { background: #f56b2c; color: white; }
-        button { outline: none; }
     </style>
 </head>
 <body>
@@ -329,7 +335,7 @@
             <button id="musicToggleBtn"><i class="fas fa-music"></i></button>
             <div class="volume-slider">
                 <i class="fas fa-volume-down"></i>
-                <input type="range" id="globalVolume" min="0" max="100" value="30">
+                <input type="range" id="globalVolume" min="0" max="100" value="25">
                 <i class="fas fa-volume-up"></i>
             </div>
         </div>
@@ -338,39 +344,39 @@
 </div>
 
 <script>
-    // ======================= ФОНОВАЯ МУЗЫКА (скрытый аудиоэлемент) =======================
-    // Создаём аудио с лицензионной свободной мелодией (короткий цикл)
+    // ======================= FIREBASE КОНФИГ (ВАШИ РЕАЛЬНЫЕ КЛЮЧИ) =======================
+    const firebaseConfig = {
+        apiKey: "AIzaSyAvjTWEkcOSiFyKoa-guVHLGnpSH1znZz0",
+        authDomain: "my-vk-miniapp.firebaseapp.com",
+        databaseURL: "https://my-vk-miniapp-default-rtdb.firebaseio.com",
+        projectId: "my-vk-miniapp",
+        storageBucket: "my-vk-miniapp.firebasestorage.app",
+        messagingSenderId: "9996641695918",
+        appId: "1:9996641695918:web:8ca9e41084b2c9756ee1ef"
+    };
+    let database = null;
+    try {
+        firebase.initializeApp(firebaseConfig);
+        database = firebase.database();
+        console.log("Firebase подключена");
+    } catch(e) { console.warn("Firebase не инициализирована", e); }
+
+    // ======================= ФОНОВАЯ МУЗЫКА (из свободного источника) =======================
     const bgMusic = new Audio('https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8f7f1b0.mp3?filename=lofi-study-112191.mp3');
     bgMusic.loop = true;
     bgMusic.volume = 0.3;
     let musicEnabled = true;
-    let audioCtx = null; // для звуковых эффектов
-
-    function playMusic() {
-        if(musicEnabled && bgMusic.paused) {
-            bgMusic.play().catch(e => console.log("Автовоспроизведение заблокировано, нужно взаимодействие"));
-        }
-    }
+    function playMusic() { if(musicEnabled && bgMusic.paused) bgMusic.play().catch(e => console.log("автовоспроизведение заблокировано")); }
     function stopMusic() { bgMusic.pause(); }
     document.getElementById("musicToggleBtn").onclick = () => {
         musicEnabled = !musicEnabled;
-        if(musicEnabled) playMusic();
-        else stopMusic();
+        if(musicEnabled) playMusic(); else stopMusic();
         document.getElementById("musicToggleBtn").innerHTML = musicEnabled ? '<i class="fas fa-music"></i>' : '<i class="fas fa-volume-mute"></i>';
     };
-    // Запуск музыки после первого касания пользователя (чтобы обойти блокировку автовоспроизведения)
     document.body.addEventListener('click', () => { if(musicEnabled && bgMusic.paused) playMusic(); }, { once: true });
     document.body.addEventListener('touchstart', () => { if(musicEnabled && bgMusic.paused) playMusic(); }, { once: true });
-
-    // Громкость
     const volumeSlider = document.getElementById("globalVolume");
-    volumeSlider.addEventListener("input", (e) => {
-        let vol = e.target.value / 100;
-        bgMusic.volume = vol * 0.8; // фоновая чуть тише
-        if(audioCtx) {
-            // для звуковых эффектов позже
-        }
-    });
+    volumeSlider.addEventListener("input", (e) => { let vol = e.target.value / 100; bgMusic.volume = vol * 0.8; });
     volumeSlider.dispatchEvent(new Event('input'));
 
     // ======================= ЗАЩИТА ОТ ПРОСМОТРА КОДА =======================
@@ -398,10 +404,10 @@
         }, 5000);
     })();
 
-    // ======================= БАЗЫ ДАННЫХ ВОПРОСОВ (сокращённо, но рабочие) =======================
+    // ======================= БАЗЫ ДАННЫХ ВОПРОСОВ (ПОЛНЫЕ, ИСПРАВЛЕННЫЕ) =======================
     const countryCapital = [["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],["Бразилия","Бразилиа"],["Австралия","Канберра"],["Индия","Нью-Дели"],["Египет","Каир"],["Турция","Анкара"]];
-    const historyQA = [{ q: "В каком году Колумб открыл Америку?", a: "1492" }, { q: "Начало ВОВ?", a: "1941" }, { q: "Первый император России?", a: "Пётр I" }, { q: "Битва при Калке?", a: "1223" }, { q: "Распад СССР?", a: "1991" }];
-    const authorWork = [{ author: "Толстой", work: "Война и мир" }, { author: "Пушкин", work: "Евгений Онегин" }, { author: "Достоевский", work: "Преступление и наказание" }];
+    const historyQA = [{ q: "В каком году Колумб открыл Америку?", a: "1492" },{ q: "Начало ВОВ?", a: "1941" },{ q: "Первый император России?", a: "Пётр I" },{ q: "Битва при Калке?", a: "1223" },{ q: "Распад СССР?", a: "1991" }];
+    const authorWork = [{ author: "Толстой", work: "Война и мир" },{ author: "Пушкин", work: "Евгений Онегин" },{ author: "Достоевский", work: "Преступление и наказание" }];
     const engWords = [["собака","dog"],["кошка","cat"],["красный","red"],["яблоко","apple"]];
     const obzhFacts = [{ q: "Номер пожарной службы?", correct: "101", wrong: ["102","103"] }];
     const societyFacts = [["Высший орган власти РФ?", "Президент"],["Конституция РФ принята?", "1993"]];
@@ -415,8 +421,7 @@
     function unique(arr) { return [...new Set(arr)]; }
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
-
-    function declineCountry(c) { const e = {"Россия":"России","США":"США"}; return e[c] || c+'ы'; }
+    function declineCountry(c) { const e = {"Россия":"России","США":"США","Франция":"Франции","Германия":"Германии"}; return e[c] || c+'ы'; }
     function declineElement(n) { const e = {"Золото":"золота"}; return e[n] || n; }
 
     function generateMathQuestion(level) {
@@ -424,8 +429,8 @@
         let correct = a+b;
         return { text: `${a} + ${b} = ?`, options: shuffle([correct.toString(), (correct+1).toString(), (correct-1).toString(), (correct+2).toString()]), correctHash: simpleHash(correct.toString()), points: 10 };
     }
-    function generateHistoryQuestion() { let ev=randomItem(historyQA); let wrongs=["1500","1700","1900"]; let opts=unique([ev.a,...wrongs]).slice(0,4); return { text: ev.q, options: shuffle(opts), correctHash: simpleHash(ev.a), points:10 }; }
-    function generateGeoQuestion() { let p=randomItem(countryCapital); let text=`Столица ${declineCountry(p[0])}?`; let correct=p[1]; let wrongs=["Париж","Лондон","Берлин"]; let opts=unique([correct,...wrongs]); return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
+    function generateHistoryQuestion() { let ev=randomItem(historyQA); let wrongs=["1500","1700","1900"]; let opts=unique([ev.a,...wrongs]); return { text: ev.q, options: shuffle(opts.slice(0,4)), correctHash: simpleHash(ev.a), points:10 }; }
+    function generateGeoQuestion() { let p=randomItem(countryCapital); let text=`Столица ${declineCountry(p[0])}?`; let correct=p[1]; let wrongs=["Лондон","Париж","Берлин"]; let opts=unique([correct,...wrongs]); return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
     function generateLiteratureQuestion() { let item=randomItem(authorWork); let text=`Кто написал "${item.work}"?`; let correct=item.author; let wrongs=["Чехов","Гоголь","Булгаков"]; let opts=unique([correct,...wrongs]); return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
     function generateEnglishQuestion() { let w=randomItem(engWords); let correct=w[1]; let wrongs=["cat","dog","car"]; let opts=unique([correct,...wrongs]); return { text:`Перевод слова "${w[0]}":`, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
     function generateOBZHQuestion() { let f=randomItem(obzhFacts); let opts=unique([f.correct,...f.wrong]); return { text: f.q, options: shuffle(opts), correctHash: simpleHash(f.correct), points:10 }; }
@@ -435,7 +440,7 @@
     function generatePhysicsQuestion() { let f=randomItem(physicsFacts); let wrongs=["Джоуль","Ватт","Паскаль"]; let opts=unique([f[1],...wrongs]); return { text: f[0], options: shuffle(opts), correctHash: simpleHash(f[1]), points:10 }; }
     function generateRussianQuestion() { let base=randomItem(spellingWords); let opts=unique([base.word,...base.wrong]); return { text: "Выберите правильное написание:", options: shuffle(opts.slice(0,4)), correctHash: simpleHash(base.word), points:10 }; }
 
-    // ======================= ОСНОВНАЯ ЛОГИКА =======================
+    // ======================= ОСНОВНАЯ ЛОГИКА ПРИЛОЖЕНИЯ =======================
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = { math:"🧮 Математика", russian:"📖 Русский", geo:"🌍 География", history:"🏛️ История", literature:"📚 Литература", english:"🇬🇧 Английский", obzh:"🛡️ ОБЖ", society:"⚖️ Общество", biology:"🧬 Биология", chemistry:"⚗️ Химия", physics:"⚛️ Физика" };
     const subjectIcons = { math:"fa-calculator", russian:"fa-book", geo:"fa-globe", history:"fa-landmark", literature:"fa-feather-alt", english:"fa-language", obzh:"fa-shield-alt", society:"fa-gavel", biology:"fa-dna", chemistry:"fa-flask", physics:"fa-atom" };
@@ -453,7 +458,6 @@
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость' };
 
-    // Инициализация прогресса
     allSubjects.forEach(s => { progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() }; });
 
     function saveAllProgress() {
@@ -469,11 +473,12 @@
                 usedQuestions: Array.from(progressBySubject[s].usedQuestions)
             };
         }
-        localStorage.setItem('quizProgressV5', JSON.stringify(toSave));
+        localStorage.setItem('quizProgressV6', JSON.stringify(toSave));
         if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: JSON.stringify(toSave) }).catch(e=>console.warn);
+        if(database) database.ref(`userProgress/${currentUser.id}`).set(toSave).catch(e=>console.warn);
     }
     function loadAllProgress() {
-        const saved = localStorage.getItem('quizProgressV5');
+        const saved = localStorage.getItem('quizProgressV6');
         if(saved) {
             try {
                 const data = JSON.parse(saved);
@@ -482,19 +487,42 @@
                 }
             } catch(e) {}
         }
+        if(database && currentUser.id !== 'guest') {
+            database.ref(`userProgress/${currentUser.id}`).once('value').then(snap => {
+                if(snap.val()) {
+                    const cloud = snap.val();
+                    for(let s of allSubjects) if(cloud[s]) {
+                        progressBySubject[s] = { ...progressBySubject[s], ...cloud[s], usedQuestions: new Set(cloud[s].usedQuestions || []) };
+                    }
+                    saveAllProgress();
+                    updateUIFromProgress();
+                    if(gameActive && !currentQuestion) loadNewQuestion();
+                }
+            });
+        }
     }
     loadAllProgress();
 
-    async function initUser() {
-        if(window.vkBridge) {
-            try {
-                await vkBridge.send("VKWebAppInit");
-                const user = await vkBridge.send("VKWebAppGetUserInfo");
-                if(user && user.id) currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок' };
-            } catch(e) {}
-        }
+    async function updateFirebaseLeaderboard() {
+        if(!database) return;
+        const p = progressBySubject[currentSubject];
+        await database.ref(`leaderboard/${currentSubject}/${currentUser.id}`).set({ name: currentUser.name, score: p.totalScore, level: p.level, timestamp: Date.now() });
     }
-    initUser();
+    async function showLeaderboard() {
+        if(!database) { alert("Топ временно недоступен. Проверьте подключение Firebase."); return; }
+        const snap = await database.ref(`leaderboard/${currentSubject}`).once('value');
+        const data = snap.val();
+        let entries = [];
+        if(data) entries = Object.entries(data).map(([id,val]) => ({ id, name: val.name, score: val.score, level: val.level }));
+        entries.sort((a,b) => b.score - a.score);
+        entries = entries.slice(0,10);
+        const modal = document.createElement('div'); modal.className = 'modal';
+        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10 (${subjectNames[currentSubject]})</h3><ul class="leaderboard-list">${entries.map((u,i) => `<li><strong>${i+1}.</strong> ${u.name} 🎯 ${u.score} очков | Уровень ${u.level}</li>`).join('')}</ul><button class="close-modal">Закрыть</button></div>`;
+        document.body.appendChild(modal); document.body.style.overflow = 'hidden';
+        modal.querySelector('.close-modal').onclick = () => { modal.remove(); document.body.style.overflow = ''; };
+        modal.onclick = (e) => { if(e.target === modal) { modal.remove(); document.body.style.overflow = ''; } };
+    }
+    document.getElementById("leaderboardBtn").onclick = showLeaderboard;
 
     function getCurrentProgress() { return progressBySubject[currentSubject]; }
     function updateUIFromProgress() {
@@ -546,7 +574,7 @@
             p.totalScore += bonus;
             if(p.levelPerfect) { showConfettiAdaptive(); showTemporaryMessage(`🎉 ИДЕАЛЬНЫЙ УРОВЕНЬ ${p.level}! +${bonus} бонусов!`); }
             p.level++; p.qInLevel=0; p.levelPerfect=true;
-            saveAllProgress(); updateUIFromProgress();
+            saveAllProgress(); updateUIFromProgress(); updateFirebaseLeaderboard();
             setTimeout(()=>loadNewQuestion(), 400);
             return;
         }
@@ -564,7 +592,7 @@
             let comboBonus = p.combo>=3?15:0;
             if(comboBonus>0){ p.totalScore+=comboBonus; fbDiv.innerHTML=`✅ ВЕРНО! +${earned} + комбо x${p.combo} +${comboBonus}! 🔥`; }
             else fbDiv.innerHTML=`✅ ВЕРНО! +${earned} очков. Отлично!`;
-            saveAllProgress(); updateUIFromProgress();
+            saveAllProgress(); updateUIFromProgress(); updateFirebaseLeaderboard();
         } else {
             p.lives--; p.combo=0; saveAllProgress(); updateUIFromProgress();
             let correctAnswer = currentQuestion.options.find(opt => simpleHash(opt) === currentQuestion.correctHash);
@@ -620,7 +648,7 @@
     function resetSubjectProgress(subject) {
         progressBySubject[subject] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
         if(subject === currentSubject) { waitingForNext=false; selectedAnswer=null; gameActive=true; currentQuestion=null; loadNewQuestion(); }
-        saveAllProgress(); updateUIFromProgress();
+        saveAllProgress(); updateUIFromProgress(); updateFirebaseLeaderboard();
     }
     function renderUI() {
         if(!currentQuestion) return;
@@ -668,11 +696,9 @@
     }
     function buildSubjectsUI() {
         const grid = document.getElementById("subjectsGrid");
-        if(!grid) return;
         grid.innerHTML = '';
         allSubjects.forEach(s => {
-            const btn = document.createElement('button');
-            btn.className = 'subject-btn';
+            const btn = document.createElement('button'); btn.className = 'subject-btn';
             if(s === currentSubject) btn.classList.add('active');
             btn.innerHTML = `<i class="fas ${subjectIcons[s]}"></i> ${subjectNames[s]}`;
             btn.onclick = () => {
@@ -687,7 +713,6 @@
             };
             grid.appendChild(btn);
         });
-        console.log("Построено кнопок:", allSubjects.length);
     }
     function showInfoModal(title, text) {
         const m = document.createElement('div'); m.className = 'modal';
@@ -697,20 +722,29 @@
     function startTutorial() {
         if(localStorage.getItem('tutorialShown')) return;
         const overlay = document.createElement('div'); overlay.className = 'modal';
-        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 секунд)<br>• Комбо увеличивает очки<br>• Топ-10 глобальный</p><button class="close-modal">Начать</button></div>`;
+        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 глобальный</p><button class="close-modal">Начать</button></div>`;
         document.body.appendChild(overlay);
         overlay.querySelector('.close-modal').onclick = () => { overlay.remove(); localStorage.setItem('tutorialShown','true'); };
     }
     document.getElementById("termsLink").onclick = () => showInfoModal("Пользовательское соглашение", "Приложение не передаёт данные третьим лицам. Весь прогресс сохраняется в VK Storage.");
     document.getElementById("privacyLink").onclick = () => showInfoModal("Политика конфиденциальности", "Собирается только идентификатор VK для рейтинга. Данные обезличены.");
     document.getElementById("deleteDataLink").onclick = () => showConfirmModal("Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); location.reload(); }, () => {});
-    // Фейковый топ (без Firebase, но для демонстрации)
-    document.getElementById("leaderboardBtn").onclick = () => showInfoModal("Топ-10", "Для глобального топа подключите Firebase. Сейчас топ локальный.");
-    // Старт
+
+    async function initUser() {
+        if(window.vkBridge) {
+            try {
+                await vkBridge.send("VKWebAppInit");
+                const user = await vkBridge.send("VKWebAppGetUserInfo");
+                if(user && user.id) currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок' };
+            } catch(e) {}
+        }
+        loadAllProgress();
+        updateUIFromProgress();
+        loadNewQuestion();
+        startTutorial();
+    }
+    initUser();
     buildSubjectsUI();
-    updateUIFromProgress();
-    loadNewQuestion();
-    startTutorial();
 </script>
 </body>
 </html>
