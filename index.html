@@ -225,8 +225,26 @@
             max-height: 80vh;
             overflow-y: auto;
         }
-        .leaderboard-list { list-style: none; margin: 16px 0; }
-        .leaderboard-list li { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; gap: 12px; }
+        .leaderboard-list {
+            list-style: none;
+            margin: 16px 0;
+        }
+        .leaderboard-list li {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+        }
+        .leaderboard-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #2a3a5a;
+            border: 2px solid #ffaa66;
+        }
         .close-modal {
             background: #6e2cf5;
             border: none;
@@ -360,7 +378,7 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКАЛЬНЫЙ ПЛЕЙЛИСТ (5 треков, надёжные ссылки) =======================
+    // ======================= МУЗЫКАЛЬНЫЙ ПЛЕЙЛИСТ (5 треков) =======================
     const playlist = [
         { name: "Lofi Study", url: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_dd6f3c3b2a.mp3?filename=lofi-study-112191.mp3" },
         { name: "Good Beginning", url: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3" },
@@ -421,7 +439,6 @@
         }
     };
     
-    // Кнопка mute/unmute
     const muteBtn = document.createElement('button');
     muteBtn.id = "muteBtn";
     muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
@@ -440,7 +457,6 @@
     const audioDiv = document.querySelector('.audio-controls');
     audioDiv.appendChild(muteBtn);
     
-    // Автозапуск музыки после любого клика по странице (на ПК и телефоне)
     const startAudio = () => {
         if (musicEnabled && bgMusic.paused) playMusic();
     };
@@ -448,7 +464,6 @@
     document.body.addEventListener('touchstart', startAudio);
     
     loadTrack(0);
-    
     const volSlider = document.getElementById("globalVolume");
     volSlider.addEventListener("input", (e) => { bgMusic.volume = e.target.value / 100; });
     
@@ -580,7 +595,7 @@
     let adTimerInterval = null;
     const MAX_LIVES = 5;
     const Q_PER_LEVEL = 3;
-    let currentUser = { id: 'guest', name: 'Гость' };
+    let currentUser = { id: 'guest', name: 'Гость', photo: '' };
     
     for (let s of allSubjects) {
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
@@ -592,7 +607,11 @@
                 await vkBridge.send("VKWebAppInit");
                 const user = await vkBridge.send("VKWebAppGetUserInfo");
                 if (user && user.id) {
-                    currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок' };
+                    currentUser = { 
+                        id: user.id.toString(), 
+                        name: user.first_name || 'Игрок',
+                        photo: user.photo_100 || ''
+                    };
                 }
                 const storageRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress"] });
                 if (storageRes && storageRes.keys && storageRes.keys[0] && storageRes.keys[0].value) {
@@ -654,21 +673,21 @@
     function updateLeaderboardStorage() {
         let leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
         const totalScore = progressBySubject[currentSubject].totalScore;
-        const existing = leaderboard.find(entry => entry.id === currentUser.id);
-        if (existing) {
-            if (totalScore > existing.score) {
-                existing.score = totalScore;
-                existing.name = currentUser.name;
-                existing.level = progressBySubject[currentSubject].level;
+        const existingIndex = leaderboard.findIndex(entry => entry.id === currentUser.id);
+        const entry = {
+            id: currentUser.id,
+            name: currentUser.name,
+            photo: currentUser.photo,
+            score: totalScore,
+            level: progressBySubject[currentSubject].level,
+            timestamp: Date.now()
+        };
+        if (existingIndex !== -1) {
+            if (totalScore > leaderboard[existingIndex].score) {
+                leaderboard[existingIndex] = entry;
             }
         } else {
-            leaderboard.push({
-                id: currentUser.id,
-                name: currentUser.name,
-                score: totalScore,
-                level: progressBySubject[currentSubject].level,
-                timestamp: Date.now()
-            });
+            leaderboard.push(entry);
         }
         leaderboard.sort((a,b) => b.score - a.score);
         leaderboard = leaderboard.slice(0, 10);
@@ -681,9 +700,19 @@
     function showLeaderboard() {
         const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
         const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10 (${subjectNames[currentSubject]})</h3><ul class="leaderboard-list">${leaderboard.map((u,i) => `<li><strong>${i+1}.</strong> ${u.name} 🎯 ${u.score} очков | Уровень ${u.level}</li>`).join('')}</ul><button class="close-modal">Закрыть</button></div>`;
+        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10 (${subjectNames[currentSubject]})</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
         document.body.appendChild(modal);
+        const listDiv = modal.querySelector('#leaderList');
+        if (leaderboard.length === 0) {
+            listDiv.innerHTML = '<li>Пока нет рекордов. Стань первым!</li>';
+        } else {
+            listDiv.innerHTML = leaderboard.map((u, idx) => {
+                const avatarHtml = u.photo ? `<img class="leaderboard-avatar" src="${u.photo}" alt="avatar">` : `<div class="leaderboard-avatar" style="background:#6e2cf5; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-user"></i></div>`;
+                return `<li>${avatarHtml}<div><strong>${idx+1}. ${u.name}</strong><br>🎯 ${u.score} очков | Уровень ${u.level}</div></li>`;
+            }).join('');
+        }
         modal.querySelector('.close-modal').onclick = () => modal.remove();
+        modal.onclick = (e) => { if(e.target === modal) modal.remove(); };
     }
     document.getElementById("leaderboardBtn").onclick = showLeaderboard;
     
@@ -827,7 +856,6 @@
     }
     
     function resetSubjectProgress(subject) {
-        // Полный сброс прогресса для данного предмета
         progressBySubject[subject] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
         if(subject === currentSubject) {
             waitingForNext = false;
@@ -845,7 +873,6 @@
     function renderUI() {
         if(!currentQuestion) return;
         const p = getCurrentProgress();
-        // Красивые иконки жизней
         let livesHtml = '';
         for (let i = 0; i < MAX_LIVES; i++) {
             if (i < p.lives) {
@@ -929,13 +956,13 @@
     function startTutorial() {
         if(localStorage.getItem('tutorialShown')) return;
         const overlay = document.createElement('div'); overlay.className = 'modal';
-        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 сохраняется в облаке VK<br>• Музыку можно переключать по значку 🎵</p><button class="close-modal">Начать</button></div>`;
+        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 сохраняется в облаке VK с аватарками<br>• Музыку можно переключать по значку 🎵</p><button class="close-modal">Начать</button></div>`;
         document.body.appendChild(overlay);
         overlay.querySelector('.close-modal').onclick = () => { overlay.remove(); localStorage.setItem('tutorialShown','true'); };
     }
     
     const userAgreement = `<strong>Пользовательское соглашение</strong><br><br>1. Настоящее соглашение регулирует отношения между разработчиком и пользователем мини-приложения "Битва знаний".<br>2. Использование приложения означает полное согласие с условиями.<br>3. Разработчик не несёт ответственности за возможные убытки.<br>4. Пользователь обязуется не нарушать работу приложения.<br>5. Контактная информация: vova_polyakov_94@mail.ru`;
-    const privacyPolicy = `<strong>Политика конфиденциальности</strong><br><br>1. Приложение собирает только идентификатор VK и имя пользователя для отображения в таблице лидеров и сохранения прогресса.<br>2. Данные хранятся в защищённом облаке VK Storage.<br>3. Пользователь может удалить все свои данные кнопкой "Удалить данные".<br>4. Данные не передаются третьим лицам.<br>5. По всем вопросам: vova_polyakov_94@mail.ru`;
+    const privacyPolicy = `<strong>Политика конфиденциальности</strong><br><br>1. Приложение собирает только идентификатор VK, имя и аватар пользователя для отображения в таблице лидеров и сохранения прогресса.<br>2. Данные хранятся в защищённом облаке VK Storage.<br>3. Пользователь может удалить все свои данные кнопкой "Удалить данные".<br>4. Данные не передаются третьим лицам.<br>5. По всем вопросам: vova_polyakov_94@mail.ru`;
     
     document.getElementById("termsLink").onclick = () => showInfoModal("Пользовательское соглашение", userAgreement);
     document.getElementById("privacyLink").onclick = () => showInfoModal("Политика конфиденциальности", privacyPolicy);
