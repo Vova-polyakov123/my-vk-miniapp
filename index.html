@@ -18,14 +18,11 @@
             color: #fff;
         }
 
-        /* Основной контейнер */
         .app {
             max-width: 500px;
             margin: 0 auto;
             background: #0f131c;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
             padding-bottom: 70px;
             position: relative;
         }
@@ -51,11 +48,12 @@
             font-size: 0.7rem;
             color: #8e9aaf;
         }
+
+        /* Блок уровня */
         .level-info {
-            text-align: center;
             background: #1e2532;
+            margin: 16px;
             padding: 12px 16px;
-            margin: 0 16px 16px;
             border-radius: 16px;
         }
         .level-number {
@@ -74,37 +72,39 @@
             background: #ffc107;
             width: 0%;
             height: 100%;
-            border-radius: 20px;
         }
         .next-level {
             font-size: 0.7rem;
             color: #8e9aaf;
         }
 
-        /* Список предметов (горизонтальный скролл) */
+        /* Горизонтальный список предметов */
         .subjects-row {
             overflow-x: auto;
             white-space: nowrap;
-            padding: 16px;
-            scrollbar-width: thin;
+            padding: 8px 16px;
             display: flex;
             gap: 12px;
+            scrollbar-width: thin;
         }
         .subject-card {
             background: #1a212d;
             border-radius: 20px;
-            padding: 12px 20px;
+            padding: 10px 16px;
             display: inline-flex;
-            flex-direction: column;
             align-items: center;
-            min-width: 100px;
+            gap: 8px;
             cursor: pointer;
-            transition: 0.2s;
             border: 1px solid #2f3748;
+            transition: 0.1s;
         }
         .subject-card.active {
             border-color: #ffc107;
             background: #2a3548;
+        }
+        .subject-icon {
+            width: 28px;
+            height: 28px;
         }
         .subject-name {
             font-weight: 600;
@@ -113,9 +113,10 @@
         .subject-level {
             font-size: 0.7rem;
             color: #ffc107;
+            margin-left: 6px;
         }
 
-        /* Основная карточка вопроса */
+        /* Карточка вопроса */
         .quiz-card {
             background: #0f131c;
             margin: 16px;
@@ -158,8 +159,8 @@
             font-weight: 500;
             text-align: center;
             cursor: pointer;
-            transition: 0.1s;
             border: 1px solid #2f3748;
+            transition: 0.1s;
         }
         .answer-btn.selected {
             background: #ffc107;
@@ -189,10 +190,14 @@
             background: #2a3548;
             border: none;
             color: white;
-            padding: 14px;
+            padding: 12px;
             border-radius: 60px;
             font-weight: 600;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
         .btn-primary {
             background: #ffc107;
@@ -201,7 +206,98 @@
         .btn-warning {
             background: #e67e22;
         }
-        /* Нижняя навигация */
+        .btn-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Блоки достижений, топа, ежедневной награды */
+        .section {
+            background: #1a212d;
+            margin: 16px;
+            padding: 16px;
+            border-radius: 24px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .section-title {
+            font-weight: 600;
+        }
+        .view-all {
+            font-size: 0.7rem;
+            color: #ffc107;
+            cursor: pointer;
+        }
+        .daily-rewards {
+            display: flex;
+            justify-content: space-between;
+            margin: 16px 0;
+        }
+        .day-box {
+            width: 40px;
+            height: 40px;
+            background: #2a323f;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #8e9aaf;
+        }
+        .day-box.active {
+            background: #ffc107;
+            color: #0a0e17;
+        }
+        .day-box.claimed {
+            background: #2a3548;
+            color: #ffc107;
+        }
+        .claim-btn {
+            background: #ffc107;
+            color: #0a0e17;
+            width: 100%;
+            margin-top: 12px;
+        }
+        .achievement-item, .top-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #2a323f;
+        }
+        .achievement-name {
+            font-weight: 500;
+        }
+        .achievement-progress {
+            font-size: 0.7rem;
+            color: #ffc107;
+        }
+        .top-rank {
+            font-weight: 600;
+            color: #ffc107;
+            width: 30px;
+        }
+        .top-name {
+            flex: 1;
+        }
+        .top-score {
+            font-weight: 600;
+        }
+        .invite-friends {
+            background: #ffc10720;
+            text-align: center;
+            padding: 12px;
+            border-radius: 40px;
+            color: #ffc107;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+
+        /* Нижнее меню */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -220,18 +316,18 @@
             font-size: 0.7rem;
             color: #8e9aaf;
             cursor: pointer;
-            transition: 0.1s;
         }
         .nav-item.active {
             color: #ffc107;
         }
         .nav-icon {
-            font-size: 1.4rem;
+            width: 24px;
+            height: 24px;
             display: block;
-            margin-bottom: 4px;
+            margin: 0 auto 4px;
         }
 
-        /* Модальные окна (как в старом коде) */
+        /* Модальное окно */
         .modal {
             position: fixed;
             top: 0;
@@ -250,7 +346,6 @@
             width: 80%;
             border-radius: 24px;
             padding: 20px;
-            color: white;
             text-align: center;
         }
         .modal-buttons {
@@ -263,28 +358,19 @@
             padding: 8px 20px;
             border-radius: 40px;
             border: none;
-            cursor: pointer;
             font-weight: 600;
+            cursor: pointer;
         }
         .modal-btn.confirm { background: #ffc107; color: #000; }
         .modal-btn.cancel { background: #2a3548; color: #fff; }
-        .close-modal {
-            background: #ffc107;
-            margin-top: 16px;
-            width: 100%;
-            padding: 10px;
-            border-radius: 40px;
-            border: none;
-            cursor: pointer;
-        }
 
-        /* Скрытые классы */
         .hidden { display: none; }
     </style>
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 </head>
 <body>
 <div class="app" id="app">
+    <!-- Верхняя панель -->
     <div class="stats-bar">
         <div class="stat">
             <div class="stat-value" id="scoreValue">0</div>
@@ -299,17 +385,18 @@
             <div class="stat-label">Рейтинг</div>
         </div>
     </div>
+
     <div class="level-info">
         <div class="level-number" id="globalLevel">1</div>
-        <div class="progress-bar">
-            <div class="progress-fill" id="globalProgress" style="width:0%"></div>
-        </div>
+        <div class="progress-bar"><div class="progress-fill" id="globalProgress"></div></div>
         <div class="next-level" id="nextLevelHint">До след. уровня: 0 очков</div>
     </div>
 
+    <!-- Горизонтальные предметы -->
     <div class="subjects-row" id="subjectsRow"></div>
 
-    <div class="quiz-card" id="quizCard">
+    <!-- Карточка вопроса (видна всегда) -->
+    <div class="quiz-card">
         <div class="quiz-header">
             <span id="subjectLevelDisplay">Уровень 1 • Математика</span>
             <span class="combo-badge" id="comboBadge">СЕРИЯ 0</span>
@@ -318,123 +405,153 @@
         <div class="answers-grid" id="answersGrid"></div>
         <div class="feedback" id="feedbackMsg"></div>
         <div class="action-buttons">
-            <button class="btn" id="hintBtn">Подсказка</button>
-            <button class="btn btn-warning" id="bonusBtn">Бонус +25 очков</button>
+            <button class="btn" id="fiftyBtn"><img src="icons/hint.png" class="btn-icon" alt=""> 50/50</button>
+            <button class="btn btn-warning" id="bonusBtn"><img src="icons/coin.png" class="btn-icon" alt=""> Бонус +25</button>
             <button class="btn btn-primary" id="nextBtn">Далее</button>
         </div>
     </div>
 
+    <!-- Блоки, которые переключаются вкладками (показываются/скрываются) -->
+    <div id="sectionsContainer">
+        <!-- Главная (изначально видна) -->
+        <div id="mainSection">
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-title">Ежедневная награда</span>
+                    <span class="view-all" id="dailyInfo">День 3 из 7</span>
+                </div>
+                <div class="daily-rewards" id="dailyRewards"></div>
+                <button class="btn claim-btn" id="claimDailyBtn">Забрать награду</button>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-title">Достижения</span>
+                    <span class="view-all" id="achievementsViewAll">Смотреть все ></span>
+                </div>
+                <div id="achievementsList"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-title">Топ игроков</span>
+                    <span class="view-all" id="topViewAll">Смотреть все ></span>
+                </div>
+                <div id="topList"></div>
+            </div>
+
+            <div class="invite-friends" id="inviteFriendsBtn">📢 Пригласить друзей</div>
+        </div>
+
+        <!-- Достижения (полный список) -->
+        <div id="achievementsFullSection" style="display:none;">
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-title">Все достижения</span>
+                    <span class="view-all" id="backToMainFromAchievements">← Назад</span>
+                </div>
+                <div id="achievementsFullList"></div>
+            </div>
+        </div>
+
+        <!-- Рейтинг (полный топ) -->
+        <div id="ratingFullSection" style="display:none;">
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-title">Топ игроков</span>
+                    <span class="view-all" id="backToMainFromRating">← Назад</span>
+                </div>
+                <div id="topFullList"></div>
+            </div>
+        </div>
+
+        <!-- Задания (заглушка) -->
+        <div id="tasksSection" style="display:none;">
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-title">Ежедневные задания</span>
+                    <span class="view-all" id="backToMainFromTasks">← Назад</span>
+                </div>
+                <p>Ответь на 10 вопросов – 100 очков</p>
+                <p>Получи комбо x5 – 50 очков</p>
+                <p>Повысь уровень предмета – 30 очков</p>
+            </div>
+        </div>
+
+        <!-- Профиль (заглушка) -->
+        <div id="profileSection" style="display:none;">
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-title">Профиль</span>
+                    <span class="view-all" id="backToMainFromProfile">← Назад</span>
+                </div>
+                <p>Ваш ID: <span id="vkUserId"></span></p>
+                <p>Всего очков: <span id="profileScore">0</span></p>
+                <button class="btn" id="logoutBtn" style="background:#e64646;">Очистить данные</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Нижнее меню -->
     <div class="bottom-nav">
         <div class="nav-item" data-nav="main">
-            <span class="nav-icon">🏠</span>
+            <img src="icons/home.svg" class="nav-icon" alt="Главная">
             <span>Главная</span>
         </div>
         <div class="nav-item" data-nav="achievements">
-            <span class="nav-icon">🏆</span>
+            <img src="icons/achievements.svg" class="nav-icon" alt="Достижения">
             <span>Достижения</span>
         </div>
         <div class="nav-item" data-nav="rating">
-            <span class="nav-icon">📊</span>
+            <img src="icons/rating.svg" class="nav-icon" alt="Рейтинг">
             <span>Рейтинг</span>
         </div>
         <div class="nav-item" data-nav="tasks">
-            <span class="nav-icon">📋</span>
+            <img src="icons/tasks.svg" class="nav-icon" alt="Задания">
             <span>Задания</span>
         </div>
         <div class="nav-item" data-nav="profile">
-            <span class="nav-icon">👤</span>
+            <img src="icons/profile.svg" class="nav-icon" alt="Профиль">
             <span>Профиль</span>
         </div>
     </div>
 </div>
 
 <script>
-    // ========== БАЗЫ ДАННЫХ (расширенные, без повторов) ==========
-    const countryCapital = [
-        ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
-        ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
-        ["Бразилия","Бразилиа"],["Австралия","Канберра"],["Индия","Нью-Дели"],["Египет","Каир"],["Турция","Анкара"],
-        ["Швеция","Стокгольм"],["Норвегия","Осло"],["Финляндия","Хельсинки"],["Польша","Варшава"],["Украина","Киев"],
-        ["Греция","Афины"],["Нидерланды","Амстердам"],["Швейцария","Берн"],["Бельгия","Брюссель"],["Аргентина","Буэнос-Айрес"],
-        ["Португалия","Лиссабон"],["Чехия","Прага"],["Венгрия","Будапешт"],["Австрия","Вена"],["Дания","Копенгаген"],
-        ["Ирландия","Дублин"],["Новая Зеландия","Веллингтон"],["ЮАР","Претория"],["Мексика","Мехико"],["Индонезия","Джакарта"]
-    ];
+    // ---------- БАЗЫ ДАННЫХ ВОПРОСОВ (сокращённые, но достаточные) ----------
+    const countryCapital = [["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"]];
     const historyQA = [
-        { q: "В каком году Христофор Колумб открыл Америку?", a: "1492", type: "date" },
-        { q: "Когда началась Великая Отечественная война?", a: "1941", type: "date" },
-        { q: "Кто был первым императором России?", a: "Пётр I", type: "person" },
-        { q: "В каком году произошла битва при Калке?", a: "1223", type: "date" },
-        { q: "Когда распался СССР?", a: "1991", type: "date" },
-        { q: "Кто был первым президентом США?", a: "Джордж Вашингтон", type: "person" },
-        { q: "Когда началась Первая мировая война?", a: "1914", type: "date" },
-        { q: "В каком году произошло Крещение Руси?", a: "988", type: "date" },
-        { q: "Когда состоялась Куликовская битва?", a: "1380", type: "date" },
-        { q: "Кто основал Москву?", a: "Юрий Долгорукий", type: "person" }
+        { q: "В каком году Христофор Колумб открыл Америку?", a: "1492", type:"date" },
+        { q: "Когда началась Великая Отечественная война?", a: "1941", type:"date" },
+        { q: "Кто был первым императором России?", a: "Пётр I", type:"person" },
+        { q: "Кто основал Москву?", a: "Юрий Долгорукий", type:"person" }
     ];
-    const authorWorkExtended = [
-        { author: "Лев Толстой", work: "Война и мир", gender: "male" },
-        { author: "Александр Пушкин", work: "Евгений Онегин", gender: "male" },
-        { author: "Фёдор Достоевский", work: "Преступление и наказание", gender: "male" },
-        { author: "Николай Гоголь", work: "Мёртвые души", gender: "male" },
-        { author: "Михаил Булгаков", work: "Собачье сердце", gender: "male" },
-        { author: "Антон Чехов", work: "Три сестры", gender: "male" },
-        { author: "Джоан Роулинг", work: "Гарри Поттер", gender: "female" }
+    const authorWork = [
+        { author:"Лев Толстой", work:"Война и мир", gender:"male" },
+        { author:"Александр Пушкин", work:"Евгений Онегин", gender:"male" },
+        { author:"Джоан Роулинг", work:"Гарри Поттер", gender:"female" }
     ];
-    const engWords = [
-        ["собака","dog"],["кошка","cat"],["красный","red"],["идти (прош.)","went"],["яблоко","apple"],
-        ["ловить (прош.)","caught"],["учитель","teacher"],["книга","book"],["радостный","happy"],["большой","big"]
-    ];
+    const engWords = [["собака","dog"],["кошка","cat"],["красный","red"]];
     const obzhFacts = [
-        { q: "Номер пожарной службы?", correct: "101", wrong: ["102","103","112"] },
-        { q: "Номер скорой помощи?", correct: "103", wrong: ["101","102","112"] },
-        { q: "Номер полиции?", correct: "102", wrong: ["101","103","112"] },
-        { q: "Что делать при пожаре?", correct: "Вызвать 101", wrong: ["Бежать","Поливать водой","Спрятаться"] }
+        { q:"Номер пожарной службы?", correct:"101", wrong:["102","103","112"] },
+        { q:"Что означает зелёный знак с белым человечком?", correct:"Выход", wrong:["Туалет","Запасный выход"] }
     ];
-    const societyFacts = [
-        ["Высший орган власти РФ?", "Президент"], ["Что такое референдум?", "Всенародное голосование"],
-        ["Нижняя палата парламента РФ?", "Государственная дума"], ["Срок президентства в РФ?", "6 лет"],
-        ["Что такое инфляция?", "Обесценивание денег"], ["Конституция РФ принята в...", "1993"]
-    ];
-    const biologyFacts = [
-        ["Фотосинтез происходит в ...", "Хлоропластах"],
-        ["Самый большой орган человека?", "Кожа"],
-        ["Процесс деления клетки?", "Митоз"],
-        ["Единица наследственности?", "Ген"],
-        ["Сколько камер в сердце человека?", "4"],
-        ["Сколько костей у взрослого человека?", "206"]
-    ];
-    const elements = [
-        ["Au","Золото"], ["Ag","Серебро"], ["Fe","Железо"], ["Pb","Свинец"], ["Hg","Ртуть"],
-        ["O","Кислород"], ["H","Водород"], ["Na","Натрий"], ["Cl","Хлор"]
-    ];
-    const physicsFacts = [
-        ["Единица измерения силы?", "Ньютон"], ["Закон всемирного тяготения открыл?", "Ньютон"],
-        ["Скорость света в вакууме (км/с)?", "300000"], ["Частица с положительным зарядом?", "Протон"],
-        ["Что измеряет вольтметр?", "Напряжение"], ["Радуга объясняется...", "Дисперсией"]
-    ];
-    const spellingWords = [
-        { word: "прекрасный", wrong: ["прекрастный","прекрасныйь","прекрасны"] },
-        { word: "участвовать", wrong: ["учавствовать","участвововать","учавствоать"] },
-        { word: "компромисс", wrong: ["компромиc","кампромисс","компромис"] }
-    ];
+    const societyFacts = [["Высший орган власти РФ?","Президент"],["Что такое референдум?","Всенародное голосование"]];
+    const biologyFacts = [["Фотосинтез происходит в ...","Хлоропластах"],["Самый большой орган человека?","Кожа"],["Сколько камер в сердце человека?","4"],["Сколько костей у взрослого человека?","206"]];
+    const elements = [["Au","Золото"],["Ag","Серебро"],["Fe","Железо"]];
+    const physicsFacts = [["Скорость света в вакууме (км/с)?","300000"],["Единица измерения силы?","Ньютон"]];
+    const spellingWords = [{ word:"прекрасный", wrong:["прекрастный","прекрасны"] }];
 
     function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-    function shuffle(arr) { for (let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+    function shuffle(arr) { for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
     function unique(arr) { return [...new Set(arr)]; }
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
-    function declineCountry(c) {
-        const e = {"Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая","Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании"};
-        return e[c] || c+'а';
-    }
-    function declineElement(n) {
-        const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа","Свинец":"свинца","Ртуть":"ртути"};
-        return e[n] || n.toLowerCase()+'а';
-    }
+    function declineCountry(c){ const e={"Россия":"России","США":"США","Франция":"Франции"}; return e[c]||c+"а";}
+    function declineElement(n){ const e={"Золото":"золота","Серебро":"серебра","Железо":"железа"}; return e[n]||n.toLowerCase()+"а";}
 
-    // Генераторы вопросов (с перемешиванием)
-    function generateMathQuestion(level) {
-        let a = Math.floor(Math.random()*9)+2, b = Math.floor(Math.random()*9)+2;
+    function generateMathQuestion(level){
+        let a=Math.floor(Math.random()*9)+2,b=Math.floor(Math.random()*9)+2;
         let ops=['+','-','×']; if(level>=3) ops.push('÷');
         let op=randomItem(ops), correct, text, opts;
         if(op==='+'){ correct=a+b; text=`${a} + ${b} = ?`; opts=[correct,correct+1,correct-1,correct+2].filter(v=>v>0);}
@@ -447,92 +564,92 @@
     }
     function generateHistoryQuestion(){ let ev=randomItem(historyQA); let wrongs=historyQA.filter(e=>e.type===ev.type && e.a!==ev.a).map(e=>e.a).slice(0,3); if(wrongs.length<3) wrongs.push(ev.type==='person'?"Иван Грозный":"1500"); let opts=unique([ev.a,...wrongs]).slice(0,4); while(opts.length<4) opts.push(ev.type==='person'?"Александр Невский":"1600"); return { text: ev.q, options: shuffle([...opts]), correctHash: simpleHash(ev.a), points:10 }; }
     function generateGeoQuestion(){ let p=randomItem(countryCapital); let text=`Столица ${declineCountry(p[0])}?`; let correct=p[1]; let wrongs=countryCapital.filter(c=>c[0]!==p[0]).map(c=>c[1]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("Лондон"); return { text, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
-    function generateLiteratureQuestion(){ let item=randomItem(authorWorkExtended); let verb=item.gender==="male"?"написал":"написала"; let text=`${item.author} ${verb} произведение ...`; let correct=item.work; let wrongs=authorWorkExtended.filter(w=>w.work!==correct).map(w=>w.work).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("Война и мир"); return { text, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
+    function generateLiteratureQuestion(){ let item=randomItem(authorWork); let verb=item.gender==="male"?"написал":"написала"; let text=`${item.author} ${verb} произведение ...`; let correct=item.work; let wrongs=authorWork.filter(w=>w.work!==correct).map(w=>w.work).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("Война и мир"); return { text, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
     function generateEnglishQuestion(){ let w=randomItem(engWords); let correct=w[1]; let wrongs=engWords.filter(e=>e[1]!==correct).map(e=>e[1]).slice(0,3); if(wrongs.length<3) wrongs.push("unknown"); let opts=unique([correct,...wrongs]).slice(0,4); return { text:`Перевод слова "${w[0]}":`, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
     function generateOBZHQuestion(){ let f=randomItem(obzhFacts); let opts=unique([f.correct,...f.wrong]); while(opts.length<4) opts.push("Неизвестно"); return { text: f.q, options: shuffle([...opts]), correctHash: simpleHash(f.correct), points:10 }; }
     function generateSocietyQuestion(){ let f=randomItem(societyFacts); let wrongs=societyFacts.filter(s=>s[1]!==f[1]).map(s=>s[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Неизвестно"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(f[1]), points:10 }; }
-    function generateBiologyQuestion(){ let f=randomItem(biologyFacts); let correct=f[1]; let wrongs=biologyFacts.filter(b=>b[1]!==correct).map(b=>b[1]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("Неизвестно"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
+    function generateBiologyQuestion(){ let f=randomItem(biologyFacts); let correct=f[1]; let wrongs=biologyFacts.filter(b=>b[1]!==correct).map(b=>b[1]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("Клетка"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
     function generateChemistryQuestion(){ let e=randomItem(elements); let text=`Химический символ ${declineElement(e[1])}?`; let correct=e[0]; let wrongs=elements.filter(el=>el[0]!==correct).map(el=>el[0]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("??"); return { text, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
     function generatePhysicsQuestion(){ let f=randomItem(physicsFacts); let wrongs=physicsFacts.filter(p=>p[1]!==f[1]).map(p=>p[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Энергия"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(f[1]), points:10 }; }
-    function generateRussianQuestion(){ let base=randomItem(spellingWords); let opts=[base.word,...base.wrong]; opts=unique(opts); if(opts.length<4) opts.push(base.word.slice(0,-2)+"а"); return { text: `Выберите правильное написание слова:`, options: shuffle(opts.slice(0,4)), correctHash: simpleHash(base.word), points:10 }; }
+    function generateRussianQuestion(){ let base=randomItem(spellingWords); let opts=[base.word,...base.wrong.slice(0,3)]; while(opts.length<4) opts.push(base.word.slice(0,-2)+"а"); return { text: `Выберите правильное написание слова:`, options: shuffle(opts), correctHash: simpleHash(base.word), points:10 }; }
 
-    // ========== ИГРОВАЯ ЛОГИКА ==========
+    // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
+    let globalScore = 0, globalLevel = 1, combo = 0;
+    let currentSubject = "math";
+    let currentQuestion = null, selectedAnswer = null, waitingForNext = false, gameActive = true;
+    let adLastShown = 0, isAdWatching = false, adTimerInterval = null;
+    let subjectLevels = {}, usedQuestions = {};
+    let achievements = { totalCorrect: 0, maxCombo: 0, perfectLevels: 0 };
+    let dailyClaimed = null; // день, который уже забрали (храним метку)
+    let dailyDay = 1; // текущий день от 1 до 7
+    let lastDailyClaimDate = null; // строка даты
+
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = {
         math:"Математика", russian:"Русский язык", geo:"География", history:"История",
         literature:"Литература", english:"Английский", obzh:"ОБЖ", society:"Обществознание",
         biology:"Биология", chemistry:"Химия", physics:"Физика"
     };
-    // Прогресс: для каждого предмета уровень, очки внутри предмета? Но у нас глобальные очки? По дизайну: есть глобальный уровень и очки, а у предметов свои уровни. Сделаем так: глобальные очки = сумма очков за все ответы, глобальный уровень вычисляется из очков (например, 100 очков = 1 уровень). У предметов свой уровень (прогресс по предмету). 
-    let globalScore = 0;
-    let globalLevel = 1;
-    let combo = 0;
-    let currentSubject = "math";
-    let currentQuestion = null;
-    let selectedAnswer = null;
-    let waitingForNext = false;
-    let gameActive = true;
-    let adLastShown = 0;
-    let isAdWatching = false;
-    let adTimerInterval = null;
-    const MAX_LIVES = 5; // жизни не используем в этом дизайне? На картинке нет жизней, но для полноты оставим, но скроем интерфейс.
-    let subjectLevels = {}; // уровень каждого предмета
-    let usedQuestions = {};  // использованные вопросы по каждому предмету
+    const subjectIcons = {
+        math:"math.svg", russian:"literature.svg", geo:"geography.svg", history:"history.svg",
+        literature:"literature.svg", english:"english.svg", obzh:"obzh.svg", society:"society.svg",
+        biology:"biology.svg", chemistry:"chemistry.svg", physics:"physics.svg"
+    };
+    // Инициализация
+    for(let s of allSubjects) { subjectLevels[s] = 1; usedQuestions[s] = new Set(); }
 
-    // Загрузка/сохранение прогресса в localStorage и VK Storage (как раньше)
-    function saveAllProgress() {
-        const data = {
-            globalScore, globalLevel, combo, subjectLevels,
-            usedQuestions: Object.fromEntries(Object.entries(usedQuestions).map(([k,v])=>[k, Array.from(v)]))
-        };
-        localStorage.setItem('quizNewProgress', JSON.stringify(data));
+    // ---------- СОХРАНЕНИЕ / ЗАГРУЗКА ----------
+    async function saveToVKStorage(key, value) {
         if(window.vkBridge) {
-            vkBridge.send("VKWebAppStorageSet", { key: "quizNewProgress", value: JSON.stringify(data) }).catch(e=>console.warn);
+            try { await vkBridge.send("VKWebAppStorageSet", { key, value: JSON.stringify(value) }); } catch(e) {}
         }
     }
+    async function loadFromVKStorage(key) {
+        if(window.vkBridge) {
+            try {
+                const res = await vkBridge.send("VKWebAppStorageGet", { keys: [key] });
+                if(res.keys[0]) return JSON.parse(res.keys[0].value);
+            } catch(e) {}
+        }
+        return null;
+    }
+    function saveAllProgress() {
+        const data = { globalScore, globalLevel, combo, subjectLevels, achievements, dailyDay, lastDailyClaimDate };
+        localStorage.setItem('quizNewProgress', JSON.stringify(data));
+        saveToVKStorage('quizNewProgress', data);
+    }
     async function loadAllProgress() {
-        try {
-            let saved = localStorage.getItem('quizNewProgress');
-            if(!saved && window.vkBridge) {
-                const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizNewProgress"] });
-                if(res.keys[0]) saved = res.keys[0].value;
-            }
-            if(saved) {
-                const data = JSON.parse(saved);
-                globalScore = data.globalScore || 0;
-                globalLevel = data.globalLevel || 1;
-                combo = data.combo || 0;
-                subjectLevels = data.subjectLevels || {};
-                usedQuestions = {};
-                if(data.usedQuestions) {
-                    for(let s of allSubjects) {
-                        if(data.usedQuestions[s]) usedQuestions[s] = new Set(data.usedQuestions[s]);
-                        else usedQuestions[s] = new Set();
-                    }
-                } else {
-                    for(let s of allSubjects) usedQuestions[s] = new Set();
-                }
-                for(let s of allSubjects) if(!subjectLevels[s]) subjectLevels[s] = 1;
-                return true;
-            }
-        } catch(e) {}
-        // инициализация
-        globalScore = 0;
-        globalLevel = 1;
-        combo = 0;
-        subjectLevels = {};
-        for(let s of allSubjects) subjectLevels[s] = 1;
-        usedQuestions = {};
-        for(let s of allSubjects) usedQuestions[s] = new Set();
-        saveAllProgress();
-        return false;
+        let data = null;
+        try { data = JSON.parse(localStorage.getItem('quizNewProgress')); } catch(e) {}
+        if(!data && window.vkBridge) data = await loadFromVKStorage('quizNewProgress');
+        if(data) {
+            globalScore = data.globalScore || 0;
+            globalLevel = data.globalLevel || 1;
+            combo = data.combo || 0;
+            subjectLevels = data.subjectLevels || {};
+            achievements = data.achievements || { totalCorrect:0, maxCombo:0, perfectLevels:0 };
+            dailyDay = data.dailyDay || 1;
+            lastDailyClaimDate = data.lastDailyClaimDate || null;
+            for(let s of allSubjects) if(!subjectLevels[s]) subjectLevels[s] = 1;
+            // проверяем дату для сброса ежедневной награды
+            const today = new Date().toDateString();
+            if(lastDailyClaimDate !== today) dailyDay = 1; // новый день – сброс прогресса наград
+            else if(dailyDay > 7) dailyDay = 1;
+        } else {
+            for(let s of allSubjects) subjectLevels[s] = 1;
+            achievements = { totalCorrect:0, maxCombo:0, perfectLevels:0 };
+            dailyDay = 1;
+            lastDailyClaimDate = null;
+        }
+        updateUIStats();
+        renderSubjects();
+        renderDailyRewards();
+        renderAchievements();
+        renderTop();
+        if(currentQuestion) renderUI();
     }
 
-    function updateGlobalLevel() {
-        let newLevel = Math.floor(globalScore / 100) + 1;
-        if(newLevel > globalLevel) globalLevel = newLevel;
-        updateUIStats();
-    }
+    // ---------- UI ОБНОВЛЕНИЯ ----------
     function updateUIStats() {
         document.getElementById("scoreValue").innerText = globalScore;
         document.getElementById("comboValue").innerText = combo;
@@ -540,46 +657,101 @@
         document.getElementById("ratingValue").innerText = rating;
         document.getElementById("globalLevel").innerText = globalLevel;
         let nextThreshold = globalLevel * 100;
-        let progress = (globalScore % 100) / 100 * 100;
+        let progress = ((globalScore % 100) / 100) * 100;
         document.getElementById("globalProgress").style.width = progress + "%";
         let needed = nextThreshold - globalScore;
         document.getElementById("nextLevelHint").innerHTML = `До след. уровня: ${needed} очков`;
         document.getElementById("comboBadge").innerHTML = `СЕРИЯ ${combo}`;
+        document.getElementById("profileScore").innerText = globalScore;
+        if(window.vkUserId) document.getElementById("vkUserId").innerText = window.vkUserId;
     }
-
-    function updateSubjectLevelsUI() {
+    function renderSubjects() {
         const row = document.getElementById("subjectsRow");
         row.innerHTML = "";
         for(let s of allSubjects) {
             const card = document.createElement("div");
             card.className = "subject-card";
             if(s === currentSubject) card.classList.add("active");
-            card.innerHTML = `<div class="subject-name">${subjectNames[s]}</div><div class="subject-level">Ур. ${subjectLevels[s]}</div>`;
-            card.addEventListener("click", () => {
+            card.innerHTML = `
+                <img src="icons/${subjectIcons[s] || 'math.svg'}" class="subject-icon" alt="">
+                <span class="subject-name">${subjectNames[s]}</span>
+                <span class="subject-level">Ур. ${subjectLevels[s]}</span>
+            `;
+            card.onclick = () => {
                 if(s === currentSubject) return;
                 saveAllProgress();
                 currentSubject = s;
                 waitingForNext = false;
                 selectedAnswer = null;
                 loadNewQuestion();
-                renderSubjectsUI();
-            });
+                renderSubjects();
+            };
             row.appendChild(card);
         }
     }
-    function renderSubjectsUI() {
-        document.querySelectorAll(".subject-card").forEach((card, idx) => {
-            const s = allSubjects[idx];
-            if(s === currentSubject) card.classList.add("active");
-            else card.classList.remove("active");
-            card.querySelector(".subject-level").innerText = `Ур. ${subjectLevels[s]}`;
+    function renderDailyRewards() {
+        const container = document.getElementById("dailyRewards");
+        container.innerHTML = "";
+        for(let i=1;i<=7;i++) {
+            const dayDiv = document.createElement("div");
+            dayDiv.className = "day-box";
+            if(i === dailyDay && (!lastDailyClaimDate || new Date().toDateString() !== lastDailyClaimDate)) dayDiv.classList.add("active");
+            else if(lastDailyClaimDate && i <= dailyDay) dayDiv.classList.add("claimed");
+            dayDiv.innerText = i;
+            container.appendChild(dayDiv);
+        }
+        document.getElementById("dailyInfo").innerHTML = `День ${dailyDay} из 7`;
+    }
+    function renderAchievements() {
+        const list = document.getElementById("achievementsList");
+        const fullList = document.getElementById("achievementsFullList");
+        const achData = [
+            { name:"Учёный", desc:"Ответ на 100 вопросов", current: achievements.totalCorrect, target:100 },
+            { name:"Неудержимый", desc:"10 ответов подряд", current: achievements.maxCombo, target:10 },
+            { name:"Гений", desc:"Пройти уровень без ошибок", current: achievements.perfectLevels, target:10 }
+        ];
+        list.innerHTML = "";
+        fullList.innerHTML = "";
+        achData.forEach(a => {
+            const item = document.createElement("div");
+            item.className = "achievement-item";
+            item.innerHTML = `<div><div class="achievement-name">${a.name}</div><div style="font-size:0.7rem;">${a.desc}</div></div><div class="achievement-progress">${a.current}/${a.target}</div>`;
+            list.appendChild(item.cloneNode(true));
+            fullList.appendChild(item.cloneNode(true));
         });
     }
+    function renderTop() {
+        // Топ храним в localStorage общий для всех пользователей (имитация)
+        let topPlayers = JSON.parse(localStorage.getItem('topPlayers')) || [
+            { name:"Иван", score:25800 }, { name:"Анна", score:24000 }, { name:"Максим", score:22000 },
+            { name:"Елизавета", score:19800 }, { name:"Алексей", score:17500 }
+        ];
+        // Обновляем топ текущим пользователем, если его очки выше пятого места
+        let currentName = "Вы";
+        if(window.vkBridge && window.vkUserId) currentName = `User${window.vkUserId.slice(-4)}`;
+        let userEntry = { name: currentName, score: globalScore };
+        topPlayers.push(userEntry);
+        topPlayers.sort((a,b)=>b.score - a.score);
+        topPlayers = topPlayers.slice(0,5);
+        localStorage.setItem('topPlayers', JSON.stringify(topPlayers));
 
+        const renderList = (container) => {
+            container.innerHTML = "";
+            topPlayers.forEach((p,idx) => {
+                const item = document.createElement("div");
+                item.className = "top-item";
+                item.innerHTML = `<div class="top-rank">${idx+1}</div><div class="top-name">${p.name}</div><div class="top-score">${p.score}</div>`;
+                container.appendChild(item);
+            });
+        };
+        renderList(document.getElementById("topList"));
+        renderList(document.getElementById("topFullList"));
+    }
+    // ---------- ИГРОВАЯ МЕХАНИКА ----------
     function getUniqueQuestion(subject, lvl) {
         if(!usedQuestions[subject]) usedQuestions[subject] = new Set();
         let attempts=0, q;
-        while(attempts<100) {
+        while(attempts<50) {
             if(subject==='math') q=generateMathQuestion(lvl);
             else if(subject==='russian') q=generateRussianQuestion();
             else if(subject==='geo') q=generateGeoQuestion();
@@ -600,70 +772,15 @@
         }
         return null;
     }
-
     function loadNewQuestion() {
         if(!gameActive) return;
         let q = getUniqueQuestion(currentSubject, subjectLevels[currentSubject]);
-        if(!q) {
-            // вопросы кончились – повысим уровень? Или просто завершим?
-            finishGame(true);
-            return;
-        }
+        if(!q) { /* вопросы кончились – можно повысить уровень или завершить */ return; }
         currentQuestion = q;
         selectedAnswer = null;
         waitingForNext = false;
         renderUI();
     }
-
-    function advance(isCorrect) {
-        if(isCorrect) {
-            let earned = currentQuestion.points;
-            globalScore += earned;
-            combo++;
-            if(combo>=3) {
-                let bonus = 15;
-                globalScore += bonus;
-                showTemporaryMessage(`+${bonus} бонус за серию!`);
-            }
-            updateGlobalLevel();
-            updateUIStats();
-            // повышаем уровень предмета каждые 3 правильных ответа подряд? По дизайну предметы имеют уровни, но логику можно сделать: за каждый правильный ответ увеличиваем счетчик, и через N правильных повышаем уровень предмета.
-            // Для простоты: каждый правильный ответ дает прогресс предмета, и при достижении 3 правильных подряд повышаем уровень предмета.
-            // Реализуем: хранить предметный прогресс отдельно.
-            if(!window.itemProgress) window.itemProgress = {};
-            if(!window.itemProgress[currentSubject]) window.itemProgress[currentSubject] = 0;
-            window.itemProgress[currentSubject]++;
-            if(window.itemProgress[currentSubject] >= 3) {
-                subjectLevels[currentSubject]++;
-                window.itemProgress[currentSubject] = 0;
-                showTemporaryMessage(`Уровень ${subjectNames[currentSubject]} повышен до ${subjectLevels[currentSubject]}!`);
-                renderSubjectsUI();
-            }
-            saveAllProgress();
-        } else {
-            combo = 0;
-            updateUIStats();
-            // при ошибке сбрасываем прогресс предмета
-            if(window.itemProgress) window.itemProgress[currentSubject] = 0;
-            showTemporaryMessage(`❌ Ошибка! Правильно: ${currentQuestion.options.find(opt => simpleHash(opt) === currentQuestion.correctHash)}`, 2000);
-            saveAllProgress();
-        }
-        waitingForNext = false;
-        loadNewQuestion();
-    }
-
-    function handleAnswerSubmit(selected) {
-        if(waitingForNext || !gameActive || !selected) return;
-        const isCorrect = (simpleHash(selected) === currentQuestion.correctHash);
-        if(isCorrect) {
-            advance(true);
-        } else {
-            advance(false);
-        }
-        waitingForNext = true;
-        // сбросить выделение кнопок
-    }
-
     function renderUI() {
         if(!currentQuestion) return;
         document.getElementById("subjectLevelDisplay").innerHTML = `Уровень ${subjectLevels[currentSubject]} • ${subjectNames[currentSubject]}`;
@@ -683,91 +800,186 @@
             };
             grid.appendChild(btn);
         });
-        // обработка кнопки "Далее"
-        const nextBtn = document.getElementById("nextBtn");
-        nextBtn.onclick = () => {
+        document.getElementById("nextBtn").onclick = () => {
             if(selectedAnswer && !waitingForNext) handleAnswerSubmit(selectedAnswer);
             else if(!selectedAnswer) showTemporaryMessage("Выберите вариант ответа");
         };
-        // подсказка (заглушка)
-        document.getElementById("hintBtn").onclick = () => showTemporaryMessage("Подсказка: внимательно подумайте");
-        // бонус +25 очков (можно с рекламой или просто)
-        document.getElementById("bonusBtn").onclick = async () => {
-            if(waitingForNext) return;
-            // можно добавить рекламу за бонус
-            if(window.vkBridge && Date.now() - adLastShown > 30000) {
-                adLastShown = Date.now();
-                try {
-                    const result = await vkBridge.send("VKWebAppShowNativeAds", { ad_format: "reward" });
-                    if(result && result.result === true) {
-                        globalScore += 25;
-                        updateGlobalLevel();
-                        updateUIStats();
-                        saveAllProgress();
-                        showTemporaryMessage("Бонус +25 очков получен!");
-                    } else showTemporaryMessage("Реклама не досмотрена");
-                } catch(e) { showTemporaryMessage("Ошибка рекламы"); }
-            } else {
-                showTemporaryMessage("Бонус доступен раз в 30 секунд");
-            }
-        };
     }
-
-    function showTemporaryMessage(msg, duration=2000) {
+    function handleAnswerSubmit(answer) {
+        if(waitingForNext || !gameActive) return;
+        const isCorrect = (simpleHash(answer) === currentQuestion.correctHash);
+        waitingForNext = true;
+        if(isCorrect) {
+            let earned = currentQuestion.points;
+            globalScore += earned;
+            combo++;
+            achievements.totalCorrect++;
+            if(combo > achievements.maxCombo) achievements.maxCombo = combo;
+            // бонус за серию
+            if(combo >= 3) {
+                let bonus = 15;
+                globalScore += bonus;
+                showTemporaryMessage(`+${bonus} бонус за серию!`);
+            }
+            // повышение уровня предмета после 3 правильных ответов подряд? Упростим: каждые 3 правильных ответа в предмете повышаем уровень
+            if(!window.subjectProgress) window.subjectProgress = {};
+            if(!window.subjectProgress[currentSubject]) window.subjectProgress[currentSubject] = 0;
+            window.subjectProgress[currentSubject]++;
+            if(window.subjectProgress[currentSubject] >= 3) {
+                subjectLevels[currentSubject]++;
+                window.subjectProgress[currentSubject] = 0;
+                showTemporaryMessage(`Уровень ${subjectNames[currentSubject]} повышен до ${subjectLevels[currentSubject]}!`);
+                renderSubjects();
+            }
+            updateUIStats();
+            saveAllProgress();
+            loadNewQuestion();
+        } else {
+            combo = 0;
+            updateUIStats();
+            let correctAnswer = currentQuestion.options.find(opt => simpleHash(opt) === currentQuestion.correctHash);
+            showTemporaryMessage(`❌ Ошибка! Правильно: ${correctAnswer}`);
+            saveAllProgress();
+            loadNewQuestion();
+        }
+        waitingForNext = false;
+        renderAchievements();
+        renderTop();
+    }
+    function showTemporaryMessage(msg, duration=2500) {
         const fb = document.getElementById("feedbackMsg");
         fb.style.display = "block";
         fb.innerHTML = msg;
-        setTimeout(() => {
-            fb.style.display = "none";
-        }, duration);
+        setTimeout(() => fb.style.display = "none", duration);
     }
-    function finishGame(success) {
-        // не используется
+    // Бонус +25 (с рекламой)
+    async function claimBonus() {
+        if(!window.vkBridge) { globalScore += 25; updateUIStats(); saveAllProgress(); showTemporaryMessage("Бонус +25"); return; }
+        const now = Date.now();
+        if(now - adLastShown < 30000) { showTemporaryMessage("Подождите 30 секунд"); return; }
+        if(isAdWatching) return;
+        isAdWatching = true;
+        adLastShown = now;
+        try {
+            const result = await vkBridge.send("VKWebAppShowNativeAds", { ad_format: "reward" });
+            if(result && result.result === true) {
+                globalScore += 25;
+                updateUIStats();
+                saveAllProgress();
+                showTemporaryMessage("Бонус +25 очков!");
+            } else showTemporaryMessage("Реклама не досмотрена");
+        } catch(e) { console.error(e); }
+        isAdWatching = false;
     }
-
-    async function initGame() {
-        await loadAllProgress();
+    // 50/50 подсказка
+    function fiftyFifty() {
+        if(waitingForNext || !currentQuestion) return;
+        let wrongOptions = currentQuestion.options.filter(opt => simpleHash(opt) !== currentQuestion.correctHash);
+        if(wrongOptions.length < 2) return;
+        let shuffledWrong = shuffle([...wrongOptions]);
+        let toRemove = shuffledWrong.slice(0,2);
+        document.querySelectorAll(".answer-btn").forEach(btn => {
+            let val = btn.getAttribute("data-value");
+            if(toRemove.includes(val)) btn.style.display = "none";
+        });
+        showTemporaryMessage("Два неверных варианта удалены");
+    }
+    // Ежедневная награда
+    function claimDaily() {
+        const today = new Date().toDateString();
+        if(lastDailyClaimDate === today) { showTemporaryMessage("Сегодня вы уже получили награду"); return; }
+        const reward = [50, 70, 100, 150, 200, 250, 500][dailyDay-1];
+        globalScore += reward;
+        lastDailyClaimDate = today;
+        if(dailyDay < 7) dailyDay++;
+        else dailyDay = 1;
         updateUIStats();
-        updateSubjectLevelsUI();
-        loadNewQuestion();
+        saveAllProgress();
+        renderDailyRewards();
+        showTemporaryMessage(`Вы получили ${reward} очков!`);
+    }
+    // Пригласить друзей
+    function inviteFriends() {
+        if(window.vkBridge) {
+            vkBridge.send("VKWebAppShare", { link: "https://vk.com", attachment: "Играйте в Битву знаний!" });
+        } else alert("Поделитесь ссылкой на приложение");
+    }
+    // Очистка данных
+    function clearData() {
+        localStorage.clear();
+        location.reload();
     }
 
-    // Инициализация VK Bridge и согласие
+    // ---------- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ----------
+    function setActiveTab(tab) {
+        document.querySelectorAll(".nav-item").forEach(nav => nav.classList.remove("active"));
+        document.querySelector(`.nav-item[data-nav="${tab}"]`).classList.add("active");
+        const sections = {
+            main: ["mainSection", "achievementsFullSection", "ratingFullSection", "tasksSection", "profileSection"],
+            achievements: ["achievementsFullSection", "mainSection", "ratingFullSection", "tasksSection", "profileSection"],
+            rating: ["ratingFullSection", "mainSection", "achievementsFullSection", "tasksSection", "profileSection"],
+            tasks: ["tasksSection", "mainSection", "achievementsFullSection", "ratingFullSection", "profileSection"],
+            profile: ["profileSection", "mainSection", "achievementsFullSection", "ratingFullSection", "tasksSection"]
+        };
+        for(let sec of sections[tab]) {
+            document.getElementById(sec).style.display = "block";
+        }
+        for(let sec of sections[tab].slice(1)) {
+            document.getElementById(sec).style.display = "none";
+        }
+        if(tab === "achievements") renderAchievements();
+        if(tab === "rating") renderTop();
+    }
+
+    // ---------- ИНИЦИАЛИЗАЦИЯ ----------
+    async function startGame() {
+        await loadAllProgress();
+        loadNewQuestion();
+        // Подписываемся на получение ID пользователя
+        if(window.vkBridge) {
+            try {
+                const user = await vkBridge.send("VKWebAppGetUserInfo");
+                if(user && user.id) window.vkUserId = user.id;
+            } catch(e) {}
+        }
+        document.getElementById("bonusBtn").onclick = claimBonus;
+        document.getElementById("fiftyBtn").onclick = fiftyFifty;
+        document.getElementById("claimDailyBtn").onclick = claimDaily;
+        document.getElementById("inviteFriendsBtn").onclick = inviteFriends;
+        document.getElementById("logoutBtn").onclick = clearData;
+        document.getElementById("achievementsViewAll").onclick = () => setActiveTab("achievements");
+        document.getElementById("topViewAll").onclick = () => setActiveTab("rating");
+        document.getElementById("backToMainFromAchievements").onclick = () => setActiveTab("main");
+        document.getElementById("backToMainFromRating").onclick = () => setActiveTab("main");
+        document.getElementById("backToMainFromTasks").onclick = () => setActiveTab("main");
+        document.getElementById("backToMainFromProfile").onclick = () => setActiveTab("main");
+        document.querySelectorAll(".nav-item").forEach(nav => {
+            nav.onclick = () => setActiveTab(nav.getAttribute("data-nav"));
+        });
+        setActiveTab("main");
+    }
+    // Согласие с политикой
     function showConsentModal() {
-        const modal = document.createElement("div");
-        modal.className = "modal";
-        modal.innerHTML = `<div class="modal-content">
-            <h4>📋 Добро пожаловать!</h4>
-            <p>Продолжая, вы принимаете <strong><a id="termsLinkModal" style="color:#ffc107;">Пользовательское соглашение</a></strong> и <strong><a id="privacyLinkModal" style="color:#ffc107;">Политику конфиденциальности</a></strong>.</p>
-            <p style="font-size:12px;">📧 Контакты: vova_polyakov_94@mail.ru</p>
-            <button class="modal-btn confirm" id="acceptBtn">Принимаю и начинаю</button>
-        </div>`;
-        document.body.appendChild(modal);
+        const modalDiv = document.createElement("div"); modalDiv.className = "modal";
+        modalDiv.innerHTML = `<div class="modal-content"><h4>📋 Добро пожаловать!</h4><p>Продолжая, вы принимаете <strong><a id="termsLinkModal" style="color:#ffc107;">Пользовательское соглашение</a></strong> и <strong><a id="privacyLinkModal" style="color:#ffc107;">Политику конфиденциальности</a></strong>.</p><p style="font-size:12px;">📧 Контакты: vova_polyakov_94@mail.ru</p><button class="modal-btn confirm" id="acceptBtn">Принимаю и начинаю</button></div>`;
+        document.body.appendChild(modalDiv);
         document.getElementById("termsLinkModal").onclick = (e) => { e.preventDefault(); alert("Пользовательское соглашение: ..."); };
         document.getElementById("privacyLinkModal").onclick = (e) => { e.preventDefault(); alert("Политика конфиденциальности: данные хранятся в VK Storage"); };
         document.getElementById("acceptBtn").onclick = () => {
-            modal.remove();
+            modalDiv.remove();
             localStorage.setItem('consentGiven', 'true');
-            initGame();
+            startGame();
         };
     }
-
     if(window.vkBridge) {
-        vkBridge.send("VKWebAppInit").then(()=>{
+        vkBridge.send("VKWebAppInit").then(() => {
             if(!localStorage.getItem('consentGiven')) showConsentModal();
-            else initGame();
-        }).catch(()=>{ if(!localStorage.getItem('consentGiven')) showConsentModal(); else initGame(); });
+            else startGame();
+        }).catch(() => { if(!localStorage.getItem('consentGiven')) showConsentModal(); else startGame(); });
     } else {
         if(!localStorage.getItem('consentGiven')) showConsentModal();
-        else initGame();
+        else startGame();
     }
-
-    // Нижняя навигация (заглушка)
-    document.querySelectorAll(".nav-item").forEach(item => {
-        item.addEventListener("click", () => {
-            alert("Раздел в разработке");
-        });
-    });
 </script>
 </body>
 </html>
