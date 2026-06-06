@@ -370,7 +370,6 @@
         let musicEnabled = true;
         let started = false;
 
-        // Функция запуска
         function playMusic() {
             if (musicEnabled && !started) {
                 audio.play().then(() => {
@@ -379,7 +378,6 @@
             }
         }
 
-        // Запуск по первому клику/тапу на документ (телефон)
         const startOnInteraction = () => {
             if (!started) {
                 audio.play().then(() => {
@@ -392,7 +390,6 @@
         document.addEventListener('click', startOnInteraction);
         document.addEventListener('touchstart', startOnInteraction);
 
-        // Дополнительно: запуск при клике на любую кнопку (ПК)
         const forceStartOnClick = (e) => {
             if (!started && musicEnabled) {
                 audio.play().then(() => {
@@ -403,7 +400,6 @@
         document.body.addEventListener('click', forceStartOnClick);
         document.body.addEventListener('touchstart', forceStartOnClick);
 
-        // Кнопка вкл/выкл
         const musicBtn = document.getElementById('musicToggleBtn');
         if (musicBtn) {
             musicBtn.onclick = (e) => {
@@ -423,7 +419,6 @@
             };
         }
 
-        // Регулятор громкости
         const volSlider = document.getElementById('globalVolume');
         if (volSlider) {
             volSlider.addEventListener('input', (e) => {
@@ -456,7 +451,7 @@
         }, 5000);
     })();
 
-    // ======================= БАЗЫ ВОПРОСОВ (РАСШИРЕННЫЕ) =======================
+    // ======================= БАЗЫ ВОПРОСОВ (РАСШИРЕННЫЕ, ГЕОГРАФИЯ ИСПРАВЛЕНА) =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -581,8 +576,16 @@
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
 
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ СКЛОНЕНИЯ СТРАН
     function declineCountry(c) {
-        const exc = { "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая","Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании","Канада":"Канады","Бразилия":"Бразилии","Австралия":"Австралии","Индия":"Индии","Египет":"Египта","Турция":"Турции","ОАЭ":"ОАЭ","Израиль":"Израиля" };
+        const exc = {
+            "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
+            "Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании",
+            "Канада":"Канады","Бразилия":"Бразилии","Австралия":"Австралии","Индия":"Индии",
+            "Египет":"Египта","Турция":"Турции","ОАЭ":"ОАЭ","Израиль":"Израиля",
+            "Беларусь":"Беларуси","ЮАР":"ЮАР","Саудовская Аравия":"Саудовской Аравии",
+            "Нидерланды":"Нидерландов","Мексика":"Мексики","Марокко":"Марокко"
+        };
         return exc[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а'));
     }
     function declineElement(n) { const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа"}; return e[n] || n; }
