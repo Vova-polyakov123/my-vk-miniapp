@@ -5,55 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Битва знаний — VK Mini App</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-        body{background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:flex;justify-content:center;align-items:center;padding:16px}
-        body.modal-open{overflow:hidden}
-        .app-container{max-width:560px;width:100%;background:white;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.1);overflow:hidden}
-        .header{background:#2688eb;padding:20px 20px 16px;text-align:center;color:white}
-        .header h1{font-size:1.8rem;font-weight:700;margin-bottom:12px}
-        .header h1 span{background:rgba(255,255,255,0.2);font-size:0.7rem;padding:4px 8px;border-radius:20px;margin-left:8px;vertical-align:super}
-        .score-board{display:flex;justify-content:space-between;background:rgba(0,0,0,0.15);border-radius:24px;padding:8px 16px;margin-top:8px}
-        .score-item{font-weight:600;font-size:0.9rem;color:white}
-        .level-progress{margin:12px 20px 0;background:rgba(255,255,255,0.3);border-radius:12px;height:6px;overflow:hidden}
-        .progress-fill{width:0%;height:100%;background:#ffd966;transition:width 0.2s}
-        .subjects-wrapper{padding:12px 16px;background:white;border-bottom:1px solid #e0e0e0;overflow-x:auto}
-        .subjects-grid{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-        .subject-btn{background:#f0f2f5;border:1px solid #ccc;padding:8px 16px;border-radius:24px;font-weight:500;font-size:0.8rem;color:#000;cursor:pointer;white-space:nowrap;transition:all 0.1s;word-break:break-word;overflow-wrap:break-word}
-        .subject-btn.active{background:#2688eb;border-color:#2688eb;color:white}
-        .game-area{padding:20px;min-height:400px;background:white}
-        .quest-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-        .level-badge{background:#f0f2f5;padding:6px 16px;border-radius:20px;font-size:0.85rem;font-weight:600;color:#000;word-break:break-word;max-width:70%}
-        .lives{font-size:1.4rem;letter-spacing:2px;color:#e64646}
-        .question-card{background:#f9f9f9;border-radius:24px;padding:24px 20px;margin-bottom:20px}
-        .question-text{font-size:1.4rem;font-weight:600;text-align:center;color:#000;margin-bottom:28px}
-        .answers{display:flex;flex-direction:column;gap:12px}
-        .answer-btn{background:white;border:1px solid #ccc;border-radius:60px;padding:14px 18px;font-weight:500;font-size:1rem;color:#000;text-align:left;cursor:pointer;transition:0.1s}
-        .answer-btn.selected{background:#2688eb;border-color:#2688eb;color:white}
-        .feedback{text-align:center;padding:12px;background:#e9ecef;border-radius:20px;margin-top:16px;font-weight:500;border:1px solid #ccc;display:none}
-        .next-btn,.bonus-btn{width:100%;border:none;padding:14px;border-radius:40px;font-weight:600;font-size:1rem;cursor:pointer;margin-top:16px}
-        .next-btn{background:#2688eb;color:white}
-        .bonus-btn{background:#ff9800;color:white}
-        .bonus-btn:disabled{background:#bbb;cursor:not-allowed;opacity:0.6}
-        .hidden{display:none}
-        .result-area{text-align:center;background:white;border-radius:24px;padding:30px 20px}
-        .result-score{font-size:2rem;font-weight:800;color:#2688eb;margin-bottom:12px}
-        .share-btn,.reset-btn{background:#f0f2f5;border:1px solid #ccc;padding:12px 20px;border-radius:40px;font-weight:600;margin:8px;cursor:pointer}
-        .share-btn{background:#2688eb;border-color:#2688eb;color:white}
-        footer{padding:16px;text-align:center;font-size:0.75rem;color:#666;border-top:1px solid #e0e0e0;display:flex;flex-direction:column;gap:8px;background:white}
-        .footer-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
-        .footer-links a,.footer-contact{color:#2688eb;text-decoration:none;cursor:pointer}
-        .footer-contact{font-size:0.7rem;opacity:0.7}
-        .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1000}
-        .modal-content{background:white;max-width:340px;width:90%;border-radius:20px;padding:20px;color:#000;text-align:left;max-height:80vh;overflow-y:auto}
-        .modal-content h4{margin-bottom:12px;text-align:center}
-        .modal-buttons{display:flex;justify-content:space-around;margin-top:16px;gap:12px}
-        .modal-btn{padding:8px 20px;border-radius:40px;font-weight:600;border:none;cursor:pointer}
-        .modal-btn.confirm{background:#ff9800;color:white}
-        .modal-btn.cancel{background:#ccc;color:#000}
-        .modal-btn.danger{background:#e64646;color:white}
-        .close-modal{background:#2688eb;border:none;padding:8px 16px;border-radius:20px;color:white;cursor:pointer;margin-top:12px;width:100%}
-        @keyframes confetti{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
-        .confetti-piece{position:fixed;width:10px;height:20px;top:-20px;z-index:1000;pointer-events:none;animation:confetti 2s ease-out forwards;will-change:transform;background:gold}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        body.modal-open { overflow: hidden; }
+        .app-container {
+            max-width: 560px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #2688eb;
+            padding: 20px 20px 16px;
+            text-align: center;
+            color: white;
+        }
+        .header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 12px; }
+        .header h1 span { 
+            background: rgba(255,255,255,0.2); 
+            font-size: 0.7rem; 
+            padding: 4px 8px; 
+            border-radius: 20px; 
+            margin-left: 8px;
+            vertical-align: super;
+        }
+        .score-board { display: flex; justify-content: space-between; background: rgba(0,0,0,0.15); border-radius: 24px; padding: 8px 16px; margin-top: 8px; }
+        .score-item { font-weight: 600; font-size: 0.9rem; color: white; }
+        .level-progress { margin: 12px 20px 0; background: rgba(255,255,255,0.3); border-radius: 12px; height: 6px; overflow: hidden; }
+        .progress-fill { width: 0%; height: 100%; background: #ffd966; transition: width 0.2s; }
+        .subjects-wrapper { padding: 12px 16px; background: white; border-bottom: 1px solid #e0e0e0; overflow-x: auto; }
+        .subjects-grid { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .subject-btn {
+            background: #f0f2f5; border: 1px solid #ccc; padding: 8px 16px; border-radius: 24px;
+            font-weight: 500; font-size: 0.8rem; color: #000; cursor: pointer; white-space: nowrap;
+            transition: all 0.1s; word-break: break-word; overflow-wrap: break-word;
+        }
+        .subject-btn.active { background: #2688eb; border-color: #2688eb; color: white; }
+        .game-area { padding: 20px; min-height: 400px; background: white; }
+        .quest-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .level-badge { background: #f0f2f5; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: #000; word-break: break-word; max-width: 70%; }
+        .lives { font-size: 1.4rem; letter-spacing: 2px; color: #e64646; }
+        .question-card { background: #f9f9f9; border-radius: 24px; padding: 24px 20px; margin-bottom: 20px; }
+        .question-text { font-size: 1.4rem; font-weight: 600; text-align: center; color: #000; margin-bottom: 28px; }
+        .answers { display: flex; flex-direction: column; gap: 12px; }
+        .answer-btn {
+            background: white; border: 1px solid #ccc; border-radius: 60px; padding: 14px 18px;
+            font-weight: 500; font-size: 1rem; color: #000; text-align: left; cursor: pointer;
+            transition: 0.1s;
+        }
+        .answer-btn.selected { background: #2688eb; border-color: #2688eb; color: white; }
+        .feedback {
+            text-align: center; padding: 12px; background: #e9ecef; border-radius: 20px; margin-top: 16px;
+            font-weight: 500; border: 1px solid #ccc; display: none;
+        }
+        .next-btn, .bonus-btn {
+            width: 100%; border: none; padding: 14px; border-radius: 40px; font-weight: 600; font-size: 1rem; cursor: pointer;
+            margin-top: 16px;
+        }
+        .next-btn { background: #2688eb; color: white; }
+        .bonus-btn { background: #ff9800; color: white; }
+        .bonus-btn:disabled { background: #bbb; cursor: not-allowed; opacity: 0.6; }
+        .hidden { display: none; }
+        .result-area { text-align: center; background: white; border-radius: 24px; padding: 30px 20px; }
+        .result-score { font-size: 2rem; font-weight: 800; color: #2688eb; margin-bottom: 12px; }
+        .share-btn, .reset-btn { background: #f0f2f5; border: 1px solid #ccc; padding: 12px 20px; border-radius: 40px; font-weight: 600; margin: 8px; cursor: pointer; }
+        .share-btn { background: #2688eb; border-color: #2688eb; color: white; }
+        footer { padding: 16px; text-align: center; font-size: 0.75rem; color: #666; border-top: 1px solid #e0e0e0; display: flex; flex-direction: column; gap: 8px; background: white; }
+        .footer-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+        .footer-links a, .footer-contact { color: #2688eb; text-decoration: none; cursor: pointer; }
+        .footer-contact { font-size: 0.7rem; opacity: 0.7; }
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content { background: white; max-width: 340px; width: 90%; border-radius: 20px; padding: 20px; color: #000; text-align: left; max-height: 80vh; overflow-y: auto; }
+        .modal-content h4 { margin-bottom: 12px; text-align: center; }
+        .modal-buttons { display: flex; justify-content: space-around; margin-top: 16px; gap: 12px; }
+        .modal-btn { padding: 8px 20px; border-radius: 40px; font-weight: 600; border: none; cursor: pointer; }
+        .modal-btn.confirm { background: #ff9800; color: white; }
+        .modal-btn.cancel { background: #ccc; color: #000; }
+        .modal-btn.danger { background: #e64646; color: white; }
+        .close-modal { background: #2688eb; border: none; padding: 8px 16px; border-radius: 20px; color: white; cursor: pointer; margin-top: 12px; width: 100%; }
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        .confetti-piece { position: fixed; width: 10px; height: 20px; top: -20px; z-index: 1000; pointer-events: none; animation: confetti 2s ease-out forwards; will-change: transform; background: gold; }
     </style>
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 </head>
@@ -430,6 +481,7 @@
         loadNewQuestion();
     }
     function handleAnswerSubmit() {
+        console.log("handleAnswerSubmit вызван, selectedAnswer=", selectedAnswer, "waitingForNext=", waitingForNext, "gameActive=", gameActive);
         if(waitingForNext || !gameActive || !selectedAnswer) return;
         const isCorrect = (simpleHash(selectedAnswer) === currentQuestion.correctHash);
         const p = getCurrentProgress();
@@ -450,6 +502,9 @@
         }
         waitingForNext=true;
         document.querySelectorAll(".answer-btn").forEach(btn=>btn.disabled=true);
+        // скрываем кнопку "Далее", чтобы не было повторных нажатий
+        const nextBtn = document.getElementById("nextBtn");
+        if(nextBtn) nextBtn.classList.add("hidden");
         saveAllProgress();
     }
     function showTemporaryMessage(msg, duration=3000) {
@@ -524,7 +579,6 @@
         document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{ document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth"}); });
     }
 
-    // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ RENDERUI ==========
     function renderUI() {
         if(!currentQuestion) return;
         const p=getCurrentProgress();
@@ -561,7 +615,10 @@
         });
         
         if(nextBtn) {
+            // Убираем все предыдущие обработчики, чтобы повесить новый
+            nextBtn.onclick = null;
             nextBtn.onclick = () => {
+                console.log("Кнопка Далее нажата, selectedAnswer=", selectedAnswer, "waitingForNext=", waitingForNext);
                 if(selectedAnswer && !waitingForNext) handleAnswerSubmit();
                 else if(!selectedAnswer) showTemporaryMessage("Выберите вариант ответа");
             };
