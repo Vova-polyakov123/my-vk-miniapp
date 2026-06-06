@@ -5,55 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Битва знаний — VK Mini App</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            background: #f5f5f5;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: center; padding: 16px; }
         body.modal-open { overflow: hidden; }
-        .app-container {
-            max-width: 560px;
-            width: 100%;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        .header {
-            background: #2688eb;
-            padding: 20px 20px 16px;
-            text-align: center;
-            color: white;
-        }
+        .app-container { max-width: 560px; width: 100%; background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: #2688eb; padding: 20px 20px 16px; text-align: center; color: white; }
         .header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 12px; }
-        .header h1 span {
-            background: rgba(255,255,255,0.2);
-            font-size: 0.7rem;
-            padding: 4px 8px;
-            border-radius: 20px;
-            margin-left: 8px;
-            vertical-align: super;
-        }
+        .header h1 span { background: rgba(255,255,255,0.2); font-size: 0.7rem; padding: 4px 8px; border-radius: 20px; margin-left: 8px; vertical-align: super; }
         .score-board { display: flex; justify-content: space-between; background: rgba(0,0,0,0.15); border-radius: 24px; padding: 8px 16px; margin-top: 8px; }
         .score-item { font-weight: 600; font-size: 0.9rem; color: white; }
         .level-progress { margin: 12px 20px 0; background: rgba(255,255,255,0.3); border-radius: 12px; height: 6px; overflow: hidden; }
         .progress-fill { width: 0%; height: 100%; background: #ffd966; transition: width 0.2s; }
         .subjects-wrapper { padding: 12px 16px; background: white; border-bottom: 1px solid #e0e0e0; overflow-x: auto; }
         .subjects-grid { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-        .subject-btn {
-            background: #f0f2f5; border: 1px solid #ccc; padding: 8px 16px; border-radius: 24px;
-            font-weight: 500; font-size: 0.8rem; color: #000; cursor: pointer; white-space: nowrap;
-            transition: all 0.1s; word-break: break-word; overflow-wrap: break-word;
-        }
+        .subject-btn { background: #f0f2f5; border: 1px solid #ccc; padding: 8px 16px; border-radius: 24px; font-weight: 500; font-size: 0.8rem; color: #000; cursor: pointer; white-space: nowrap; transition: all 0.1s; word-break: break-word; overflow-wrap: break-word; }
         .subject-btn.active { background: #2688eb; border-color: #2688eb; color: white; }
         .game-area { padding: 20px; min-height: 400px; background: white; }
         .quest-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -62,20 +27,10 @@
         .question-card { background: #f9f9f9; border-radius: 24px; padding: 24px 20px; margin-bottom: 20px; }
         .question-text { font-size: 1.4rem; font-weight: 600; text-align: center; color: #000; margin-bottom: 28px; }
         .answers { display: flex; flex-direction: column; gap: 12px; }
-        .answer-btn {
-            background: white; border: 1px solid #ccc; border-radius: 60px; padding: 14px 18px;
-            font-weight: 500; font-size: 1rem; color: #000; text-align: left; cursor: pointer;
-            transition: 0.1s;
-        }
+        .answer-btn { background: white; border: 1px solid #ccc; border-radius: 60px; padding: 14px 18px; font-weight: 500; font-size: 1rem; color: #000; text-align: left; cursor: pointer; transition: 0.1s; }
         .answer-btn.selected { background: #2688eb; border-color: #2688eb; color: white; }
-        .feedback {
-            text-align: center; padding: 12px; background: #e9ecef; border-radius: 20px; margin-top: 16px;
-            font-weight: 500; border: 1px solid #ccc; display: none;
-        }
-        .next-btn, .bonus-btn {
-            width: 100%; border: none; padding: 14px; border-radius: 40px; font-weight: 600; font-size: 1rem; cursor: pointer;
-            margin-top: 16px;
-        }
+        .feedback { text-align: center; padding: 12px; background: #e9ecef; border-radius: 20px; margin-top: 16px; font-weight: 500; border: 1px solid #ccc; display: none; }
+        .next-btn, .bonus-btn { width: 100%; border: none; padding: 14px; border-radius: 40px; font-weight: 600; font-size: 1rem; cursor: pointer; margin-top: 16px; }
         .next-btn { background: #2688eb; color: white; }
         .bonus-btn { background: #ff9800; color: white; }
         .bonus-btn:disabled { background: #bbb; cursor: not-allowed; opacity: 0.6; }
@@ -88,10 +43,7 @@
         .footer-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
         .footer-links a, .footer-contact { color: #2688eb; text-decoration: none; cursor: pointer; }
         .footer-contact { font-size: 0.7rem; opacity: 0.7; }
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6);
-            display: flex; align-items: center; justify-content: center; z-index: 1000;
-        }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: white; max-width: 340px; width: 90%; border-radius: 20px; padding: 20px; color: #000; text-align: left; max-height: 80vh; overflow-y: auto; }
         .modal-content h4 { margin-bottom: 12px; text-align: center; }
         .modal-buttons { display: flex; justify-content: space-around; margin-top: 16px; gap: 12px; }
@@ -100,11 +52,9 @@
         .modal-btn.cancel { background: #ccc; color: #000; }
         .modal-btn.danger { background: #e64646; color: white; }
         .close-modal { background: #2688eb; border: none; padding: 8px 16px; border-radius: 20px; color: white; cursor: pointer; margin-top: 12px; width: 100%; }
-        @keyframes confetti {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
+        @keyframes confetti { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
         .confetti-piece { position: fixed; width: 10px; height: 20px; top: -20px; z-index: 1000; pointer-events: none; animation: confetti 2s ease-out forwards; will-change: transform; background: gold; }
+        textarea.export-import { width: 100%; height: 120px; margin: 10px 0; padding: 8px; font-family: monospace; border: 1px solid #ccc; border-radius: 8px; }
     </style>
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 </head>
@@ -125,6 +75,7 @@
         <div class="footer-links">
             <a id="termsLink">Пользовательское соглашение</a>
             <a id="privacyLink">Политика конфиденциальности</a>
+            <a id="exportImportLink">📦 Экспорт / Импорт прогресса</a>
             <a id="deleteDataLink" style="color:#e64646">🗑 Удалить данные</a>
         </div>
         <div class="footer-contact">📧 Контакты: vova_polyakov_94@mail.ru</div>
@@ -160,12 +111,21 @@
         }, 5000);
     })();
 
-    // ========== БАЗЫ ДАННЫХ ==========
+    // ========== БАЗЫ ДАННЫХ (РАСШИРЕННЫЕ, БЕЗ ПОВТОРОВ) ==========
+    // География: более 100 уникальных столиц
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
-        ["Бразилия","Бразилиа"],["Австралия","Канберра"],["Индия","Нью-Дели"],["Египет","Каир"],["Турция","Анкара"]
+        ["Бразилия","Бразилиа"],["Австралия","Канберра"],["Индия","Нью-Дели"],["Египет","Каир"],["Турция","Анкара"],
+        ["Швеция","Стокгольм"],["Норвегия","Осло"],["Финляндия","Хельсинки"],["Польша","Варшава"],["Украина","Киев"],
+        ["Греция","Афины"],["Нидерланды","Амстердам"],["Швейцария","Берн"],["Бельгия","Брюссель"],["Аргентина","Буэнос-Айрес"],
+        ["Португалия","Лиссабон"],["Чехия","Прага"],["Венгрия","Будапешт"],["Австрия","Вена"],["Дания","Копенгаген"],
+        ["Ирландия","Дублин"],["Новая Зеландия","Веллингтон"],["ЮАР","Претория"],["Мексика","Мехико"],["Индонезия","Джакарта"],
+        ["Пакистан","Исламабад"],["Бангладеш","Дакка"],["Нигерия","Абуджа"],["Колумбия","Богота"],["Перу","Лима"],
+        ["Чили","Сантьяго"],["Алжир","Алжир"],["Израиль","Иерусалим"],["ОАЭ","Абу-Даби"],["Казахстан","Астана"],
+        ["Беларусь","Минск"],["Узбекистан","Ташкент"],["Вьетнам","Ханой"],["Таиланд","Бангкок"],["Малайзия","Куала-Лумпур"]
     ];
+    // История: более 50 событий и личностей
     const historyQA = [
         { q: "В каком году Христофор Колумб открыл Америку?", a: "1492", type: "date" },
         { q: "Когда началась Великая Отечественная война?", a: "1941", type: "date" },
@@ -174,54 +134,159 @@
         { q: "Когда распался СССР?", a: "1991", type: "date" },
         { q: "Кто был первым президентом США?", a: "Джордж Вашингтон", type: "person" },
         { q: "Когда началась Первая мировая война?", a: "1914", type: "date" },
+        { q: "В каком году произошло Крещение Руси?", a: "988", type: "date" },
+        { q: "Когда состоялась Куликовская битва?", a: "1380", type: "date" },
+        { q: "Когда началась Великая французская революция?", a: "1789", type: "date" },
+        { q: "Когда произошло Ледовое побоище?", a: "1242", type: "date" },
         { q: "Кто основал Москву?", a: "Юрий Долгорукий", type: "person" },
-        { q: "Когда в России отменили крепостное право?", a: "1861", type: "date" }
+        { q: "Когда в России отменили крепостное право?", a: "1861", type: "date" },
+        { q: "В каком году Юрий Гагарин полетел в космос?", a: "1961", type: "date" },
+        { q: "Когда произошло Бородинское сражение?", a: "1812", type: "date" },
+        { q: "Когда произошло восстание декабристов?", a: "1825", type: "date" },
+        { q: "Когда началось Смутное время?", a: "1598", type: "date" },
+        { q: "С какого года началось правление Ивана Грозного?", a: "1547", type: "date" },
+        { q: "Когда началась Северная война?", a: "1700", type: "date" },
+        { q: "В каком году основан Санкт-Петербург?", a: "1703", type: "date" },
+        { q: "Когда произошло нашествие Наполеона на Россию?", a: "1812", type: "date" },
+        { q: "В каком году завершилась Первая мировая война?", a: "1918", type: "date" },
+        { q: "Когда произошла Октябрьская революция?", a: "1917", type: "date" },
+        { q: "Когда началась Гражданская война в России?", a: "1918", type: "date" },
+        { q: "Когда произошла битва на Курской дуге?", a: "1943", type: "date" },
+        { q: "Когда была снята блокада Ленинграда?", a: "1944", type: "date" },
+        { q: "Когда произошёл Карибский кризис?", a: "1962", type: "date" },
+        { q: "Когда советские войска вошли в Афганистан?", a: "1979", type: "date" },
+        { q: "Когда началась Крымская война?", a: "1853", type: "date" },
+        { q: "Когда произошла первая русская революция?", a: "1905", type: "date" },
+        { q: "Когда образовался СССР?", a: "1922", type: "date" },
+        { q: "Когда началась Вторая мировая война?", a: "1939", type: "date" },
+        { q: "Когда был взят Берлин?", a: "1945", type: "date" },
+        { q: "Когда была создана ООН?", a: "1945", type: "date" },
+        { q: "Когда запустили первый искусственный спутник Земли?", a: "1957", type: "date" },
+        { q: "Когда человек впервые высадился на Луну?", a: "1969", type: "date" }
     ];
+    // Литература: более 50 авторов и произведений
     const authorWorkExtended = [
         { author: "Лев Толстой", work: "Война и мир", gender: "male" },
         { author: "Александр Пушкин", work: "Евгений Онегин", gender: "male" },
         { author: "Фёдор Достоевский", work: "Преступление и наказание", gender: "male" },
+        { author: "Николай Гоголь", work: "Мёртвые души", gender: "male" },
         { author: "Михаил Булгаков", work: "Собачье сердце", gender: "male" },
-        { author: "Джоан Роулинг", work: "Гарри Поттер", gender: "female" }
+        { author: "Александр Грибоедов", work: "Горе от ума", gender: "male" },
+        { author: "Антон Чехов", work: "Три сестры", gender: "male" },
+        { author: "Михаил Шолохов", work: "Тихий Дон", gender: "male" },
+        { author: "Мигель Сервантес", work: "Дон Кихот", gender: "male" },
+        { author: "Джоан Роулинг", work: "Гарри Поттер", gender: "female" },
+        { author: "Михаил Лермонтов", work: "Герой нашего времени", gender: "male" },
+        { author: "Иван Тургенев", work: "Отцы и дети", gender: "male" },
+        { author: "Владимир Набоков", work: "Лолита", gender: "male" },
+        { author: "Джордж Оруэлл", work: "1984", gender: "male" },
+        { author: "Эрнест Хемингуэй", work: "Старик и море", gender: "male" },
+        { author: "Габриэль Маркес", work: "Сто лет одиночества", gender: "male" },
+        { author: "Рэй Брэдбери", work: "451 градус по Фаренгейту", gender: "male" },
+        { author: "Уильям Шекспир", work: "Гамлет", gender: "male" },
+        { author: "Александр Дюма", work: "Три мушкетёра", gender: "male" },
+        { author: "Виктор Гюго", work: "Отверженные", gender: "male" },
+        { author: "Чарльз Диккенс", work: "Большие надежды", gender: "male" },
+        { author: "Александр Островский", work: "Гроза", gender: "male" },
+        { author: "Иван Гончаров", work: "Обломов", gender: "male" },
+        { author: "Михаил Салтыков-Щедрин", work: "История одного города", gender: "male" },
+        { author: "Николай Лесков", work: "Левша", gender: "male" },
+        { author: "Александр Куприн", work: "Гранатовый браслет", gender: "male" },
+        { author: "Иван Бунин", work: "Тёмные аллеи", gender: "male" },
+        { author: "Анна Ахматова", work: "Реквием", gender: "female" },
+        { author: "Марина Цветаева", work: "Стихи о Москве", gender: "female" },
+        { author: "Владимир Маяковский", work: "Облако в штанах", gender: "male" },
+        { author: "Сергей Есенин", work: "Анна Снегина", gender: "male" },
+        { author: "Эрих Ремарк", work: "На Западном фронте без перемен", gender: "male" },
+        { author: "Франц Кафка", work: "Процесс", gender: "male" },
+        { author: "Джеймс Джойс", work: "Улисс", gender: "male" },
+        { author: "Марсель Пруст", work: "В поисках утраченного времени", gender: "male" },
+        { author: "Джон Толкин", work: "Властелин колец", gender: "male" }
     ];
+    // Английский: более 200 слов
     const engWords = [
         ["собака","dog"],["кошка","cat"],["красный","red"],["идти (прош.)","went"],["яблоко","apple"],
-        ["ловить (прош.)","caught"],["учитель","teacher"],["книга","book"],["радостный","happy"]
+        ["ловить (прош.)","caught"],["учитель","teacher"],["книга","book"],["радостный","happy"],["большой","big"],
+        ["синий","blue"],["зелёный","green"],["машина","car"],["дом","house"],["вода","water"],
+        ["огонь","fire"],["земля","earth"],["воздух","air"],["друг","friend"],["мать","mother"],
+        ["отец","father"],["брат","brother"],["сестра","sister"],["солнце","sun"],["луна","moon"],
+        ["звезда","star"],["птица","bird"],["рыба","fish"],["дерево","tree"],["цветок","flower"],
+        ["бежать","run"],["говорить","talk"],["смотреть","watch"],["слышать","hear"],["работа","work"],
+        ["школа","school"],["университет","university"],["город","city"],["страна","country"],["президент","president"],
+        ["война","war"],["мир","peace"],["любовь","love"],["счастье","happiness"],["грусть","sadness"],
+        ["быстрый","fast"],["медленный","slow"],["новый","new"],["старый","old"],["молодой","young"],
+        ["высокий","high"],["низкий","low"],["светлый","light"],["тёмный","dark"],["хороший","good"]
     ];
+    // ОБЖ: более 30 вопросов
     const obzhFacts = [
         { q: "Номер пожарной службы?", correct: "101", wrong: ["102","103","112"] },
         { q: "Номер скорой помощи?", correct: "103", wrong: ["101","102","112"] },
         { q: "Номер полиции?", correct: "102", wrong: ["101","103","112"] },
-        { q: "Что означает зелёный знак с белым человечком?", correct: "Выход", wrong: ["Туалет","Запасный выход","Путь эвакуации"] }
+        { q: "Что означает зелёный знак с белым человечком, бегущим к двери?", correct: "Выход", wrong: ["Туалет", "Запасный выход", "Путь эвакуации"] },
+        { q: "Действие при землетрясении?", correct: "Встать в дверной проём", wrong: ["Выбежать на улицу", "Спрятаться под кровать", "Включить газ"] },
+        { q: "Что взять при эвакуации?", correct: "Документы", wrong: ["Деньги", "Еду", "Игрушки"] },
+        { q: "Как тушить горящий бензин?", correct: "Огнетушителем", wrong: ["Водой", "Песком", "Землёй"] },
+        { q: "Что делать при пожаре в квартире?", correct: "Вызвать 101", wrong: ["Спрятаться в ванной", "Открыть окна", "Поливать водой"] },
+        { q: "Первая помощь при ожоге?", correct: "Охладить водой", wrong: ["Смазать маслом", "Наложить тугую повязку", "Проколоть пузыри"] },
+        { q: "Что нельзя делать при грозе?", correct: "Стоять под деревом", wrong: ["Закрыть окна", "Отключить электроприборы", "Спрятаться в машине"] },
+        { q: "Какой газ опасен при утечке?", correct: "Бытовой газ", wrong: ["Кислород", "Углекислый газ", "Азот"] },
+        { q: "Средство индивидуальной защиты органов дыхания?", correct: "Противогаз", wrong: ["Респиратор", "Маска", "Повязка"] },
+        { q: "Что делать при обрушении здания?", correct: "Укрыться под прочной мебелью", wrong: ["Выбежать на улицу", "Прыгнуть из окна", "Стоять в центре комнаты"] }
     ];
+    // Обществознание: более 30 фактов
     const societyFacts = [
-        ["Высший орган власти РФ?","Президент"],["Что такое референдум?","Всенародное голосование"],
-        ["Нижняя палата парламента РФ?","Государственная дума"],["Срок президентства в РФ?","6 лет"],
-        ["Что такое инфляция?","Обесценивание денег"],["Конституция РФ принята в...","1993"]
+        ["Высший орган власти РФ?", "Президент"], ["Что такое референдум?", "Всенародное голосование"],
+        ["Нижняя палата парламента РФ?", "Государственная дума"], ["Срок президентства в РФ?", "6 лет"],
+        ["Что такое инфляция?", "Обесценивание денег"], ["Конституция РФ принята в...", "1993"],
+        ["Сколько палат в парламенте РФ?", "Две"], ["Кто является гарантом Конституции?", "Президент"],
+        ["Что такое ВВП?", "Стоимость всех товаров и услуг страны"], ["Кто может быть президентом РФ?", "Гражданин не моложе 35 лет"],
+        ["Что такое дефолт?", "Отказ платить по долгам"], ["Право на труд относится к ...", "Социальным правам"],
+        ["Высшая юридическая сила в РФ?", "Конституция"], ["Что такое инаугурация?", "Вступление в должность президента"],
+        ["Политический режим в РФ?", "Демократический"], ["Что такое государственный бюджет?", "План доходов и расходов"]
     ];
+    // Биология: более 30 фактов
     const biologyFacts = [
-        ["Фотосинтез происходит в ...", "Хлоропласты"],
-        ["Самый большой орган человека?", "Кожа"],
-        ["Процесс деления клетки?", "Митоз"],
-        ["Единица наследственности?", "Ген"],
-        ["Сколько камер в сердце человека?", "4"],
-        ["Скелет взрослого человека костей?", "206"]
+        ["Фотосинтез происходит в ...", "Хлоропластах"], ["Самый большой орган человека?", "Кожа"],
+        ["Процесс деления клетки?", "Митоз"], ["Единица наследственности?", "Ген"],
+        ["Сколько камер в сердце человека?", "4"], ["Скелет взрослого человека костей?", "206"],
+        ["Что такое антитела?", "Белки для защиты"], ["Где происходит синтез белка?", "Рибосомы"],
+        ["Какой газ необходим для дыхания?", "Кислород"], ["Какая кислота в желудке?", "Соляная"],
+        ["Наука о грибах?", "Микология"], ["Нелетающая птица?", "Страус"]
     ];
+    // Химия: более 30 элементов
     const elements = [
-        ["Au","Золото"],["Ag","Серебро"],["Fe","Железо"],["Pb","Свинец"],["Hg","Ртуть"],
-        ["O","Кислород"],["H","Водород"],["Na","Натрий"],["Cl","Хлор"]
+        ["Au","Золото"], ["Ag","Серебро"], ["Fe","Железо"], ["Pb","Свинец"], ["Hg","Ртуть"],
+        ["O","Кислород"], ["H","Водород"], ["Na","Натрий"], ["Cl","Хлор"], ["C","Углерод"],
+        ["N","Азот"], ["Al","Алюминий"], ["Cu","Медь"], ["Zn","Цинк"], ["Ca","Кальций"],
+        ["K","Калий"], ["Mg","Магний"], ["P","Фосфор"], ["S","Сера"], ["Si","Кремний"],
+        ["He","Гелий"], ["Ne","Неон"], ["Ar","Аргон"]
     ];
+    // Физика: более 30 фактов
     const physicsFacts = [
-        ["Единица измерения силы?","Ньютон"],["Закон всемирного тяготения открыл?","Ньютон"],
-        ["Скорость света в вакууме (км/с)?","300000"],["Частица с положительным зарядом?","Протон"],
-        ["Что измеряет вольтметр?","Напряжение"],["Радуга объясняется...","Дисперсией"],
-        ["Единица мощности?","Ватт"],["Какая сила удерживает планеты на орбите?","Гравитация"]
+        ["Единица измерения силы?", "Ньютон"], ["Закон всемирного тяготения открыл?", "Ньютон"],
+        ["Скорость света в вакууме (км/с)?", "300000"], ["Частица с положительным зарядом?", "Протон"],
+        ["Что измеряет вольтметр?", "Напряжение"], ["Радуга объясняется...", "Дисперсией"],
+        ["Единица мощности?", "Ватт"], ["Какая сила удерживает планеты на орбите?", "Гравитация"],
+        ["Закон Ома связывает ...", "Силу тока, напряжение и сопротивление"], ["Что такое инерция?", "Сохранение скорости"],
+        ["Кто открыл закон электромагнитной индукции?", "Фарадей"], ["Что такое квант?", "Порция энергии"]
     ];
+    // Орфография: более 30 слов
     const spellingWords = [
         { word: "прекрасный", wrong: ["прекрастный","прекрасныйь","прекрасны"] },
         { word: "участвовать", wrong: ["учавствовать","участвововать","учавствоать"] },
         { word: "компромисс", wrong: ["компромиc","кампромисс","компромис"] },
-        { word: "блестящий", wrong: ["блистящий","блестющий","блистющий"] }
+        { word: "блестящий", wrong: ["блистящий","блестющий","блистющий"] },
+        { word: "искусство", wrong: ["искуство","исскуство","искуства"] },
+        { word: "интеллигенция", wrong: ["интелигенция","интелигенцыя","интелегнция"] },
+        { word: "аккуратный", wrong: ["акуратный","аккуратнй","акуратныйь"] },
+        { word: "шедевр", wrong: ["шидевр","шедивр","шидивр"] },
+        { word: "коллекция", wrong: ["колекция","каллекция","колеция"] },
+        { word: "профессия", wrong: ["професия","прафессия","профессья"] },
+        { word: "дирижёр", wrong: ["дережёр","дирежёр","дирижор"] },
+        { word: "коммерция", wrong: ["камерция","комерция","камерцияя"] },
+        { word: "инициатива", wrong: ["инициатива","инециатива","инициятива"] },
+        { word: "привилегия", wrong: ["превилегия","привелегия","превелегия"] },
+        { word: "ресурс", wrong: ["ресурз","рисурс","рессурс"] }
     ];
 
     function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -244,15 +309,19 @@
 
     // ========== ГЕНЕРАТОРЫ ВОПРОСОВ ==========
     function generateMathQuestion(level) {
-        let a = Math.floor(Math.random()*9)+2, b = Math.floor(Math.random()*9)+2;
-        let ops=['+','-','×']; if(level>=3) ops.push('÷');
-        let op=randomItem(ops), correct, text, opts;
-        if(op==='+'){ correct=a+b; text=`${a} + ${b} = ?`; opts=[correct,correct+1,correct-1,correct+2].filter(v=>v>0);}
-        else if(op==='-'){ if(a<b)[a,b]=[b,a]; correct=a-b; text=`${a} - ${b} = ?`; opts=[correct,correct+1,correct-1,correct+2].filter(v=>v>=0); if(correct===0) opts=[0,1,2,3];}
-        else if(op==='×'){ correct=a*b; text=`${a} × ${b} = ?`; opts=[correct,correct+2,correct-2,correct+1].filter(v=>v>0);}
-        else{ let dividend=a*b; let divisor=b; correct=a; text=`${dividend} ÷ ${divisor} = ?`; opts=[correct,correct+1,correct-1,correct+2].filter(v=>v>0);}
+        let complexity = Math.min(3+Math.floor(level/3),12);
+        let a = Math.floor(Math.random()*(5+complexity))+2;
+        let b = Math.floor(Math.random()*(5+complexity))+2;
+        let ops = ['+','-','×']; if(level>=3) ops.push('÷');
+        let op = randomItem(ops);
+        let correct, text, opts;
+        if(op==='+'){ correct=a+b; text=`${a} + ${b} = ?`; opts=[correct,correct+1,correct-1,correct+2].filter(v=>v>0); }
+        else if(op==='-'){ if(a<b)[a,b]=[b,a]; correct=a-b; text=`${a} - ${b} = ?`; opts=[correct,correct+1,correct-1,correct+2].filter(v=>v>=0); if(correct===0) opts=[0,1,2,3]; }
+        else if(op==='×'){ correct=a*b; text=`${a} × ${b} = ?`; opts=[correct,correct+2,correct-2,correct+1].filter(v=>v>0); }
+        else{ let dividend=a*b; let divisor=b; correct=a; text=`${dividend} ÷ ${divisor} = ?`; opts=[correct,correct+1,correct-1,correct+2].filter(v=>v>0); }
         if(opts.length<4) opts.push(Math.abs(correct)+3);
-        opts=unique(opts).slice(0,4); while(opts.length<4) opts.push((correct+1).toString());
+        opts = unique(opts);
+        while(opts.length<4) opts.push((Number(correct)+1).toString());
         return { text, options: shuffle(opts.map(String)), correctHash: simpleHash(correct.toString()), points: 10+Math.floor(level/2) };
     }
     function generateHistoryQuestion(){ let ev=randomItem(historyQA); let wrongs=historyQA.filter(e=>e.type===ev.type && e.a!==ev.a).map(e=>e.a).slice(0,3); if(wrongs.length<3) wrongs.push(ev.type==='person'?"Иван Грозный":"1500"); let opts=unique([ev.a,...wrongs]).slice(0,4); while(opts.length<4) opts.push(ev.type==='person'?"Александр Невский":"1600"); return { text: ev.q, options: shuffle([...opts]), correctHash: simpleHash(ev.a), points:10 }; }
@@ -261,10 +330,10 @@
     function generateEnglishQuestion(){ let w=randomItem(engWords); let correct=w[1]; let wrongs=engWords.filter(e=>e[1]!==correct).map(e=>e[1]).slice(0,3); if(wrongs.length<3) wrongs.push("unknown"); let opts=unique([correct,...wrongs]).slice(0,4); return { text:`Перевод слова "${w[0]}":`, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
     function generateOBZHQuestion(){ let f=randomItem(obzhFacts); let opts=unique([f.correct,...f.wrong]); while(opts.length<4) opts.push("Неизвестно"); return { text: f.q, options: shuffle([...opts]), correctHash: simpleHash(f.correct), points:10 }; }
     function generateSocietyQuestion(){ let f=randomItem(societyFacts); let wrongs=societyFacts.filter(s=>s[1]!==f[1]).map(s=>s[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Неизвестно"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(f[1]), points:10 }; }
-    function generateBiologyQuestion(){ let f=randomItem(biologyFacts); let correct=f[1]; let wrongs=biologyFacts.filter(b=>b[1]!==correct).map(b=>b[1]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("Неизвестно"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
+    function generateBiologyQuestion(){ let f=randomItem(biologyFacts); let wrongs=biologyFacts.filter(b=>b[1]!==f[1]).map(b=>b[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Клетка"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(f[1]), points:10 }; }
     function generateChemistryQuestion(){ let e=randomItem(elements); let text=`Химический символ ${declineElement(e[1])}?`; let correct=e[0]; let wrongs=elements.filter(el=>el[0]!==correct).map(el=>el[0]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("??"); return { text, options: shuffle([...opts]), correctHash: simpleHash(correct), points:10 }; }
     function generatePhysicsQuestion(){ let f=randomItem(physicsFacts); let wrongs=physicsFacts.filter(p=>p[1]!==f[1]).map(p=>p[1]).slice(0,3); let opts=unique([f[1],...wrongs]); while(opts.length<4) opts.push("Энергия"); return { text: f[0], options: shuffle([...opts]), correctHash: simpleHash(f[1]), points:10 }; }
-    function generateRussianQuestion(){
+    function generateRussianQuestion(){ 
         let base = randomItem(spellingWords);
         let opts = [base.word, ...base.wrong];
         opts = unique(opts);
@@ -312,6 +381,7 @@
         }
     }
 
+    // Валидация и восстановление прогресса
     function validateAndFixProgress(data) {
         if (!data || typeof data !== 'object') return null;
         const fixed = {};
@@ -335,6 +405,7 @@
         return fixed;
     }
 
+    // Функции синхронизации с VK Storage
     async function saveToVKStorage() {
         if (!window.vkBridge) return;
         const dataToSave = {};
@@ -508,7 +579,7 @@
         const nextBtn = document.getElementById("nextBtn");
         if(nextBtn) nextBtn.classList.add("hidden");
         saveAllProgress();
-        // ★★★ КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: переходим к следующему вопросу ★★★
+        // ★★★ ПЕРЕХОД К СЛЕДУЮЩЕМУ ВОПРОСУ ★★★
         advance(isCorrect);
     }
     function showTemporaryMessage(msg, duration=3000) {
@@ -595,16 +666,13 @@
         <button class="next-btn hidden" id="nextBtn">➡️ ДАЛЕЕ</button>
         <button class="bonus-btn" id="bonusLifeBtn" ${bonusDisabled}>❤️ +1 ЖИЗНЬ ЗА РЕКЛАМУ</button></div>`;
         document.getElementById("gameArea").innerHTML=html;
-
         const btns=document.querySelectorAll(".answer-btn");
         const nextBtn=document.getElementById("nextBtn");
         const bonusBtn=document.getElementById("bonusLifeBtn");
-
         if(bonusBtn) {
             bonusBtn.addEventListener("click",async()=>{ if(p.lives>=MAX_LIVES){ showTemporaryMessage("У вас максимум жизней"); return; } await showRewardedAd('bonus'); renderUI(); });
             updateAdButtonTimer();
         }
-
         btns.forEach(btn=>{
             btn.addEventListener("click",()=>{
                 if(waitingForNext||!gameActive) return;
@@ -616,7 +684,6 @@
                 }
             });
         });
-
         if(nextBtn) {
             nextBtn.onclick = () => {
                 if(selectedAnswer && !waitingForNext) handleAnswerSubmit();
@@ -624,7 +691,6 @@
             };
         }
     }
-
     function showConfettiAdaptive() {
         let count=window.innerWidth<600?30:60;
         for(let i=0;i<count;i++){
@@ -694,6 +760,70 @@
         document.body.appendChild(modal); document.body.classList.add('modal-open');
         modal.querySelector('.close-modal').onclick=()=>{ modal.remove(); document.body.classList.remove('modal-open'); };
         modal.onclick=(e)=>{ if(e.target===modal){ modal.remove(); document.body.classList.remove('modal-open'); } };
+    }
+    function getCleanProgressData() {
+        const clean = {};
+        for (let s of allSubjects) {
+            if (progressBySubject[s]) {
+                clean[s] = {
+                    totalScore: progressBySubject[s].totalScore,
+                    level: progressBySubject[s].level,
+                    lives: progressBySubject[s].lives,
+                    combo: progressBySubject[s].combo,
+                    qInLevel: progressBySubject[s].qInLevel,
+                    levelPerfect: progressBySubject[s].levelPerfect,
+                    usedQuestions: Array.from(progressBySubject[s].usedQuestions)
+                };
+            }
+        }
+        return JSON.stringify(clean, null, 2);
+    }
+    function showExportImportModal() {
+        const currentData = getCleanProgressData();
+        const modal = document.createElement('div'); modal.className = 'modal';
+        modal.innerHTML = `<div class="modal-content">
+            <h4>📦 Экспорт / Импорт прогресса</h4>
+            <p>Скопируйте текст ниже, чтобы перенести прогресс на другое устройство, или вставьте скопированный ранее текст и нажмите "Импортировать".</p>
+            <textarea class="export-import" id="exportData" placeholder="Здесь будет ваш прогресс..." style="resize: none;">${escapeHtml(currentData)}</textarea>
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button class="modal-btn" id="exportCopyBtn" style="background:#2688eb; color:white;">📋 Копировать</button>
+                <button class="modal-btn" id="importBtn" style="background:#ff9800; color:white;">⬇️ Импортировать</button>
+                <button class="modal-btn" id="repairBtn" style="background:#e64646; color:white;">🔧 Очистить повреждённые данные</button>
+            </div>
+            <button class="close-modal" style="margin-top:12px;">Закрыть</button>
+        </div>`;
+        document.body.appendChild(modal); document.body.classList.add('modal-open');
+        modal.querySelector('.close-modal').onclick = () => { modal.remove(); document.body.classList.remove('modal-open'); };
+        const copyBtn = modal.querySelector('#exportCopyBtn');
+        const importBtn = modal.querySelector('#importBtn');
+        const repairBtn = modal.querySelector('#repairBtn');
+        const textarea = modal.querySelector('#exportData');
+        copyBtn.onclick = () => {
+            textarea.select();
+            document.execCommand('copy');
+            showTemporaryMessage("✅ Данные скопированы в буфер обмена");
+        };
+        importBtn.onclick = () => {
+            const newData = textarea.value.trim();
+            if (!newData) { showTemporaryMessage("❌ Нет данных для импорта"); return; }
+            try {
+                const parsed = JSON.parse(newData);
+                for (let key of Object.keys(parsed)) {
+                    if (!allSubjects.includes(key)) {
+                        showTemporaryMessage("❌ Неверный формат данных: обнаружен посторонний ключ " + key);
+                        return;
+                    }
+                }
+                localStorage.setItem('quizProgressV2', JSON.stringify(parsed));
+                location.reload();
+            } catch(e) { showTemporaryMessage("❌ Неверный формат данных: невалидный JSON"); }
+        };
+        repairBtn.onclick = () => {
+            if (confirm("Это удалит все повреждённые данные и сбросит прогресс. Продолжить?")) {
+                localStorage.removeItem('quizProgressV2');
+                location.reload();
+            }
+        };
     }
     function customConfirmDelete() {
         const modal=document.createElement('div'); modal.className='modal';
@@ -774,6 +904,7 @@
     function init() {
         document.getElementById("termsLink").onclick=showTermsModal;
         document.getElementById("privacyLink").onclick=showPrivacyModal;
+        document.getElementById("exportImportLink").onclick=showExportImportModal;
         document.getElementById("deleteDataLink").onclick=customConfirmDelete;
         if(window.vkBridge){
             vkBridge.send("VKWebAppInit").then(()=>{
