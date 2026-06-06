@@ -75,10 +75,7 @@
             overflow-x: auto;
             white-space: nowrap;
         }
-        .subjects-grid {
-            display: inline-flex;
-            gap: 12px;
-        }
+        .subjects-grid { display: inline-flex; gap: 12px; }
         .subject-btn {
             background: rgba(20,28,45,0.9);
             border: 1px solid rgba(255,255,255,0.2);
@@ -117,11 +114,7 @@
             font-weight: 600;
             color: #ffd966;
         }
-        .lives {
-            font-size: 1.6rem;
-            display: flex;
-            gap: 6px;
-        }
+        .lives { display: flex; gap: 6px; }
         .lives i { font-size: 1.8rem; }
         .fa-heart { color: #ff3366; text-shadow: 0 0 3px #ff6699; }
         .fa-heart-broken { color: #555; opacity: 0.6; }
@@ -222,10 +215,7 @@
             max-height: 80vh;
             overflow-y: auto;
         }
-        .leaderboard-list {
-            list-style: none;
-            margin: 16px 0;
-        }
+        .leaderboard-list { list-style: none; margin: 16px 0; }
         .leaderboard-list li {
             padding: 12px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -292,11 +282,7 @@
             font-size: 1.2rem;
             cursor: pointer;
         }
-        .volume-slider {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .volume-slider { display: flex; align-items: center; gap: 10px; }
         input[type="range"] { width: 100px; cursor: pointer; }
         @keyframes confettiFall {
             0% { transform: translateY(-20vh) rotate(0); opacity: 1; }
@@ -366,7 +352,7 @@
             <button id="musicToggleBtn"><i class="fas fa-music"></i> Вкл/Выкл</button>
             <div class="volume-slider">
                 <i class="fas fa-volume-down"></i>
-                <input type="range" id="globalVolume" min="0" max="100" value="25">
+                <input type="range" id="globalVolume" min="0" max="100" value="30">
                 <i class="fas fa-volume-up"></i>
             </div>
         </div>
@@ -375,44 +361,67 @@
 </div>
 
 <script>
-    // ======================= ПРОСТАЯ МУЗЫКА =======================
-    const musicUrl = 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_dd6f3c3b2a.mp3?filename=lofi-study-112191.mp3';
-    const bgMusic = new Audio(musicUrl);
-    bgMusic.loop = true;
-    bgMusic.volume = 0.3;
-    let musicEnabled = true;
-    
-    function playMusic() {
-        if (musicEnabled && bgMusic.paused) {
-            bgMusic.play().catch(e => console.log("Автовоспроизведение заблокировано"));
+    // ======================= МУЗЫКА (ГАРАНТИРОВАННЫЙ ЗАПУСК) =======================
+    (function() {
+        const musicURL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3';
+        const audio = new Audio(musicURL);
+        audio.loop = true;
+        audio.volume = 0.3;
+        let musicEnabled = true;
+        let started = false;
+
+        // Функция запуска
+        function playMusic() {
+            if (musicEnabled && !started) {
+                audio.play().then(() => {
+                    started = true;
+                }).catch(e => console.log("Нужен клик для музыки"));
+            }
         }
-    }
-    function stopMusic() { bgMusic.pause(); }
-    
-    const musicBtn = document.getElementById("musicToggleBtn");
-    musicBtn.onclick = () => {
-        musicEnabled = !musicEnabled;
-        if (musicEnabled) {
-            playMusic();
-            musicBtn.innerHTML = '<i class="fas fa-music"></i> Вкл/Выкл';
-        } else {
-            stopMusic();
-            musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i> Вкл/Выкл';
+
+        // Запуск по первому клику/тапу
+        const startOnInteraction = () => {
+            if (!started) {
+                audio.play().then(() => {
+                    started = true;
+                }).catch(e => console.log("Автовоспроизведение заблокировано"));
+            }
+            document.removeEventListener('click', startOnInteraction);
+            document.removeEventListener('touchstart', startOnInteraction);
+        };
+        document.addEventListener('click', startOnInteraction);
+        document.addEventListener('touchstart', startOnInteraction);
+
+        // Кнопка вкл/выкл
+        const musicBtn = document.getElementById('musicToggleBtn');
+        if (musicBtn) {
+            musicBtn.onclick = (e) => {
+                e.stopPropagation();
+                musicEnabled = !musicEnabled;
+                if (musicEnabled) {
+                    if (!started) {
+                        audio.play().then(() => started = true).catch(e=>console.log);
+                    } else {
+                        audio.play().catch(e=>console.log);
+                    }
+                    musicBtn.innerHTML = '<i class="fas fa-music"></i> Вкл/Выкл';
+                } else {
+                    audio.pause();
+                    musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i> Вкл/Выкл';
+                }
+            };
         }
-    };
-    
-    const startAudio = () => {
-        if (musicEnabled && bgMusic.paused) playMusic();
-        document.body.removeEventListener('click', startAudio);
-        document.body.removeEventListener('touchstart', startAudio);
-    };
-    document.body.addEventListener('click', startAudio);
-    document.body.addEventListener('touchstart', startAudio);
-    
-    const volSlider = document.getElementById("globalVolume");
-    volSlider.addEventListener("input", (e) => { bgMusic.volume = e.target.value / 100; });
-    
-    // ======================= ЗАЩИТА =======================
+
+        // Регулятор громкости
+        const volSlider = document.getElementById('globalVolume');
+        if (volSlider) {
+            volSlider.addEventListener('input', (e) => {
+                audio.volume = e.target.value / 100;
+            });
+        }
+    })();
+
+    // ======================= ЗАЩИТА ОТ ПРОСМОТРА КОДА =======================
     (function() {
         document.addEventListener('contextmenu', (e) => e.preventDefault());
         document.addEventListener('keydown', (e) => {
@@ -435,8 +444,8 @@
             } else devCount = 0;
         }, 5000);
     })();
-    
-    // ======================= БАЗЫ ВОПРОСОВ =======================
+
+    // ======================= БАЗЫ ВОПРОСОВ (ГЕОГРАФИЯ ИСПРАВЛЕНА) =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -479,13 +488,13 @@
     const spellingWords = [
         { word: "прекрасный", wrong: ["прекрастный","прекрасны"] }
     ];
-    
+
     function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
     function shuffle(arr) { for (let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
     function unique(arr) { return [...new Set(arr)]; }
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
-    
+
     function declineCountry(c) {
         const exc = {
             "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
@@ -499,7 +508,7 @@
         const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа"};
         return e[n] || n;
     }
-    
+
     function generateMathQuestion(level) {
         let a = Math.floor(Math.random()*10)+2, b = Math.floor(Math.random()*10)+2;
         let correct = a+b;
@@ -523,12 +532,12 @@
     function generateChemistryQuestion() { let e=randomItem(elements); let text=`Символ ${declineElement(e[1])}?`; let correct=e[0]; let wrongs=["Fe","Ag","Pb"]; let opts=unique([correct,...wrongs]); return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
     function generatePhysicsQuestion() { let f=randomItem(physicsFacts); let wrongs=["Джоуль","Ватт","Паскаль"]; let opts=unique([f[1],...wrongs]); return { text: f[0], options: shuffle(opts), correctHash: simpleHash(f[1]), points:10 }; }
     function generateRussianQuestion() { let base=randomItem(spellingWords); let opts=unique([base.word,...base.wrong]); return { text: "Выберите правильное написание:", options: shuffle(opts.slice(0,4)), correctHash: simpleHash(base.word), points:10 }; }
-    
+
     // ======================= ОСНОВНАЯ ЛОГИКА =======================
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = { math:"🧮 Математика", russian:"📖 Русский", geo:"🌍 География", history:"🏛️ История", literature:"📚 Литература", english:"🇬🇧 Английский", obzh:"🛡️ ОБЖ", society:"⚖️ Общество", biology:"🧬 Биология", chemistry:"⚗️ Химия", physics:"⚛️ Физика" };
     const subjectIcons = { math:"fa-calculator", russian:"fa-book", geo:"fa-globe", history:"fa-landmark", literature:"fa-feather-alt", english:"fa-language", obzh:"fa-shield-alt", society:"fa-gavel", biology:"fa-dna", chemistry:"fa-flask", physics:"fa-atom" };
-    
+
     let progressBySubject = {};
     let currentSubject = "math";
     let currentQuestion = null;
@@ -541,11 +550,11 @@
     const MAX_LIVES = 5;
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
-    
+
     for (let s of allSubjects) {
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
     }
-    
+
     async function initVK() {
         if (window.vkBridge) {
             try {
@@ -558,6 +567,7 @@
                         photo: user.photo_100 || ''
                     };
                 }
+                // Загрузка прогресса из VK Storage
                 const storageRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress"] });
                 if (storageRes && storageRes.keys && storageRes.keys[0] && storageRes.keys[0].value) {
                     try {
@@ -569,6 +579,7 @@
                         }
                     } catch(e) {}
                 }
+                // Загрузка топа из VK Storage
                 const leaderRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["globalLeaderboard"] });
                 if (leaderRes && leaderRes.keys && leaderRes.keys[0] && leaderRes.keys[0].value) {
                     try {
@@ -594,7 +605,7 @@
         buildSubjectsUI();
         startTutorial();
     }
-    
+
     function saveAllProgress() {
         const toSave = {};
         for (let s of allSubjects) {
@@ -614,7 +625,7 @@
         }
         updateLeaderboardStorage();
     }
-    
+
     function updateLeaderboardStorage() {
         let leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
         const totalScore = progressBySubject[currentSubject].totalScore;
@@ -641,7 +652,7 @@
             vkBridge.send("VKWebAppStorageSet", { key: "globalLeaderboard", value: JSON.stringify(leaderboard) }).catch(e=>console.warn);
         }
     }
-    
+
     function showLeaderboard() {
         const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
         const modal = document.createElement('div'); modal.className = 'modal';
@@ -660,7 +671,7 @@
         modal.onclick = (e) => { if(e.target === modal) modal.remove(); };
     }
     document.getElementById("leaderboardBtn").onclick = showLeaderboard;
-    
+
     function getCurrentProgress() { return progressBySubject[currentSubject]; }
     function updateUI() {
         const p = getCurrentProgress();
@@ -669,7 +680,7 @@
         document.getElementById("comboValue").innerText = p.combo;
         document.getElementById("levelProgressFill").style.width = (p.qInLevel / Q_PER_LEVEL) * 100 + "%";
     }
-    
+
     function getUniqueQuestion(subject, lvl) {
         const p = progressBySubject[subject];
         let attempts=0, q;
@@ -691,7 +702,7 @@
         p.usedQuestions.add(q.text+q.correctHash);
         return q;
     }
-    
+
     function loadNewQuestion() {
         if(!gameActive) return;
         waitingForNext = false;
@@ -703,7 +714,7 @@
         selectedAnswer = null;
         renderUI();
     }
-    
+
     function advance(isCorrect) {
         const p = getCurrentProgress();
         if(!isCorrect) p.levelPerfect = false;
@@ -720,7 +731,7 @@
         }
         loadNewQuestion();
     }
-    
+
     function handleAnswerSubmit() {
         if(waitingForNext || !gameActive || !selectedAnswer) return;
         const isCorrect = (simpleHash(selectedAnswer) === currentQuestion.correctHash);
@@ -744,12 +755,12 @@
         document.querySelectorAll(".answer-btn").forEach(btn=>btn.disabled=true);
         advance(isCorrect);
     }
-    
+
     function showTemporaryMessage(msg, duration=3000) {
         const fb = document.getElementById("feedbackMsg");
         if(fb){ fb.style.display="block"; fb.innerHTML=msg; setTimeout(()=>{ if(fb.innerHTML===msg){ fb.style.display="none"; fb.innerHTML=""; } }, duration); }
     }
-    
+
     async function showRewardedAd(adType) {
         if(!window.vkBridge) { showTemporaryMessage("Реклама недоступна (нет VK Bridge)"); return false; }
         const now=Date.now();
@@ -771,7 +782,7 @@
             } else{ showTemporaryMessage("Реклама не досмотрена"); return false; }
         } catch(e){ return false; } finally{ isAdWatching=false; updateAdButtonTimer(); }
     }
-    
+
     function offerAdForRevival() {
         if(!gameActive) return;
         gameActive=false;
@@ -781,7 +792,7 @@
             else finishGame(false);
         },()=>finishGame(false));
     }
-    
+
     function finishGame(success) {
         gameActive=false;
         const p=getCurrentProgress();
@@ -792,14 +803,10 @@
         <button class="reset-btn" id="selectSubjectHint" style="margin-top:8px; background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
         </div>`;
         document.getElementById("shareBtn")?.addEventListener("click",()=>{ if(window.vkBridge) vkBridge.send("VKWebAppShare",{link:"https://vk.com",attachment:`Я прошёл ${subjectNames[currentSubject]} с ${p.totalScore} очков!`}); });
-        document.getElementById("resetBtn")?.addEventListener("click",()=>{
-            resetSubjectProgress(currentSubject);
-        });
-        document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{
-            document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth"});
-        });
+        document.getElementById("resetBtn")?.addEventListener("click",()=>{ resetSubjectProgress(currentSubject); });
+        document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{ document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth"}); });
     }
-    
+
     function resetSubjectProgress(subject) {
         progressBySubject[subject] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
         if(subject === currentSubject) {
@@ -814,7 +821,7 @@
             saveAllProgress();
         }
     }
-    
+
     function renderUI() {
         if(!currentQuestion) return;
         const p = getCurrentProgress();
@@ -844,7 +851,7 @@
         document.getElementById("hintBtn")?.addEventListener("click", () => showTemporaryMessage("🤖 Подсказка: отбросьте заведомо неверные варианты, останется 2-3 возможных.", 4000));
         updateAdButtonTimer();
     }
-    
+
     function updateAdButtonTimer() {
         const btn = document.getElementById("bonusLifeBtn");
         if(!btn) return;
@@ -852,7 +859,7 @@
         if(rem>0 && adLastShown>0){ btn.disabled=true; btn.innerHTML=`⏳ +1 ЖИЗНЬ (${Math.ceil(rem/1000)}с)`; }
         else { btn.disabled=false; btn.innerHTML=`❤️ +1 ЖИЗНЬ ЗА РЕКЛАМУ`; if(adTimerInterval) clearInterval(adTimerInterval); adTimerInterval=null; }
     }
-    
+
     function showConfirmModal(msg, onYes, onNo) {
         const modal = document.createElement('div'); modal.className = 'modal';
         modal.innerHTML = `<div class="modal-content"><p>${msg}</p><div style="display:flex; gap:12px; margin-top:20px;"><button class="modal-btn confirm" style="background:#f56b2c; padding:12px 24px; border-radius:60px;">Да, смотреть</button><button class="modal-btn cancel" style="background:#555; padding:12px 24px; border-radius:60px;">Нет, закончить</button></div></div>`;
@@ -862,11 +869,11 @@
         modal.querySelector('.cancel').onclick = () => { close(); onNo(); };
         modal.onclick = (e) => { if(e.target === modal) { close(); onNo(); } };
     }
-    
+
     function showConfetti() {
         for(let i=0;i<60;i++){ let c=document.createElement('div'); c.classList.add('confetti-piece'); c.style.left=Math.random()*window.innerWidth+'px'; c.style.backgroundColor=`hsl(${Math.random()*360},80%,60%)`; document.body.appendChild(c); setTimeout(()=>c.remove(),2500); }
     }
-    
+
     function buildSubjectsUI() {
         const grid = document.getElementById("subjectsGrid");
         if(!grid) return;
@@ -888,13 +895,13 @@
             grid.appendChild(btn);
         });
     }
-    
+
     function showInfoModal(title, text) {
         const m = document.createElement('div'); m.className = 'modal';
         m.innerHTML = `<div class="modal-content"><h3>${title}</h3><p>${text}</p><button class="close-modal">Закрыть</button></div>`;
         document.body.appendChild(m); m.querySelector('.close-modal').onclick = () => m.remove();
     }
-    
+
     function startTutorial() {
         if(localStorage.getItem('tutorialShown')) return;
         const overlay = document.createElement('div'); overlay.className = 'modal';
@@ -902,14 +909,14 @@
         document.body.appendChild(overlay);
         overlay.querySelector('.close-modal').onclick = () => { overlay.remove(); localStorage.setItem('tutorialShown','true'); };
     }
-    
+
     const userAgreement = `<strong>Пользовательское соглашение</strong><br><br>1. Настоящее соглашение регулирует отношения между разработчиком и пользователем мини-приложения "Битва знаний".<br>2. Использование приложения означает полное согласие с условиями.<br>3. Разработчик не несёт ответственности за возможные убытки.<br>4. Пользователь обязуется не нарушать работу приложения.<br>5. Контактная информация: vova_polyakov_94@mail.ru`;
     const privacyPolicy = `<strong>Политика конфиденциальности</strong><br><br>1. Приложение собирает только идентификатор VK, имя и аватар пользователя для отображения в таблице лидеров и сохранения прогресса.<br>2. Данные хранятся в защищённом облаке VK Storage.<br>3. Пользователь может удалить все свои данные кнопкой "Удалить данные".<br>4. Данные не передаются третьим лицам.<br>5. По всем вопросам: vova_polyakov_94@mail.ru`;
-    
+
     document.getElementById("termsLink").onclick = () => showInfoModal("Пользовательское соглашение", userAgreement);
     document.getElementById("privacyLink").onclick = () => showInfoModal("Политика конфиденциальности", privacyPolicy);
     document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: "" }); location.reload(); }, () => {});
-    
+
     initVK();
 </script>
 </body>
