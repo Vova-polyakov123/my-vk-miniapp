@@ -566,7 +566,6 @@
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
 
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ СКЛОНЕНИЯ СТРАН
     function declineCountry(c) {
         const exc = {
             "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
@@ -583,7 +582,6 @@
         return e[n] || n; 
     }
 
-    // ФУНКЦИЯ МАТЕМАТИКИ (+, -, ×, ÷)
     function generateMathQuestion(level) {
         let complexity = Math.min(3 + Math.floor(level / 3), 12);
         let a = Math.floor(Math.random() * (5 + complexity)) + 2;
@@ -740,11 +738,18 @@
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
     let currentAppUrl = window.location.href;
-    let isVKInitialized = false;
-    let isSyncing = false;
 
     for (let s of allSubjects) {
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
+    }
+
+    // Получить общий максимальный счёт (для топа)
+    function getTotalScore() {
+        let total = 0;
+        for (let s of allSubjects) {
+            total += progressBySubject[s].totalScore;
+        }
+        return total;
     }
 
     async function saveProgressToCloud() {
@@ -802,7 +807,7 @@
     async function saveUserToLeaderboard() {
         if (!window.vkBridge || currentUser.id === 'guest') return;
         try {
-            const totalScore = progressBySubject[currentSubject]?.totalScore || 0;
+            const totalScore = getTotalScore();
             const userData = {
                 name: currentUser.name,
                 photo: currentUser.photo,
@@ -830,7 +835,7 @@
                 }
             }
             entries.sort((a,b) => b.score - a.score);
-            localStorage.setItem('globalLeaderboard', JSON.stringify(entries.slice(0,20)));
+            localStorage.setItem('globalLeaderboard', JSON.stringify(entries.slice(0,10)));
         } catch(e) { console.warn("Ошибка загрузки топа:", e); }
     }
 
@@ -858,7 +863,7 @@
 
     function updateLeaderboardStorage() {
         const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
-        const totalScore = progressBySubject[currentSubject]?.totalScore || 0;
+        const totalScore = getTotalScore();
         const existingIndex = leaderboard.findIndex(entry => entry.name === currentUser.name);
         const entry = { name: currentUser.name, photo: currentUser.photo, score: totalScore, level: progressBySubject[currentSubject]?.level || 1, timestamp: Date.now() };
         if (existingIndex !== -1) {
@@ -867,7 +872,7 @@
             leaderboard.push(entry);
         }
         leaderboard.sort((a,b) => b.score - a.score);
-        localStorage.setItem('globalLeaderboard', JSON.stringify(leaderboard.slice(0, 20)));
+        localStorage.setItem('globalLeaderboard', JSON.stringify(leaderboard.slice(0, 10)));
         if (window.vkBridge) loadGlobalLeaderboard();
     }
 
@@ -875,7 +880,7 @@
         await loadGlobalLeaderboard();
         const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
         const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-20 игроков</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
+        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10 игроков</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
         document.body.appendChild(modal);
         const listDiv = modal.querySelector('#leaderList');
         if (leaderboard.length === 0) listDiv.innerHTML = '<li>Пока нет рекордов. Стань первым!</li>';
@@ -1020,17 +1025,9 @@
         <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
         <button class="reset-btn" id="selectSubjectHint" style="margin-top:8px; background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
         </div>`;
-        // ИСПРАВЛЕНА КНОПКА ПОДЕЛИТЬСЯ — ИСПОЛЬЗУЕТСЯ VKWebAppShowWallPostBox
         document.getElementById("shareBtn")?.addEventListener("click",()=>{
             if(window.vkBridge) {
-                // Определяем ссылку на приложение
                 let shareUrl = window.location.href;
-                // Если приложение запущено не в домене VK, формируем правильную ссылку
-                if (!shareUrl.includes('vk.com') && currentUser.id !== 'guest') {
-                    // Пытаемся получить ID приложения из настроек или используем стандартный формат
-                    // Здесь можно указать ваш ID приложения
-                    shareUrl = `https://vk.com/appYOUR_APP_ID`;
-                }
                 vkBridge.send("VKWebAppShowWallPostBox", {
                     message: `Я прошёл(а) ${subjectNames[currentSubject]} с результатом ${p.totalScore} очков!`,
                     attachments: [shareUrl]
