@@ -16,6 +16,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow-x: hidden;
         }
         .app-container {
             max-width: 650px;
@@ -55,6 +56,7 @@
             background: rgba(255,255,255,0.2);
             padding: 2px 8px;
             border-radius: 40px;
+            line-height: 1;
         }
         .score-board {
             display: flex;
@@ -77,7 +79,7 @@
             cursor: pointer; display: inline-flex; align-items: center; gap: 12px; transition: 0.25s;
             box-shadow: 0 6px 14px rgba(0,0,0,0.3);
         }
-        .subject-btn i { font-size: 1.2rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3)); }
+        .subject-btn i { font-size: 1.2rem; }
         .subject-btn.active { background: linear-gradient(135deg, #f56b2c, #ff9040); box-shadow: 0 8px 20px rgba(245,107,44,0.5); transform: scale(1.02); }
         .subject-btn:hover { transform: translateY(-2px); background: linear-gradient(135deg, #3a4a70, #2a3a60); }
         .game-area { padding: 28px 24px; min-height: 540px; }
@@ -88,7 +90,7 @@
         .fa-heart { color: #ff3366; text-shadow: 0 0 6px #ff6699; }
         .fa-heart-broken { color: #888; opacity: 0.7; }
         .question-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border-radius: 48px; padding: 32px 24px; margin-bottom: 24px; box-shadow: 0 12px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); }
-        .question-text { font-size: 1.6rem; font-weight: 700; text-align: center; color: white; margin-bottom: 32px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .question-text { font-size: 1.6rem; font-weight: 700; text-align: center; color: white; margin-bottom: 32px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); word-break: break-word; }
         .answers { display: flex; flex-direction: column; gap: 16px; }
         .answer-btn {
             background: linear-gradient(95deg, #2a3a60, #1a2a4a);
@@ -111,15 +113,28 @@
         .hint-btn { background: rgba(255,255,255,0.12); backdrop-filter: blur(8px); color: #ffd966; border: 1px solid #ffd966; }
         .hint-btn:hover:not(:disabled) { background: rgba(255,217,102,0.2); transform: translateY(-2px); }
         .hidden { display: none; }
-        .leaderboard-btn { background: linear-gradient(135deg, #f5b042, #ff8c2c); border: none; color: white; padding: 10px 20px; border-radius: 60px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .leaderboard-btn {
+            background: linear-gradient(135deg, #f5b042, #ff8c2c);
+            border: none; color: white; padding: 10px 20px; border-radius: 60px; font-weight: bold;
+            cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
         .leaderboard-btn:hover { transform: scale(1.02); box-shadow: 0 6px 16px rgba(0,0,0,0.4); }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 2000; }
-        .modal-content { background: #12192c; border-radius: 48px; max-width: 500px; width: 90%; padding: 28px; color: white; border: 1px solid rgba(255,255,255,0.2); max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 40px rgba(0,0,0,0.5); }
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+            display: flex; align-items: center; justify-content: center; z-index: 2000;
+        }
+        .modal-content {
+            background: #12192c; border-radius: 48px; max-width: 500px; width: 90%; padding: 28px;
+            color: white; border: 1px solid rgba(255,255,255,0.2); max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.5);
+        }
         .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
         .tab-btn { background: rgba(255,255,255,0.1); border: none; padding: 10px 20px; border-radius: 60px; color: white; cursor: pointer; font-weight: 600; transition: 0.2s; }
         .tab-btn.active-tab { background: #f56b2c; color: white; box-shadow: 0 4px 12px rgba(245,107,44,0.4); }
         .leaderboard-list { list-style: none; margin: 20px 0; }
-        .leaderboard-list li { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
+        .leaderboard-list li { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; word-break: break-word; }
         .leaderboard-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: #2a3a5a; border: 2px solid #ffaa66; }
         .close-modal { background: #6e2cf5; border: none; padding: 14px; border-radius: 60px; width: 100%; color: white; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .close-modal:hover { background: #8a4cff; }
@@ -176,7 +191,7 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКА =======================
+    // ======================= МУЗЫКА (работает на ПК и телефоне) =======================
     (function() {
         const musicURL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3';
         let audio = null, musicEnabled = true, isPlaying = false, userInteracted = false;
@@ -202,7 +217,7 @@
         window.addEventListener('load', () => initAudio());
     })();
 
-    // ======================= ЗАЩИТА =======================
+    // ======================= ЗАЩИТА ОТ ПРОСМОТРА КОДА =======================
     (function() {
         document.addEventListener('contextmenu', (e) => e.preventDefault());
         document.addEventListener('keydown', (e) => { if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'U')) e.preventDefault(); });
@@ -217,7 +232,7 @@
     function declineCountry(c) { const exc = { "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая","Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании","Турция":"Турции","Греция":"Греции","Индия":"Индии","Канада":"Канады","Бразилия":"Бразилии","Австралия":"Австралии","Республика Корея":"Республики Корея","КНДР":"КНДР","Вьетнам":"Вьетнама","Таиланд":"Таиланда","Индонезия":"Индонезии","Филиппины":"Филиппин","Пакистан":"Пакистана","Иран":"Ирана","Ирак":"Ирака","Афганистан":"Афганистана","Сирия":"Сирии","Ливан":"Ливана","Иордания":"Иордании","Кувейт":"Кувейта","Катар":"Катара","Бахрейн":"Бахрейна","Оман":"Омана","Йемен":"Йемена","Шри-Ланка":"Шри-Ланки","Непал":"Непала","Бангладеш":"Бангладеш","Мьянма":"Мьянмы","Монголия":"Монголии","Киргизия":"Киргизии","Таджикистан":"Таджикистана","Туркменистан":"Туркменистана","Азербайджан":"Азербайджана","Армения":"Армении","Грузия":"Грузии","Молдова":"Молдовы","Литва":"Литвы","Латвия":"Латвии","Эстония":"Эстонии","Словакия":"Словакии","Словения":"Словении","Хорватия":"Хорватии","Сербия":"Сербии","Черногория":"Черногории","Босния и Герцеговина":"Боснии и Герцеговины","Северная Македония":"Северной Македонии","Албания":"Албании","Болгария":"Болгарии","Румыния":"Румынии" }; return exc[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а')); }
     function declineElement(n) { const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа","Ртуть":"ртути","Натрий":"натрия","Кислород":"кислорода","Водород":"водорода","Хлор":"хлора","Углерод":"углерода","Азот":"азота","Алюминий":"алюминия","Медь":"меди","Цинк":"цинка","Кальций":"кальция","Калий":"калия","Магний":"магния","Фосфор":"фосфора","Сера":"серы","Кремний":"кремния","Гелий":"гелия","Неон":"неона","Аргон":"аргона","Литий":"лития","Бериллий":"бериллия"}; return e[n] || n.toLowerCase(); }
 
-    // ======================= БАЗЫ ДАННЫХ =======================
+    // ======================= БАЗЫ ДАННЫХ (расширенные, без ошибок) =======================
     const countryCapital = [["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],["Бразилия","Бразилиа"],["Австралия","Канберра"],["Индия","Нью-Дели"],["Египет","Каир"],["Турция","Анкара"],["ОАЭ","Абу-Даби"],["Израиль","Иерусалим"],["Греция","Афины"],["Нидерланды","Амстердам"],["Швейцария","Берн"],["Бельгия","Брюссель"],["Аргентина","Буэнос-Айрес"],["Португалия","Лиссабон"],["Чехия","Прага"],["Венгрия","Будапешт"],["Австрия","Вена"],["Дания","Копенгаген"],["Швеция","Стокгольм"],["Норвегия","Осло"],["Финляндия","Хельсинки"],["Польша","Варшава"],["Украина","Киев"],["Казахстан","Астана"],["Беларусь","Минск"],["Узбекистан","Ташкент"],["ЮАР","Претория"],["Мексика","Мехико"],["Куба","Гавана"],["Марокко","Рабат"],["Саудовская Аравия","Эр-Рияд"],["Республика Корея","Сеул"],["КНДР","Пхеньян"],["Вьетнам","Ханой"],["Таиланд","Бангкок"],["Индонезия","Джакарта"],["Филиппины","Манила"],["Пакистан","Исламабад"],["Иран","Тегеран"],["Ирак","Багдад"],["Афганистан","Кабул"],["Сирия","Дамаск"],["Ливан","Бейрут"],["Иордания","Амман"],["Кувейт","Эль-Кувейт"],["Катар","Доха"],["Бахрейн","Манама"],["Оман","Маскат"],["Йемен","Сана"],["Шри-Ланка","Коломбо"],["Непал","Катманду"],["Бангладеш","Дакка"],["Мьянма","Нейпьидо"],["Монголия","Улан-Батор"],["Киргизия","Бишкек"],["Таджикистан","Душанбе"],["Туркменистан","Ашхабад"],["Азербайджан","Баку"],["Армения","Ереван"],["Грузия","Тбилиси"],["Молдова","Кишинёв"],["Литва","Вильнюс"],["Латвия","Рига"],["Эстония","Таллин"],["Словакия","Братислава"],["Словения","Любляна"],["Хорватия","Загреб"],["Сербия","Белград"],["Черногория","Подгорица"],["Босния и Герцеговина","Сараево"],["Северная Македония","Скопье"],["Албания","Тирана"],["Болгария","София"],["Румыния","Бухарест"]];
     const historyQA = [{ q: "Кто был прозван 'Грозным'?", a: "Иван IV", type: "person" },{ q: "Кто был первым императором России?", a: "Пётр I", type: "person" },{ q: "Кто основал Москву?", a: "Юрий Долгорукий", type: "person" },{ q: "Кто написал 'Слово о полку Игореве'?", a: "Неизвестный автор", type: "person" },{ q: "Кто был первым президентом США?", a: "Джордж Вашингтон", type: "person" },{ q: "Кто изобрёл радио?", a: "Александр Попов", type: "person" },{ q: "Кто был первым космонавтом?", a: "Юрий Гагарин", type: "person" },{ q: "Кто написал 'Божественную комедию'?", a: "Данте Алигьери", type: "person" },{ q: "Кто был последним российским императором?", a: "Николай II", type: "person" },{ q: "Кто отменил крепостное право в России?", a: "Александр II", type: "person" },{ q: "Кто был лидером большевиков?", a: "Владимир Ленин", type: "person" },{ q: "Кто основал Санкт-Петербург?", a: "Пётр I", type: "person" },{ q: "Кто открыл Америку?", a: "Христофор Колумб", type: "person" },{ q: "Кто написал 'Капитал'?", a: "Карл Маркс", type: "person" },{ q: "Кто был первым канцлером Германии?", a: "Отто фон Бисмарк", type: "person" },{ q: "Кто был основателем династии Романовых?", a: "Михаил Романов", type: "person" },{ q: "Кто командовал Красной армией в Гражданскую войну?", a: "Лев Троцкий", type: "person" },{ q: "Кто был президентом СССР?", a: "Михаил Горбачёв", type: "person" },{ q: "В каком году произошло Крещение Руси?", a: "988", type: "date" },{ q: "В каком году была Куликовская битва?", a: "1380", type: "date" },{ q: "В каком году началась Северная война?", a: "1700", type: "date" },{ q: "В каком году отменили крепостное право?", a: "1861", type: "date" },{ q: "В каком году началась Первая мировая война?", a: "1914", type: "date" },{ q: "В каком году произошла Октябрьская революция?", a: "1917", type: "date" },{ q: "В каком году началась Великая Отечественная война?", a: "1941", type: "date" },{ q: "В каком году распался СССР?", a: "1991", type: "date" },{ q: "В каком году было основано НАТО?", a: "1949", type: "date" },{ q: "В каком году человек впервые полетел в космос?", a: "1961", type: "date" },{ q: "В каком году произошла Битва на Калке?", a: "1223", type: "date" },{ q: "В каком году началось правление Петра I?", a: "1682", type: "date" }];
     const authorWork = [{ author: "Лев Толстой", work: "Война и мир" },{ author: "Александр Пушкин", work: "Евгений Онегин" },{ author: "Фёдор Достоевский", work: "Преступление и наказание" },{ author: "Николай Гоголь", work: "Мёртвые души" },{ author: "Михаил Булгаков", work: "Мастер и Маргарита" },{ author: "Антон Чехов", work: "Вишнёвый сад" },{ author: "Иван Тургенев", work: "Отцы и дети" },{ author: "Михаил Лермонтов", work: "Герой нашего времени" },{ author: "Иван Гончаров", work: "Обломов" },{ author: "Михаил Салтыков-Щедрин", work: "История одного города" },{ author: "Николай Лесков", work: "Левша" },{ author: "Александр Куприн", work: "Гранатовый браслет" },{ author: "Иван Бунин", work: "Тёмные аллеи" },{ author: "Анна Ахматова", work: "Реквием" },{ author: "Марина Цветаева", work: "Стихи о Москве" },{ author: "Владимир Маяковский", work: "Облако в штанах" },{ author: "Сергей Есенин", work: "Анна Снегина" },{ author: "Михаил Шолохов", work: "Тихий Дон" },{ author: "Александр Солженицын", work: "Один день Ивана Денисовича" },{ author: "Владимир Набоков", work: "Лолита" },{ author: "Джордж Оруэлл", work: "1984" },{ author: "Эрих Мария Ремарк", work: "Три товарища" },{ author: "Эрнест Хемингуэй", work: "Старик и море" },{ author: "Фрэнсис Скотт Фицджеральд", work: "Великий Гэтсби" }];
@@ -275,23 +290,23 @@
                 try { const appInfo = await vkBridge.send("VKWebAppGetAppInfo"); if (appInfo && appInfo.id) appId = appInfo.id; } catch(e) {}
                 if (!appId) { try { const lp = await vkBridge.send("VKWebAppGetLaunchParams"); if (lp && lp.vk_app_id) appId = lp.vk_app_id; } catch(e) {} }
                 if (appId) { appShareUrl = `https://vk.com/app${appId}`; localStorage.setItem('vk_app_share_url', appShareUrl); } else { const saved = localStorage.getItem('vk_app_share_url'); if (saved && saved.startsWith('https://vk.com/app')) appShareUrl = saved; }
-                const storageRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgressV14", "leaderboardBySubjectV7"] });
+                const storageRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgressV15", "leaderboardBySubjectV8"] });
                 if (storageRes && storageRes.keys) {
                     if (storageRes.keys[0] && storageRes.keys[0].value) { let cloud = JSON.parse(storageRes.keys[0].value); for (let s of allSubjects) if (cloud[s]) progressBySubject[s] = { ...progressBySubject[s], ...cloud[s], usedQuestions: new Set(cloud[s].usedQuestions || []) }; }
                     if (storageRes.keys[1] && storageRes.keys[1].value) leaderboardBySubject = JSON.parse(storageRes.keys[1].value);
                 }
             } catch(e) { console.warn(e); }
         }
-        const local = localStorage.getItem('quizProgressV14'); if (local) { try { let data = JSON.parse(local); for (let s of allSubjects) if (data[s]) progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) }; } catch(e){} }
-        const localLeader = localStorage.getItem('leaderboardBySubjectV7'); if (localLeader) try { leaderboardBySubject = JSON.parse(localLeader); } catch(e){}
+        const local = localStorage.getItem('quizProgressV15'); if (local) { try { let data = JSON.parse(local); for (let s of allSubjects) if (data[s]) progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) }; } catch(e){} }
+        const localLeader = localStorage.getItem('leaderboardBySubjectV8'); if (localLeader) try { leaderboardBySubject = JSON.parse(localLeader); } catch(e){}
         updateUI(); loadNewQuestion(); buildSubjectsUI(); startTutorial();
     }
 
     function saveAllProgress() {
         let toSave = {}; for (let s of allSubjects) toSave[s] = { totalScore: progressBySubject[s].totalScore, level: progressBySubject[s].level, lives: progressBySubject[s].lives, combo: progressBySubject[s].combo, qInLevel: progressBySubject[s].qInLevel, levelPerfect: progressBySubject[s].levelPerfect, usedQuestions: Array.from(progressBySubject[s].usedQuestions) };
-        localStorage.setItem('quizProgressV14', JSON.stringify(toSave));
-        localStorage.setItem('leaderboardBySubjectV7', JSON.stringify(leaderboardBySubject));
-        if (window.vkBridge) { vkBridge.send("VKWebAppStorageSet", { key: "quizProgressV14", value: JSON.stringify(toSave) }).catch(e=>console.warn); vkBridge.send("VKWebAppStorageSet", { key: "leaderboardBySubjectV7", value: JSON.stringify(leaderboardBySubject) }).catch(e=>console.warn); }
+        localStorage.setItem('quizProgressV15', JSON.stringify(toSave));
+        localStorage.setItem('leaderboardBySubjectV8', JSON.stringify(leaderboardBySubject));
+        if (window.vkBridge) { vkBridge.send("VKWebAppStorageSet", { key: "quizProgressV15", value: JSON.stringify(toSave) }).catch(e=>console.warn); vkBridge.send("VKWebAppStorageSet", { key: "leaderboardBySubjectV8", value: JSON.stringify(leaderboardBySubject) }).catch(e=>console.warn); }
         updateLeaderboardForCurrentSubject();
     }
 
@@ -303,8 +318,8 @@
         if (existing !== -1) { if (totalScore > lb[existing].score) lb[existing] = entry; else if (totalScore === lb[existing].score && progressBySubject[currentSubject].level > lb[existing].level) lb[existing] = entry; } else lb.push(entry);
         lb.sort((a,b) => b.score - a.score); lb = lb.slice(0, 10);
         leaderboardBySubject[currentSubject] = lb;
-        localStorage.setItem('leaderboardBySubjectV7', JSON.stringify(leaderboardBySubject));
-        if (window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "leaderboardBySubjectV7", value: JSON.stringify(leaderboardBySubject) }).catch(e=>console.warn);
+        localStorage.setItem('leaderboardBySubjectV8', JSON.stringify(leaderboardBySubject));
+        if (window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "leaderboardBySubjectV8", value: JSON.stringify(leaderboardBySubject) }).catch(e=>console.warn);
     }
 
     function showLeaderboard() {
@@ -418,7 +433,7 @@
 
     document.getElementById("termsLink").onclick = () => showInfoModal("Пользовательское соглашение", "1. Соглашение регулирует отношения...<br>2. Использование приложения означает полное согласие.<br>3. Контакт: vova_polyakov_94@mail.ru");
     document.getElementById("privacyLink").onclick = () => showInfoModal("Политика конфиденциальности", "Собираем только ID, имя и аватар для рейтинга. Данные хранятся в VK Storage. Можно удалить кнопкой 'Удалить данные'.");
-    document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgressV14", value: "" }); location.reload(); }, () => {});
+    document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgressV15", value: "" }); location.reload(); }, () => {});
 
     initVK();
 </script>
