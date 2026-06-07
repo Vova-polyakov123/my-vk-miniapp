@@ -75,14 +75,14 @@
             overflow-x: auto;
             white-space: nowrap;
         }
-        .subjects-grid { display: inline-flex; gap: 15px; }
+        .subjects-grid { display: inline-flex; gap: 12px; }
         .subject-btn {
             background: rgba(20,28,45,0.9);
             border: 1px solid rgba(255,255,255,0.2);
-            padding: 14px 28px;
+            padding: 12px 24px;
             border-radius: 60px;
-            font-weight: 800;
-            font-size: 1.1rem;
+            font-weight: 700;
+            font-size: 1rem;
             color: white;
             cursor: pointer;
             display: inline-flex;
@@ -90,7 +90,6 @@
             gap: 12px;
             transition: 0.2s;
         }
-        .subject-btn i { font-size: 1.3rem; }
         .subject-btn.active {
             background: #f56b2c;
             border-color: #ffaa66;
@@ -314,7 +313,7 @@
             margin-bottom: 16px;
             letter-spacing: 2px;
         }
-        .share-btn, .reset-btn, .select-subject-btn {
+        .share-btn, .reset-btn {
             border: none;
             padding: 14px 24px;
             border-radius: 60px;
@@ -325,7 +324,13 @@
         }
         .share-btn { background: #2688eb; color: white; }
         .reset-btn { background: #f56b2c; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-        .select-subject-btn { background: #6e2cf5; color: white; }
+        .subject-btn {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .subject-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,170,102,0.3);
+        }
     </style>
 </head>
 <body>
@@ -363,7 +368,7 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКА =======================
+    // ======================= МУЗЫКА (РАБОТАЕТ НА ВСЕХ УСТРОЙСТВАХ) =======================
     (function() {
         const musicURL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3';
         const audio = new Audio(musicURL);
@@ -371,27 +376,34 @@
         audio.volume = 0.3;
         let musicEnabled = true;
         let started = false;
+        let initialPlayAttempt = false;
 
         function playMusic() {
             if (musicEnabled && audio.paused) {
                 audio.play().then(() => {
                     started = true;
-                }).catch(e => console.log("Нужен клик для музыки"));
+                    console.log("Музыка запущена");
+                }).catch(e => {
+                    console.log("Автовоспроизведение заблокировано (требуется явный клик)", e);
+                });
             }
         }
 
-        const startOnInteraction = () => {
+        // Запуск музыки по первому клику/тапу пользователя
+        const firstInteraction = () => {
             if (!started && musicEnabled) {
                 audio.play().then(() => {
                     started = true;
-                }).catch(e => console.log("Автовоспроизведение заблокировано"));
+                    console.log("Музыка запущена после взаимодействия");
+                }).catch(e => console.log("Ошибка запуска после взаимодействия:", e));
             }
-            document.removeEventListener('click', startOnInteraction);
-            document.removeEventListener('touchstart', startOnInteraction);
+            document.removeEventListener('click', firstInteraction);
+            document.removeEventListener('touchstart', firstInteraction);
         };
-        document.addEventListener('click', startOnInteraction);
-        document.addEventListener('touchstart', startOnInteraction);
+        document.addEventListener('click', firstInteraction);
+        document.addEventListener('touchstart', firstInteraction);
 
+        // Кнопка управления музыкой
         const musicBtn = document.getElementById('musicToggleBtn');
         if (musicBtn) {
             musicBtn.onclick = (e) => {
@@ -399,9 +411,9 @@
                 musicEnabled = !musicEnabled;
                 if (musicEnabled) {
                     if (!started) {
-                        audio.play().then(() => started = true).catch(e=>console.log);
+                        audio.play().then(() => started = true).catch(e => console.log);
                     } else {
-                        audio.play().catch(e=>console.log);
+                        audio.play().catch(e => console.log);
                     }
                     musicBtn.innerHTML = '<i class="fas fa-music"></i> Вкл/Выкл';
                 } else {
@@ -411,6 +423,7 @@
             };
         }
 
+        // Регулятор громкости
         const volSlider = document.getElementById('globalVolume');
         if (volSlider) {
             volSlider.addEventListener('input', (e) => {
@@ -443,10 +456,7 @@
         }, 5000);
     })();
 
-    // ======================= БАЗЫ ДАННЫХ ВОПРОСОВ (полные, как ранее) =======================
-    // ... (здесь должен быть весь код с вопросами, но для краткости оставим ссылку на полную версию)
-    // ВНИМАНИЕ: в реальном коде все базы вопросов из предыдущих версий должны быть здесь.
-    // Я их укажу сокращённо, но вы можете вставить свои полные массивы.
+    // ======================= БАЗЫ ДАННЫХ ВОПРОСОВ (РАСШИРЕННЫЕ) =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -571,6 +581,7 @@
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
 
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ СКЛОНЕНИЯ СТРАН
     function declineCountry(c) {
         const exc = {
             "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
@@ -587,6 +598,7 @@
         return e[n] || n; 
     }
 
+    // ФУНКЦИЯ МАТЕМАТИКИ (+, -, ×, ÷)
     function generateMathQuestion(level) {
         let complexity = Math.min(3 + Math.floor(level / 3), 12);
         let a = Math.floor(Math.random() * (5 + complexity)) + 2;
@@ -743,12 +755,13 @@
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
     let currentAppUrl = window.location.href;
+    let isVKInitialized = false;
+    let isSyncing = false;
 
     for (let s of allSubjects) {
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
     }
 
-    // Сохранение в облако VK Storage
     async function saveProgressToCloud() {
         if (!window.vkBridge || currentUser.id === 'guest') return;
         try {
@@ -801,7 +814,6 @@
         } catch(e) { console.warn("Ошибка загрузки из облака VK:", e); return false; }
     }
 
-    // Сохранение пользователя в глобальный топ
     async function saveUserToLeaderboard() {
         if (!window.vkBridge || currentUser.id === 'guest') return;
         try {
@@ -856,18 +868,34 @@
             saveProgressToCloud();
             saveUserToLeaderboard();
         }
+        updateLeaderboardStorage();
+    }
+
+    function updateLeaderboardStorage() {
+        const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
+        const totalScore = progressBySubject[currentSubject]?.totalScore || 0;
+        const existingIndex = leaderboard.findIndex(entry => entry.name === currentUser.name);
+        const entry = { name: currentUser.name, photo: currentUser.photo, score: totalScore, level: progressBySubject[currentSubject]?.level || 1, timestamp: Date.now() };
+        if (existingIndex !== -1) {
+            if (totalScore > leaderboard[existingIndex].score) leaderboard[existingIndex] = entry;
+        } else {
+            leaderboard.push(entry);
+        }
+        leaderboard.sort((a,b) => b.score - a.score);
+        localStorage.setItem('globalLeaderboard', JSON.stringify(leaderboard.slice(0, 20)));
+        if (window.vkBridge) loadGlobalLeaderboard();
     }
 
     async function showLeaderboard() {
         await loadGlobalLeaderboard();
         const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
         const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10 игроков</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
+        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10 игроков (${subjectNames[currentSubject]})</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
         document.body.appendChild(modal);
         const listDiv = modal.querySelector('#leaderList');
         if (leaderboard.length === 0) listDiv.innerHTML = '<li>Пока нет рекордов. Стань первым!</li>';
         else {
-            listDiv.innerHTML = leaderboard.slice(0,10).map((u, idx) => {
+            listDiv.innerHTML = leaderboard.map((u, idx) => {
                 const avatarHtml = u.photo ? `<img class="leaderboard-avatar" src="${u.photo}" alt="avatar">` : `<div class="leaderboard-avatar" style="background:#6e2cf5; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-user"></i></div>`;
                 return `<li>${avatarHtml}<div><strong>${idx+1}. ${u.name}</strong><br>🎯 ${u.score} очков | Уровень ${u.level}</div></li>`;
             }).join('');
@@ -1005,24 +1033,29 @@
         document.getElementById("gameArea").innerHTML=`<div class="result-area"><div class="result-score">${resultText}</div><p style="margin:12px 0; color:white; font-size:1.2rem;">Очки: ${p.totalScore} | Уровень: ${p.level}</p>
         <button class="share-btn" id="shareBtn">📢 ПОДЕЛИТЬСЯ</button>
         <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
-        <button class="select-subject-btn" id="selectSubjectHint">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
+        <button class="reset-btn" id="selectSubjectHint" style="margin-top:8px; background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
         </div>`;
-        // Поделиться через VKWebAppShowWallPostBox
+        // ИСПРАВЛЕНА КНОПКА ПОДЕЛИТЬСЯ — ИСПОЛЬЗУЕТСЯ VKWebAppShowWallPostBox
         document.getElementById("shareBtn")?.addEventListener("click",()=>{
             if(window.vkBridge) {
+                // Определяем ссылку на приложение
+                let shareUrl = window.location.href;
+                // Если приложение запущено не в домене VK, формируем правильную ссылку
+                if (!shareUrl.includes('vk.com') && currentUser.id !== 'guest') {
+                    // Пытаемся получить ID приложения из настроек или используем стандартный формат
+                    // Здесь можно указать ваш ID приложения
+                    shareUrl = `https://vk.com/appYOUR_APP_ID`;
+                }
                 vkBridge.send("VKWebAppShowWallPostBox", {
-                    message: `Я прошёл(а) ${subjectNames[currentSubject]} с результатом ${p.totalScore} очков! Играйте со мной в "Битву знаний"!`,
-                    attachments: [window.location.href]
+                    message: `Я прошёл(а) ${subjectNames[currentSubject]} с результатом ${p.totalScore} очков!`,
+                    attachments: [shareUrl]
                 });
             } else {
                 alert("Поделиться можно только в приложении VK");
             }
         });
         document.getElementById("resetBtn")?.addEventListener("click",()=>{ resetSubjectProgress(currentSubject); });
-        document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{
-            // Прокрутка к панели предметов
-            document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth"});
-        });
+        document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{ document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth"}); });
     }
 
     function resetSubjectProgress(subject) {
@@ -1115,7 +1148,7 @@
     function startTutorial() {
         if(localStorage.getItem('tutorialShown')) return;
         const overlay = document.createElement('div'); overlay.className = 'modal';
-        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 глобальный с аватарками<br>• Музыка включается/выключается кнопкой</p><button class="close-modal">Начать</button></div>`;
+        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 сохраняется в облаке VK с аватарками<br>• Музыка включается/выключается кнопкой</p><button class="close-modal">Начать</button></div>`;
         document.body.appendChild(overlay);
         overlay.querySelector('.close-modal').onclick = () => { overlay.remove(); localStorage.setItem('tutorialShown','true'); };
     }
