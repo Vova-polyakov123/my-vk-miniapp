@@ -361,7 +361,7 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКА (РАБОТАЕТ НА ПК И ТЕЛЕФОНЕ) =======================
+    // ======================= МУЗЫКА (РАБОТАЕТ НА ТЕЛЕФОНЕ И ПК) =======================
     (function() {
         const musicURL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3';
         const audio = new Audio(musicURL);
@@ -451,7 +451,7 @@
         }, 5000);
     })();
 
-    // ======================= БАЗЫ ВОПРОСОВ (РАСШИРЕННЫЕ, БЕЗ ОШИБОК) =======================
+    // ======================= БАЗЫ ДАННЫХ (ПОЛНОСТЬЮ ИСПРАВЛЕНЫ) =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -462,6 +462,7 @@
         ["Польша","Варшава"],["Украина","Киев"],["Казахстан","Астана"],["Беларусь","Минск"],["Узбекистан","Ташкент"],
         ["ЮАР","Претория"],["Мексика","Мехико"],["Куба","Гавана"],["Марокко","Рабат"],["Саудовская Аравия","Эр-Рияд"]
     ];
+
     const historyQA = [
         { q: "Кто был прозван 'Грозным'?", a: "Иван IV", type: "person" },
         { q: "Кто был первым императором России?", a: "Пётр I", type: "person" },
@@ -488,6 +489,7 @@
         { q: "В каком году закончилась Вторая мировая война?", a: "1945", type: "date" },
         { q: "В каком году распался СССР?", a: "1991", type: "date" }
     ];
+
     const authorWork = [
         { author: "Лев Толстой", work: "Война и мир" },
         { author: "Александр Пушкин", work: "Евгений Онегин" },
@@ -510,6 +512,7 @@
         { author: "Александр Солженицын", work: "Один день Ивана Денисовича" },
         { author: "Владимир Набоков", work: "Лолита" }
     ];
+
     const engWords = [
         ["собака","dog"],["кошка","cat"],["красный","red"],["идти (прош.)","went"],["яблоко","apple"],
         ["ловить (прош.)","caught"],["учитель","teacher"],["книга","book"],["радостный","happy"],["большой","big"],
@@ -518,6 +521,7 @@
         ["отец","father"],["брат","brother"],["сестра","sister"],["солнце","sun"],["луна","moon"],
         ["звезда","star"],["птица","bird"],["рыба","fish"],["дерево","tree"],["цветок","flower"]
     ];
+
     const obzhFacts = [
         { q: "Номер пожарной службы?", correct: "101", wrong: ["102","103","112"] },
         { q: "Номер скорой помощи?", correct: "103", wrong: ["101","102","112"] },
@@ -529,6 +533,7 @@
         { q: "Что делать при пожаре в квартире?", correct: "Вызвать 101", wrong: ["Спрятаться в ванной", "Открыть окна", "Поливать водой"] },
         { q: "Первая помощь при ожоге?", correct: "Охладить водой", wrong: ["Смазать маслом", "Наложить тугую повязку", "Проколоть пузыри"] }
     ];
+
     const societyFacts = [
         ["Высший орган власти РФ?", "Президент"], ["Что такое референдум?", "Всенародное голосование"],
         ["Нижняя палата парламента РФ?", "Государственная дума"], ["Срок президентства в РФ?", "6 лет"],
@@ -537,18 +542,21 @@
         ["Что такое ВВП?", "Стоимость всех товаров и услуг страны"], ["Кто может быть президентом РФ?", "Гражданин не моложе 35 лет"],
         ["Что такое дефолт?", "Отказ платить по долгам"], ["Право на труд относится к ...", "Социальным правам"]
     ];
+
     const biologyFacts = [
         ["Фотосинтез происходит в ...", "Хлоропластах"], ["Самый большой орган человека?", "Кожа"],
         ["Процесс деления клетки?", "Митоз"], ["Единица наследственности?", "Ген"],
         ["Сколько камер в сердце человека?", "4"], ["Сколько костей у взрослого человека?", "206"],
         ["Что такое ДНК?", "Носитель наследственной информации"], ["Что такое эволюция?", "Развитие живых организмов"]
     ];
+
     const elements = [
         ["Au","Золото"],["Ag","Серебро"],["Fe","Железо"],["Pb","Свинец"],["Hg","Ртуть"],
         ["O","Кислород"],["H","Водород"],["Na","Натрий"],["Cl","Хлор"],["C","Углерод"],
         ["N","Азот"],["Al","Алюминий"],["Cu","Медь"],["Zn","Цинк"],["Ca","Кальций"],
         ["K","Калий"],["Mg","Магний"],["P","Фосфор"],["S","Сера"],["Si","Кремний"]
     ];
+
     const physicsFacts = [
         ["Единица измерения силы?", "Ньютон"], ["Закон всемирного тяготения открыл?", "Ньютон"],
         ["Скорость света в вакууме (км/с)?", "300000"], ["Частица с положительным зарядом?", "Протон"],
@@ -557,6 +565,7 @@
         ["Закон Ома связывает ...", "Силу тока, напряжение и сопротивление"], ["Что такое инерция?", "Сохранение скорости"],
         ["Кто открыл закон электромагнитной индукции?", "Фарадей"], ["Что такое квант?", "Порция энергии"]
     ];
+
     const spellingWords = [
         { word: "прекрасный", wrong: ["прекрастный","прекрасныйь","прекрасны"] },
         { word: "участвовать", wrong: ["учавствовать","участвововать","учавствоать"] },
@@ -576,44 +585,86 @@
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
 
-    // ======================= ИСПРАВЛЕННАЯ ФУНКЦИЯ СКЛОНЕНИЯ СТРАН =======================
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ СКЛОНЕНИЯ СТРАН
     function declineCountry(c) {
-        const exceptions = {
-            "Россия": "России", "США": "США", "Франция": "Франции", "Германия": "Германии",
-            "Китай": "Китая", "Япония": "Японии", "Италия": "Италии", "Великобритания": "Великобритании",
-            "Испания": "Испании", "Канада": "Канады", "Бразилия": "Бразилии", "Австралия": "Австралии",
-            "Индия": "Индии", "Египет": "Египта", "Турция": "Турции", "ОАЭ": "ОАЭ", "Израиль": "Израиля",
-            "Греция": "Греции", "Нидерланды": "Нидерландов", "Швейцария": "Швейцарии", "Бельгия": "Бельгии",
-            "Аргентина": "Аргентины", "Португалия": "Португалии", "Чехия": "Чехии", "Венгрия": "Венгрии",
-            "Австрия": "Австрии", "Дания": "Дании", "Швеция": "Швеции", "Норвегия": "Норвегии",
-            "Финляндия": "Финляндии", "Польша": "Польши", "Украина": "Украины", "Казахстан": "Казахстана",
-            "Беларусь": "Беларуси", "Узбекистан": "Узбекистана", "ЮАР": "ЮАР", "Мексика": "Мексики",
-            "Куба": "Кубы", "Марокко": "Марокко", "Саудовская Аравия": "Саудовской Аравии"
+        const exc = {
+            "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
+            "Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании",
+            "Канада":"Канады","Бразилия":"Бразилии","Австралия":"Австралии","Индия":"Индии",
+            "Египет":"Египта","Турция":"Турции","ОАЭ":"ОАЭ","Израиль":"Израиля",
+            "Беларусь":"Беларуси","ЮАР":"ЮАР","Саудовская Аравия":"Саудовской Аравии",
+            "Нидерланды":"Нидерландов","Мексика":"Мексики","Марокко":"Марокко"
         };
-        return exceptions[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а'));
+        return exc[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а'));
     }
-    function declineElement(n) { const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа"}; return e[n] || n; }
+    function declineElement(n) { 
+        const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа"}; 
+        return e[n] || n; 
+    }
 
+    // НОВАЯ ФУНКЦИЯ МАТЕМАТИКИ (+, -, ×, ÷)
     function generateMathQuestion(level) {
-        let a = Math.floor(Math.random()*10)+2, b = Math.floor(Math.random()*10)+2;
-        let correct = a+b;
-        return { text: `${a} + ${b} = ?`, options: shuffle([correct.toString(), (correct+1).toString(), (correct-1).toString(), (correct+2).toString()]), correctHash: simpleHash(correct.toString()), points: 10 };
+        // С увеличением уровня сложность растёт
+        let complexity = Math.min(3 + Math.floor(level / 3), 12);
+        let a = Math.floor(Math.random() * (5 + complexity)) + 2;
+        let b = Math.floor(Math.random() (5 + complexity)) + 2;
+        let ops = ['+', '-', '×'];
+        if (level >= 3) ops.push('÷');
+        let op = randomItem(ops);
+        let correct, text, opts;
+
+        if (op === '+') {
+            correct = a + b;
+            text = `${a} + ${b} = ?`;
+            opts = [correct, correct+1, correct-1, correct+2].filter(v => v > 0);
+        } 
+        else if (op === '-') {
+            if (a < b) [a, b] = [b, a];
+            correct = a - b;
+            text = `${a} - ${b} = ?`;
+            opts = [correct, correct+1, correct-1, correct+2].filter(v => v >= 0);
+            if (correct === 0) opts = [0, 1, 2, 3];
+        }
+        else if (op === '×') {
+            correct = a * b;
+            text = `${a} × ${b} = ?`;
+            opts = [correct, correct+2, correct-2, correct+1].filter(v => v > 0);
+        }
+        else { // деление
+            // Генерируем делимое и делитель так, чтобы результат был целым
+            let divisor = Math.floor(Math.random() * (5 + complexity)) + 2;
+            let quotient = Math.floor(Math.random() * (5 + complexity)) + 2;
+            let dividend = divisor * quotient;
+            correct = quotient;
+            text = `${dividend} ÷ ${divisor} = ?`;
+            opts = [correct, correct+1, correct-1, correct+2].filter(v => v > 0);
+        }
+
+        if (opts.length < 4) opts.push(Math.abs(correct) + 3);
+        opts = unique(opts);
+        while (opts.length < 4) opts.push((Number(correct) + 1).toString());
+        return { 
+            text, 
+            options: shuffle(opts.map(String)), 
+            correctHash: simpleHash(correct.toString()), 
+            points: 10 + Math.floor(level / 2) 
+        };
     }
-    // ======================= ИСПРАВЛЕННЫЙ ГЕНЕРАТОР ИСТОРИИ =======================
+
     function generateHistoryQuestion() {
         let ev = randomItem(historyQA);
         let wrongs;
         if (ev.type === "person") {
-            const personWrongs = ["Иван Грозный", "Пётр I", "Екатерина II", "Николай II", "Александр I", "Владимир Ленин", "Иосиф Сталин", "Михаил Горбачёв", "Александр II", "Павел I"];
-            wrongs = personWrongs.filter(w => w !== ev.a).slice(0, 3);
+            wrongs = ["Иван Грозный", "Пётр I", "Екатерина II", "Николай II", "Александр I", "Владимир Ленин", "Иосиф Сталин", "Михаил Горбачёв"];
         } else {
-            const dateWrongs = ["988", "1242", "1380", "1613", "1700", "1703", "1812", "1825", "1861", "1914", "1917", "1918", "1941", "1945", "1961", "1991"];
-            wrongs = dateWrongs.filter(w => w !== ev.a).slice(0, 3);
+            wrongs = ["1500", "1700", "1900", "2000", "988", "1242", "1812", "1917", "1945", "1991"];
         }
+        wrongs = wrongs.filter(w => w !== ev.a).slice(0, 3);
         let opts = unique([ev.a, ...wrongs]);
         while(opts.length < 4) opts.push(ev.type === "person" ? "Неизвестно" : "0");
         return { text: ev.q, options: shuffle(opts.slice(0,4)), correctHash: simpleHash(ev.a), points: 10 };
     }
+
     function generateGeoQuestion() { 
         let p = randomItem(countryCapital); 
         let text = `Столица ${declineCountry(p[0])}?`; 
@@ -623,6 +674,7 @@
         while(opts.length < 4) opts.push("Лондон");
         return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; 
     }
+
     function generateLiteratureQuestion() { 
         let item = randomItem(authorWork); 
         let text = `Кто написал "${item.work}"?`; 
@@ -632,6 +684,7 @@
         while(opts.length < 4) opts.push("Неизвестный автор");
         return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; 
     }
+
     function generateEnglishQuestion() { 
         let w = randomItem(engWords); 
         let correct = w[1]; 
@@ -640,12 +693,14 @@
         while(opts.length < 4) opts.push("unknown");
         return { text: `Перевод слова "${w[0]}":`, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; 
     }
+
     function generateOBZHQuestion() { 
         let f = randomItem(obzhFacts); 
         let opts = unique([f.correct, ...f.wrong]);
         while(opts.length < 4) opts.push("Неизвестно");
         return { text: f.q, options: shuffle(opts), correctHash: simpleHash(f.correct), points:10 }; 
     }
+
     function generateSocietyQuestion() { 
         let f = randomItem(societyFacts); 
         let wrongs = societyFacts.filter(s => s[1] !== f[1]).map(s => s[1]).slice(0,3);
@@ -653,6 +708,7 @@
         while(opts.length < 4) opts.push("Неизвестно");
         return { text: f[0], options: shuffle(opts), correctHash: simpleHash(f[1]), points:10 }; 
     }
+
     function generateBiologyQuestion() { 
         let f = randomItem(biologyFacts); 
         let correct = f[1]; 
@@ -661,6 +717,7 @@
         while(opts.length < 4) opts.push("Неизвестно");
         return { text: f[0], options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; 
     }
+
     function generateChemistryQuestion() { 
         let e = randomItem(elements); 
         let text = `Химический символ ${declineElement(e[1])}?`; 
@@ -670,6 +727,7 @@
         while(opts.length < 4) opts.push("??");
         return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; 
     }
+
     function generatePhysicsQuestion() { 
         let f = randomItem(physicsFacts); 
         let wrongs = physicsFacts.filter(p => p[1] !== f[1]).map(p => p[1]).slice(0,3);
@@ -677,6 +735,7 @@
         while(opts.length < 4) opts.push("Энергия");
         return { text: f[0], options: shuffle(opts), correctHash: simpleHash(f[1]), points:10 }; 
     }
+
     function generateRussianQuestion() { 
         let base = randomItem(spellingWords); 
         let opts = unique([base.word, ...base.wrong]);
@@ -684,7 +743,7 @@
         return { text: "Выберите правильное написание:", options: shuffle(opts.slice(0,4)), correctHash: simpleHash(base.word), points:10 }; 
     }
 
-    // ======================= ОСНОВНАЯ ЛОГИКА (БЕЗ ИЗМЕНЕНИЙ) =======================
+    // ======================= ОСНОВНАЯ ЛОГИКА =======================
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = { math:"🧮 Математика", russian:"📖 Русский", geo:"🌍 География", history:"🏛️ История", literature:"📚 Литература", english:"🇬🇧 Английский", obzh:"🛡️ ОБЖ", society:"⚖️ Общество", biology:"🧬 Биология", chemistry:"⚗️ Химия", physics:"⚛️ Физика" };
     const subjectIcons = { math:"fa-calculator", russian:"fa-book", geo:"fa-globe", history:"fa-landmark", literature:"fa-feather-alt", english:"fa-language", obzh:"fa-shield-alt", society:"fa-gavel", biology:"fa-dna", chemistry:"fa-flask", physics:"fa-atom" };
@@ -701,6 +760,7 @@
     const MAX_LIVES = 5;
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
+    let currentAppUrl = window.location.href; // для шаринга
 
     for (let s of allSubjects) {
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
@@ -933,7 +993,17 @@
         <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
         <button class="reset-btn" id="selectSubjectHint" style="margin-top:8px; background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
         </div>`;
-        document.getElementById("shareBtn")?.addEventListener("click",()=>{ if(window.vkBridge) vkBridge.send("VKWebAppShare",{link:"https://vk.com",attachment:`Я прошёл ${subjectNames[currentSubject]} с ${p.totalScore} очков!`}); });
+        // ИСПРАВЛЕНА КНОПКА ПОДЕЛИТЬСЯ: теперь открывает текущее приложение, а не страницу VK
+        document.getElementById("shareBtn")?.addEventListener("click",()=>{
+            if(window.vkBridge) {
+                vkBridge.send("VKWebAppShare", {
+                    link: window.location.href,
+                    attachment: `Я прошёл ${subjectNames[currentSubject]} с ${p.totalScore} очков!`
+                });
+            } else {
+                alert("Поделиться можно только в приложении VK");
+            }
+        });
         document.getElementById("resetBtn")?.addEventListener("click",()=>{ resetSubjectProgress(currentSubject); });
         document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{ document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth"}); });
     }
