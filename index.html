@@ -361,7 +361,7 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКА (РАБОТАЕТ НА ВСЕХ УСТРОЙСТВАХ) =======================
+    // ======================= МУЗЫКА (РАБОТАЕТ НА ТЕЛЕФОНЕ И ПК) =======================
     (function() {
         const musicURL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3';
         const audio = new Audio(musicURL);
@@ -374,21 +374,21 @@
             if (musicEnabled && audio.paused) {
                 audio.play().then(() => {
                     started = true;
-                }).catch(e => console.log("Автовоспроизведение заблокировано (требуется клик)"));
+                }).catch(e => console.log("Нужен клик для музыки"));
             }
         }
 
-        const firstInteraction = () => {
+        const startOnInteraction = () => {
             if (!started && musicEnabled) {
                 audio.play().then(() => {
                     started = true;
-                }).catch(e => console.log("Ошибка запуска после клика:", e));
+                }).catch(e => console.log("Автовоспроизведение заблокировано"));
             }
-            document.removeEventListener('click', firstInteraction);
-            document.removeEventListener('touchstart', firstInteraction);
+            document.removeEventListener('click', startOnInteraction);
+            document.removeEventListener('touchstart', startOnInteraction);
         };
-        document.addEventListener('click', firstInteraction);
-        document.addEventListener('touchstart', firstInteraction);
+        document.addEventListener('click', startOnInteraction);
+        document.addEventListener('touchstart', startOnInteraction);
 
         const musicBtn = document.getElementById('musicToggleBtn');
         if (musicBtn) {
@@ -566,6 +566,7 @@
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
 
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ СКЛОНЕНИЯ СТРАН
     function declineCountry(c) {
         const exc = {
             "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
@@ -582,6 +583,7 @@
         return e[n] || n; 
     }
 
+    // ФУНКЦИЯ МАТЕМАТИКИ (+, -, ×, ÷)
     function generateMathQuestion(level) {
         let complexity = Math.min(3 + Math.floor(level / 3), 12);
         let a = Math.floor(Math.random() * (5 + complexity)) + 2;
@@ -720,7 +722,7 @@
         return { text: "Выберите правильное написание:", options: shuffle(opts.slice(0,4)), correctHash: simpleHash(base.word), points:10 }; 
     }
 
-    // ======================= ОСНОВНАЯ ЛОГИКА С ПОЛНОЙ СИНХРОНИЗАЦИЕЙ =======================
+    // ======================= ОСНОВНАЯ ЛОГИКА С СИНХРОНИЗАЦИЕЙ =======================
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = { math:"🧮 Математика", russian:"📖 Русский", geo:"🌍 География", history:"🏛️ История", literature:"📚 Литература", english:"🇬🇧 Английский", obzh:"🛡️ ОБЖ", society:"⚖️ Общество", biology:"🧬 Биология", chemistry:"⚗️ Химия", physics:"⚛️ Физика" };
     const subjectIcons = { math:"fa-calculator", russian:"fa-book", geo:"fa-globe", history:"fa-landmark", literature:"fa-feather-alt", english:"fa-language", obzh:"fa-shield-alt", society:"fa-gavel", biology:"fa-dna", chemistry:"fa-flask", physics:"fa-atom" };
@@ -737,6 +739,8 @@
     const MAX_LIVES = 5;
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
+    let currentAppUrl = window.location.href;
+    let isVKInitialized = false;
     let isSyncing = false;
 
     for (let s of allSubjects) {
@@ -758,24 +762,24 @@
                     usedQuestions: Array.from(progressBySubject[s].usedQuestions)
                 };
             }
-            await vkBridge.send("VKWebAppStorageSet", { key: `quizProgress_${currentUser.id}`, value: JSON.stringify(toSave) });
-            await vkBridge.send("VKWebAppStorageSet", { key: `quizProgressTimestamp_${currentUser.id}`, value: Date.now().toString() });
+            await vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: JSON.stringify(toSave) });
+            await vkBridge.send("VKWebAppStorageSet", { key: "quizProgressTimestamp", value: Date.now().toString() });
         } catch(e) { console.warn("Ошибка сохранения в облако VK:", e); }
     }
 
     async function loadProgressFromCloud() {
         if (!window.vkBridge || currentUser.id === 'guest') return false;
         try {
-            const res = await vkBridge.send("VKWebAppStorageGet", { keys: [`quizProgress_${currentUser.id}`, `quizProgressTimestamp_${currentUser.id}`] });
+            const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress", "quizProgressTimestamp"] });
             let cloudProgress = null;
             let cloudTimestamp = 0;
             for (let item of res.keys) {
-                if (item.key === `quizProgress_${currentUser.id}`) cloudProgress = item.value;
-                if (item.key === `quizProgressTimestamp_${currentUser.id}`) cloudTimestamp = parseInt(item.value) || 0;
+                if (item.key === "quizProgress") cloudProgress = item.value;
+                if (item.key === "quizProgressTimestamp") cloudTimestamp = parseInt(item.value) || 0;
             }
             if (cloudProgress) {
-                const localTimestamp = parseInt(localStorage.getItem(`quizProgressTimestamp_${currentUser.id}`) || '0');
-                if (cloudTimestamp > localTimestamp) {
+                const localTimestamp = parseInt(localStorage.getItem('quizProgressTimestamp') || '0');
+                if (cloudTimestamp > localTimestamp || localTimestamp === 0) {
                     const parsed = JSON.parse(cloudProgress);
                     for (let s of allSubjects) {
                         if (parsed[s]) {
@@ -786,8 +790,8 @@
                             };
                         }
                     }
-                    localStorage.setItem(`quizProgress_${currentUser.id}`, JSON.stringify(parsed));
-                    localStorage.setItem(`quizProgressTimestamp_${currentUser.id}`, cloudTimestamp.toString());
+                    localStorage.setItem('quizProgressV7', JSON.stringify(parsed));
+                    localStorage.setItem('quizProgressTimestamp', cloudTimestamp.toString());
                     return true;
                 }
             }
@@ -826,7 +830,7 @@
                 }
             }
             entries.sort((a,b) => b.score - a.score);
-            localStorage.setItem('globalLeaderboard', JSON.stringify(entries.slice(0,10)));
+            localStorage.setItem('globalLeaderboard', JSON.stringify(entries.slice(0,20)));
         } catch(e) { console.warn("Ошибка загрузки топа:", e); }
     }
 
@@ -843,13 +847,11 @@
                 usedQuestions: Array.from(progressBySubject[s].usedQuestions)
             };
         }
-        if (currentUser.id !== 'guest') {
-            localStorage.setItem(`quizProgress_${currentUser.id}`, JSON.stringify(toSave));
-            localStorage.setItem(`quizProgressTimestamp_${currentUser.id}`, Date.now().toString());
+        localStorage.setItem('quizProgressV7', JSON.stringify(toSave));
+        localStorage.setItem('quizProgressTimestamp', Date.now().toString());
+        if (window.vkBridge && currentUser.id !== 'guest') {
             saveProgressToCloud();
             saveUserToLeaderboard();
-        } else {
-            localStorage.setItem('quizProgressV7', JSON.stringify(toSave));
         }
         updateLeaderboardStorage();
     }
@@ -865,7 +867,7 @@
             leaderboard.push(entry);
         }
         leaderboard.sort((a,b) => b.score - a.score);
-        localStorage.setItem('globalLeaderboard', JSON.stringify(leaderboard.slice(0, 10)));
+        localStorage.setItem('globalLeaderboard', JSON.stringify(leaderboard.slice(0, 20)));
         if (window.vkBridge) loadGlobalLeaderboard();
     }
 
@@ -873,7 +875,7 @@
         await loadGlobalLeaderboard();
         const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
         const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10 игроков</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
+        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-20 игроков</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
         document.body.appendChild(modal);
         const listDiv = modal.querySelector('#leaderList');
         if (leaderboard.length === 0) listDiv.innerHTML = '<li>Пока нет рекордов. Стань первым!</li>';
@@ -1018,11 +1020,20 @@
         <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
         <button class="reset-btn" id="selectSubjectHint" style="margin-top:8px; background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
         </div>`;
+        // ИСПРАВЛЕНА КНОПКА ПОДЕЛИТЬСЯ — ИСПОЛЬЗУЕТСЯ VKWebAppShowWallPostBox
         document.getElementById("shareBtn")?.addEventListener("click",()=>{
             if(window.vkBridge) {
-                vkBridge.send("VKWebAppShare", {
-                    link: window.location.href,
-                    attachment: `Я прошёл ${subjectNames[currentSubject]} с ${p.totalScore} очков!`
+                // Определяем ссылку на приложение
+                let shareUrl = window.location.href;
+                // Если приложение запущено не в домене VK, формируем правильную ссылку
+                if (!shareUrl.includes('vk.com') && currentUser.id !== 'guest') {
+                    // Пытаемся получить ID приложения из настроек или используем стандартный формат
+                    // Здесь можно указать ваш ID приложения
+                    shareUrl = `https://vk.com/appYOUR_APP_ID`;
+                }
+                vkBridge.send("VKWebAppShowWallPostBox", {
+                    message: `Я прошёл(а) ${subjectNames[currentSubject]} с результатом ${p.totalScore} очков!`,
+                    attachments: [shareUrl]
                 });
             } else {
                 alert("Поделиться можно только в приложении VK");
@@ -1132,7 +1143,7 @@
 
     document.getElementById("termsLink").onclick = () => showInfoModal("Пользовательское соглашение", userAgreement);
     document.getElementById("privacyLink").onclick = () => showInfoModal("Политика конфиденциальности", privacyPolicy);
-    document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: `quizProgress_${currentUser.id}`, value: "" }); location.reload(); }, () => {});
+    document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: "" }); location.reload(); }, () => {});
 
     async function startApp() {
         try {
@@ -1144,7 +1155,7 @@
                 }
                 const cloudLoaded = await loadProgressFromCloud();
                 if (!cloudLoaded) {
-                    const local = localStorage.getItem(`quizProgress_${currentUser.id}`);
+                    const local = localStorage.getItem('quizProgressV7');
                     if (local) {
                         try {
                             const data = JSON.parse(local);
@@ -1154,23 +1165,9 @@
                                 }
                             }
                         } catch(e) {}
-                    } else {
-                        const fallback = localStorage.getItem('quizProgressV7');
-                        if (fallback) {
-                            try {
-                                const data = JSON.parse(fallback);
-                                for (let s of allSubjects) {
-                                    if (data[s]) {
-                                        progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
-                                    }
-                                }
-                            } catch(e) {}
-                        }
                     }
                 }
                 await loadGlobalLeaderboard();
-                await saveProgressToCloud();
-                await saveUserToLeaderboard();
             } else {
                 const local = localStorage.getItem('quizProgressV7');
                 if (local) {
