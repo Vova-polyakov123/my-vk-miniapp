@@ -419,27 +419,127 @@
         document.addEventListener('keydown', (e) => { if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'U')) e.preventDefault(); });
     })();
 
-    // ======================= ДАННЫЕ И ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =======================
-    const countryCapital = [["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],["Бразилия","Бразилиа"],["Австралия","Канберра"],["Индия","Нью-Дели"],["Египет","Каир"],["Турция","Анкара"],["ОАЭ","Абу-Даби"],["Израиль","Иерусалим"],["Греция","Афины"],["Нидерланды","Амстердам"],["Швейцария","Берн"],["Бельгия","Брюссель"],["Аргентина","Буэнос-Айрес"],["Португалия","Лиссабон"],["Чехия","Прага"],["Венгрия","Будапешт"],["Австрия","Вена"],["Дания","Копенгаген"],["Швеция","Стокгольм"],["Норвегия","Осло"],["Финляндия","Хельсинки"],["Польша","Варшава"],["Украина","Киев"],["Казахстан","Астана"],["Беларусь","Минск"],["Узбекистан","Ташкент"],["ЮАР","Претория"],["Мексика","Мехико"],["Куба","Гавана"],["Марокко","Рабат"],["Саудовская Аравия","Эр-Рияд"]];
-    const historyQA = [{ q: "Кто был прозван 'Грозным'?", a: "Иван IV", type: "person" },{ q: "Кто был первым императором России?", a: "Пётр I", type: "person" },{ q: "Кто основал Москву?", a: "Юрий Долгорукий", type: "person" },{ q: "Кто написал 'Слово о полку Игореве'?", a: "Неизвестный автор", type: "person" },{ q: "Кто был первым президентом США?", a: "Джордж Вашингтон", type: "person" },{ q: "Кто изобрёл радио?", a: "Александр Попов", type: "person" },{ q: "Кто был первым космонавтом?", a: "Юрий Гагарин", type: "person" },{ q: "Кто написал 'Божественную комедию'?", a: "Данте Алигьери", type: "person" },{ q: "В каком году произошло Крещение Руси?", a: "988", type: "date" },{ q: "В каком году была Куликовская битва?", a: "1380", type: "date" },{ q: "В каком году началась Северная война?", a: "1700", type: "date" },{ q: "В каком году отменили крепостное право?", a: "1861", type: "date" },{ q: "В каком году началась Первая мировая война?", a: "1914", type: "date" },{ q: "В каком году произошла Октябрьская революция?", a: "1917", type: "date" },{ q: "В каком году началась Великая Отечественная война?", a: "1941", type: "date" },{ q: "В каком году распался СССР?", a: "1991", type: "date" }];
-    const authorWork = [{ author: "Лев Толстой", work: "Война и мир" },{ author: "Александр Пушкин", work: "Евгений Онегин" },{ author: "Фёдор Достоевский", work: "Преступление и наказание" },{ author: "Николай Гоголь", work: "Мёртвые души" },{ author: "Михаил Булгаков", work: "Мастер и Маргарита" },{ author: "Антон Чехов", work: "Вишнёвый сад" },{ author: "Иван Тургенев", work: "Отцы и дети" },{ author: "Михаил Лермонтов", work: "Герой нашего времени" }];
-    const engWords = [["собака","dog"],["кошка","cat"],["красный","red"],["идти (прош.)","went"],["яблоко","apple"],["учитель","teacher"],["книга","book"],["радостный","happy"],["большой","big"],["синий","blue"]];
-    const obzhFacts = [{ q: "Номер пожарной службы?", correct: "101", wrong: ["102","103","112"] },{ q: "Номер скорой помощи?", correct: "103", wrong: ["101","102","112"] },{ q: "Номер полиции?", correct: "102", wrong: ["101","103","112"] },{ q: "Что означает зелёный знак с белым человечком?", correct: "Выход", wrong: ["Туалет","Запасный выход"] }];
-    const societyFacts = [["Высший орган власти РФ?", "Президент"],["Нижняя палата парламента РФ?", "Государственная дума"],["Срок президентства в РФ?", "6 лет"],["Конституция РФ принята в...", "1993"],["Сколько палат в парламенте РФ?", "Две"]];
-    const biologyFacts = [["Фотосинтез происходит в ...", "Хлоропластах"],["Самый большой орган человека?", "Кожа"],["Единица наследственности?", "Ген"],["Сколько камер в сердце человека?", "4"],["Сколько костей у взрослого человека?", "206"],["Что такое ДНК?", "Носитель наследственной информации"]];
-    const elements = [["Au","Золото"],["Ag","Серебро"],["Fe","Железо"],["Pb","Свинец"],["Hg","Ртуть"],["O","Кислород"],["H","Водород"],["Na","Натрий"],["Cl","Хлор"],["C","Углерод"]];
-    const physicsFacts = [["Единица измерения силы?", "Ньютон"],["Закон всемирного тяготения открыл?", "Ньютон"],["Скорость света в вакууме (км/с)?", "300000"],["Что измеряет вольтметр?", "Напряжение"],["Единица мощности?", "Ватт"],["Что такое инерция?", "Сохранение скорости"]];
-    const spellingWords = [{ word: "прекрасный", wrong: ["прекрастный","прекрасны"] },{ word: "компромисс", wrong: ["компромиc","кампромисс"] },{ word: "блестящий", wrong: ["блистящий","блестющий"] }];
+    // ======================= РАСШИРЕННЫЕ БАЗЫ ВОПРОСОВ =======================
+    const countryCapital = [
+        ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
+        ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
+        ["Бразилия","Бразилиа"],["Австралия","Канберра"],["Индия","Нью-Дели"],["Египет","Каир"],["Турция","Анкара"],
+        ["ОАЭ","Абу-Даби"],["Израиль","Иерусалим"],["Греция","Афины"],["Нидерланды","Амстердам"],["Швейцария","Берн"],
+        ["Бельгия","Брюссель"],["Аргентина","Буэнос-Айрес"],["Португалия","Лиссабон"],["Чехия","Прага"],["Венгрия","Будапешт"],
+        ["Австрия","Вена"],["Дания","Копенгаген"],["Швеция","Стокгольм"],["Норвегия","Осло"],["Финляндия","Хельсинки"],
+        ["Польша","Варшава"],["Украина","Киев"],["Казахстан","Астана"],["Беларусь","Минск"],["Узбекистан","Ташкент"],
+        ["ЮАР","Претория"],["Мексика","Мехико"],["Куба","Гавана"],["Марокко","Рабат"],["Саудовская Аравия","Эр-Рияд"],
+        ["Республика Корея","Сеул"],["КНДР","Пхеньян"],["Вьетнам","Ханой"],["Таиланд","Бангкок"],["Индонезия","Джакарта"],
+        ["Филиппины","Манила"],["Пакистан","Исламабад"],["Иран","Тегеран"],["Ирак","Багдад"],["Афганистан","Кабул"],
+        ["Сирия","Дамаск"],["Ливан","Бейрут"],["Иордания","Амман"],["Кувейт","Эль-Кувейт"],["Катар","Доха"],
+        ["Бахрейн","Манама"],["Оман","Маскат"],["Йемен","Сана"],["Шри-Ланка","Коломбо"],["Непал","Катманду"],
+        ["Бангладеш","Дакка"],["Мьянма","Нейпьидо"],["Монголия","Улан-Батор"],["Киргизия","Бишкек"],["Таджикистан","Душанбе"],
+        ["Туркменистан","Ашхабад"],["Азербайджан","Баку"],["Армения","Ереван"],["Грузия","Тбилиси"],["Молдова","Кишинёв"],
+        ["Литва","Вильнюс"],["Латвия","Рига"],["Эстония","Таллин"],["Словакия","Братислава"],["Словения","Любляна"],
+        ["Хорватия","Загреб"],["Сербия","Белград"],["Черногория","Подгорица"],["Босния и Герцеговина","Сараево"],
+        ["Северная Македония","Скопье"],["Албания","Тирана"],["Болгария","София"],["Румыния","Бухарест"]
+    ];
+    const historyQA = [
+        { q: "Кто был прозван 'Грозным'?", a: "Иван IV", type: "person" },{ q: "Кто был первым императором России?", a: "Пётр I", type: "person" },
+        { q: "Кто основал Москву?", a: "Юрий Долгорукий", type: "person" },{ q: "Кто написал 'Слово о полку Игореве'?", a: "Неизвестный автор", type: "person" },
+        { q: "Кто был первым президентом США?", a: "Джордж Вашингтон", type: "person" },{ q: "Кто изобрёл радио?", a: "Александр Попов", type: "person" },
+        { q: "Кто был первым космонавтом?", a: "Юрий Гагарин", type: "person" },{ q: "Кто написал 'Божественную комедию'?", a: "Данте Алигьери", type: "person" },
+        { q: "Кто был последним российским императором?", a: "Николай II", type: "person" },{ q: "Кто отменил крепостное право в России?", a: "Александр II", type: "person" },
+        { q: "Кто был лидером большевиков?", a: "Владимир Ленин", type: "person" },{ q: "Кто основал Санкт-Петербург?", a: "Пётр I", type: "person" },
+        { q: "Кто открыл Америку?", a: "Христофор Колумб", type: "person" },{ q: "Кто написал 'Капитал'?", a: "Карл Маркс", type: "person" },
+        { q: "Кто был первым канцлером Германии?", a: "Отто фон Бисмарк", type: "person" },{ q: "Кто был основателем династии Романовых?", a: "Михаил Романов", type: "person" },
+        { q: "Кто командовал Красной армией в Гражданскую войну?", a: "Лев Троцкий", type: "person" },{ q: "Кто был президентом СССР?", a: "Михаил Горбачёв", type: "person" },
+        { q: "В каком году произошло Крещение Руси?", a: "988", type: "date" },{ q: "В каком году была Куликовская битва?", a: "1380", type: "date" },
+        { q: "В каком году началась Северная война?", a: "1700", type: "date" },{ q: "В каком году отменили крепостное право?", a: "1861", type: "date" },
+        { q: "В каком году началась Первая мировая война?", a: "1914", type: "date" },{ q: "В каком году произошла Октябрьская революция?", a: "1917", type: "date" },
+        { q: "В каком году началась Великая Отечественная война?", a: "1941", type: "date" },{ q: "В каком году распался СССР?", a: "1991", type: "date" },
+        { q: "В каком году было основано НАТО?", a: "1949", type: "date" },{ q: "В каком году человек впервые полетел в космос?", a: "1961", type: "date" },
+        { q: "В каком году произошла Битва на Калке?", a: "1223", type: "date" },{ q: "В каком году началось правление Петра I?", a: "1682", type: "date" }
+    ];
+    const authorWork = [
+        { author: "Лев Толстой", work: "Война и мир" },{ author: "Александр Пушкин", work: "Евгений Онегин" },
+        { author: "Фёдор Достоевский", work: "Преступление и наказание" },{ author: "Николай Гоголь", work: "Мёртвые души" },
+        { author: "Михаил Булгаков", work: "Мастер и Маргарита" },{ author: "Антон Чехов", work: "Вишнёвый сад" },
+        { author: "Иван Тургенев", work: "Отцы и дети" },{ author: "Михаил Лермонтов", work: "Герой нашего времени" },
+        { author: "Иван Гончаров", work: "Обломов" },{ author: "Михаил Салтыков-Щедрин", work: "История одного города" },
+        { author: "Николай Лесков", work: "Левша" },{ author: "Александр Куприн", work: "Гранатовый браслет" },
+        { author: "Иван Бунин", work: "Тёмные аллеи" },{ author: "Анна Ахматова", work: "Реквием" },
+        { author: "Марина Цветаева", work: "Стихи о Москве" },{ author: "Владимир Маяковский", work: "Облако в штанах" },
+        { author: "Сергей Есенин", work: "Анна Снегина" },{ author: "Михаил Шолохов", work: "Тихий Дон" },
+        { author: "Александр Солженицын", work: "Один день Ивана Денисовича" },{ author: "Владимир Набоков", work: "Лолита" },
+        { author: "Джордж Оруэлл", work: "1984" },{ author: "Эрих Мария Ремарк", work: "Три товарища" },
+        { author: "Эрнест Хемингуэй", work: "Старик и море" },{ author: "Фрэнсис Скотт Фицджеральд", work: "Великий Гэтсби" }
+    ];
+    const engWords = [
+        ["собака","dog"],["кошка","cat"],["красный","red"],["идти (прош.)","went"],["яблоко","apple"],
+        ["учитель","teacher"],["книга","book"],["радостный","happy"],["большой","big"],["синий","blue"],
+        ["зелёный","green"],["машина","car"],["дом","house"],["вода","water"],["огонь","fire"],
+        ["земля","earth"],["воздух","air"],["друг","friend"],["мать","mother"],["отец","father"],
+        ["брат","brother"],["сестра","sister"],["солнце","sun"],["луна","moon"],["звезда","star"],
+        ["птица","bird"],["рыба","fish"],["дерево","tree"],["цветок","flower"],["бежать","run"],
+        ["говорить","speak"],["работать","work"],["любить","love"],["ненавидеть","hate"],["сильный","strong"],
+        ["слабый","weak"],["быстрый","fast"],["медленный","slow"],["новый","new"],["старый","old"],
+        ["хороший","good"],["плохой","bad"],["высокий","tall"],["низкий","short"],["красивый","beautiful"]
+    ];
+    const obzhFacts = [
+        { q: "Номер пожарной службы?", correct: "101", wrong: ["102","103","112"] },{ q: "Номер скорой помощи?", correct: "103", wrong: ["101","102","112"] },
+        { q: "Номер полиции?", correct: "102", wrong: ["101","103","112"] },{ q: "Что означает зелёный знак с белым человечком, бегущим к двери?", correct: "Выход", wrong: ["Туалет","Запасный выход","Эвакуация"] },
+        { q: "Действие при землетрясении?", correct: "Встать в дверной проём", wrong: ["Выбежать на улицу","Спрятаться под кровать","Включить газ"] },
+        { q: "Что взять при эвакуации?", correct: "Документы", wrong: ["Деньги","Еду","Игрушки"] },{ q: "Как тушить горящий бензин?", correct: "Огнетушителем", wrong: ["Водой","Песком","Землёй"] },
+        { q: "Что делать при пожаре в квартире?", correct: "Вызвать 101", wrong: ["Спрятаться в ванной","Открыть окна","Поливать водой"] },{ q: "Первая помощь при ожоге?", correct: "Охладить водой", wrong: ["Смазать маслом","Наложить тугую повязку","Проколоть пузыри"] },
+        { q: "Какой цвет имеет огнетушитель?", correct: "Красный", wrong: ["Зелёный","Синий","Жёлтый"] },{ q: "Что такое 'гражданская оборона'?", correct: "Система защиты населения", wrong: ["Военная служба","Спортивная организация","Политическая партия"] }
+    ];
+    const societyFacts = [
+        ["Высший орган власти РФ?", "Президент"],["Нижняя палата парламента РФ?", "Государственная дума"],
+        ["Срок президентства в РФ?", "6 лет"],["Конституция РФ принята в...", "1993"],["Сколько палат в парламенте РФ?", "Две"],
+        ["Что такое инфляция?", "Обесценивание денег"],["Кто является гарантом Конституции?", "Президент"],
+        ["Что такое ВВП?", "Стоимость всех товаров и услуг страны"],["Кто может быть президентом РФ?", "Гражданин не моложе 35 лет"],
+        ["Что такое дефолт?", "Отказ платить по долгам"],["Право на труд относится к ...", "Социальным правам"],
+        ["Что такое референдум?", "Всенародное голосование"],["Что такое федерация?", "Форма государственного устройства"]
+    ];
+    const biologyFacts = [
+        ["Фотосинтез происходит в ...", "Хлоропластах"],["Самый большой орган человека?", "Кожа"],
+        ["Единица наследственности?", "Ген"],["Сколько камер в сердце человека?", "4"],
+        ["Сколько костей у взрослого человека?", "206"],["Что такое ДНК?", "Носитель наследственной информации"],
+        ["Что такое эволюция?", "Развитие живых организмов"],["Как называется процесс деления клетки?", "Митоз"],
+        ["Какой орган вырабатывает инсулин?", "Поджелудочная железа"],["Сколько хромосом у человека?", "46"],
+        ["Как называется клетка, передающая нервные импульсы?", "Нейрон"],["Что такое антитела?", "Белки иммунной системы"],
+        ["Какой витамин вырабатывается на солнце?", "D"]
+    ];
+    const elements = [
+        ["Au","Золото"],["Ag","Серебро"],["Fe","Железо"],["Pb","Свинец"],["Hg","Ртуть"],
+        ["O","Кислород"],["H","Водород"],["Na","Натрий"],["Cl","Хлор"],["C","Углерод"],
+        ["N","Азот"],["Al","Алюминий"],["Cu","Медь"],["Zn","Цинк"],["Ca","Кальций"],
+        ["K","Калий"],["Mg","Магний"],["P","Фосфор"],["S","Сера"],["Si","Кремний"],
+        ["He","Гелий"],["Ne","Неон"],["Ar","Аргон"],["Li","Литий"],["Be","Бериллий"]
+    ];
+    const physicsFacts = [
+        ["Единица измерения силы?", "Ньютон"],["Закон всемирного тяготения открыл?", "Ньютон"],
+        ["Скорость света в вакууме (км/с)?", "300000"],["Что измеряет вольтметр?", "Напряжение"],
+        ["Единица мощности?", "Ватт"],["Что такое инерция?", "Сохранение скорости"],
+        ["Закон Ома связывает ...", "Силу тока, напряжение и сопротивление"],["Кто открыл закон электромагнитной индукции?", "Фарадей"],
+        ["Что такое квант?", "Порция энергии"],["Частица с положительным зарядом?", "Протон"],
+        ["Что измеряет амперметр?", "Силу тока"],["Единица измерения частоты?", "Герц"],
+        ["Какая частица вращается вокруг ядра?", "Электрон"],["Что такое гравитация?", "Притяжение тел"]
+    ];
+    const spellingWords = [
+        { word: "прекрасный", wrong: ["прекрастный","прекрасны"] },{ word: "компромисс", wrong: ["компромиc","кампромисс"] },
+        { word: "блестящий", wrong: ["блистящий","блестющий"] },{ word: "искусство", wrong: ["искуство","исскуство"] },
+        { word: "интеллигенция", wrong: ["интелигенция","интелигенцыя"] },{ word: "аккуратный", wrong: ["акуратный","аккуратнй"] },
+        { word: "шедевр", wrong: ["шидевр","шедивр"] },{ word: "коллекция", wrong: ["колекция","каллекция"] },
+        { word: "профессия", wrong: ["професия","прафессия"] },{ word: "ассистент", wrong: ["асистент","ассистэнт"] },
+        { word: "терраса", wrong: ["тераса","террасса"] },{ word: "иллюминация", wrong: ["илюминация","иллюминацыя"] }
+    ];
 
     function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
     function shuffle(arr) { for (let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
     function unique(arr) { return [...new Set(arr)]; }
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
-    function declineCountry(c) { const exc = { "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая","Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании","Турция":"Турции","Греция":"Греции","Индия":"Индии","Канада":"Канады","Бразилия":"Бразилии","Австралия":"Австралии" }; return exc[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а')); }
-    function declineElement(n) { const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа","Ртуть":"ртути","Натрий":"натрия","Кислород":"кислорода","Водород":"водорода","Хлор":"хлора","Углерод":"углерода"}; return e[n] || n.toLowerCase(); }
-    function generateMathQuestion() { let a=Math.floor(Math.random()*10)+2,b=Math.floor(Math.random()*10)+2,correct=a+b; return { text: `${a} + ${b} = ?`, options: shuffle([correct.toString(), (correct+1).toString(), (correct-1).toString(), (correct+2).toString()]), correctHash: simpleHash(correct.toString()), points: 10 }; }
-    function generateHistoryQuestion() { let ev=randomItem(historyQA); let personList=["Иван Грозный","Пётр I","Екатерина II","Николай II","Александр I","Владимир Ленин"]; let dateList=["988","1380","1613","1700","1861","1914","1917","1941","1991"]; let wrongs = ev.type==="person" ? personList.filter(w=>w!==ev.a).slice(0,3) : dateList.filter(w=>w!==ev.a).slice(0,3); let opts=unique([ev.a, ...wrongs]); while(opts.length<4) opts.push("Неизвестно"); return { text: ev.q, options: shuffle(opts.slice(0,4)), correctHash: simpleHash(ev.a), points:10 }; }
+    function declineCountry(c) { const exc = { "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая","Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании","Турция":"Турции","Греция":"Греции","Индия":"Индии","Канада":"Канады","Бразилия":"Бразилии","Австралия":"Австралии","Республика Корея":"Республики Корея","КНДР":"КНДР","Вьетнам":"Вьетнама","Таиланд":"Таиланда","Индонезия":"Индонезии","Филиппины":"Филиппин","Пакистан":"Пакистана","Иран":"Ирана","Ирак":"Ирака","Афганистан":"Афганистана","Сирия":"Сирии","Ливан":"Ливана","Иордания":"Иордании","Кувейт":"Кувейта","Катар":"Катара","Бахрейн":"Бахрейна","Оман":"Омана","Йемен":"Йемена","Шри-Ланка":"Шри-Ланки","Непал":"Непала","Бангладеш":"Бангладеш","Мьянма":"Мьянмы","Монголия":"Монголии","Киргизия":"Киргизии","Таджикистан":"Таджикистана","Туркменистан":"Туркменистана","Азербайджан":"Азербайджана","Армения":"Армении","Грузия":"Грузии","Молдова":"Молдовы","Литва":"Литвы","Латвия":"Латвии","Эстония":"Эстонии","Словакия":"Словакии","Словения":"Словении","Хорватия":"Хорватии","Сербия":"Сербии","Черногория":"Черногории","Босния и Герцеговина":"Боснии и Герцеговины","Северная Македония":"Северной Македонии","Албания":"Албании","Болгария":"Болгарии","Румыния":"Румынии" }; return exc[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а')); }
+    function declineElement(n) { const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа","Ртуть":"ртути","Натрий":"натрия","Кислород":"кислорода","Водород":"водорода","Хлор":"хлора","Углерод":"углерода","Азот":"азота","Алюминий":"алюминия","Медь":"меди","Цинк":"цинка","Кальций":"кальция","Калий":"калия","Магний":"магния","Фосфор":"фосфора","Сера":"серы","Кремний":"кремния","Гелий":"гелия","Неон":"неона","Аргон":"аргона","Литий":"лития","Бериллий":"бериллия"}; return e[n] || n.toLowerCase(); }
+    function generateMathQuestion() { let a=Math.floor(Math.random()*20)+2,b=Math.floor(Math.random()*20)+2,correct=a+b; return { text: `${a} + ${b} = ?`, options: shuffle([correct.toString(), (correct+Math.floor(Math.random()*5)+1).toString(), (correct-Math.floor(Math.random()*5)-1).toString(), (correct+Math.floor(Math.random()*3)+2).toString()]), correctHash: simpleHash(correct.toString()), points: 10 }; }
+    function generateHistoryQuestion() { let ev=randomItem(historyQA); let personList=["Иван Грозный","Пётр I","Екатерина II","Николай II","Александр I","Владимир Ленин","Юрий Гагарин","Джордж Вашингтон","Карл Маркс","Михаил Горбачёв"]; let dateList=["988","1380","1613","1700","1861","1914","1917","1941","1991","1949","1961","1223","1682"]; let wrongs = ev.type==="person" ? personList.filter(w=>w!==ev.a).slice(0,3) : dateList.filter(w=>w!==ev.a).slice(0,3); let opts=unique([ev.a, ...wrongs]); while(opts.length<4) opts.push("Неизвестно"); return { text: ev.q, options: shuffle(opts.slice(0,4)), correctHash: simpleHash(ev.a), points:10 }; }
     function generateGeoQuestion() { let p=randomItem(countryCapital); let text=`Столица ${declineCountry(p[0])}?`; let correct=p[1]; let wrongs=countryCapital.filter(c=>c[0]!==p[0]).map(c=>c[1]).slice(0,3); let opts=unique([correct, ...wrongs]); while(opts.length<4) opts.push("Лондон"); return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
     function generateLiteratureQuestion() { let item=randomItem(authorWork); let text=`Кто написал "${item.work}"?`; let correct=item.author; let wrongs=authorWork.filter(w=>w.author!==correct).map(w=>w.author).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("Неизвестный автор"); return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
     function generateEnglishQuestion() { let w=randomItem(engWords); let correct=w[1]; let wrongs=engWords.filter(e=>e[1]!==correct).map(e=>e[1]).slice(0,3); let opts=unique([correct,...wrongs]); while(opts.length<4) opts.push("unknown"); return { text: `Перевод слова "${w[0]}":`, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; }
@@ -469,7 +569,7 @@
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
     let leaderboardBySubject = {};
-    let appShareUrl = "https://vk.com/app"; // будет заменён на реальный URL приложения
+    let appShareUrl = "https://vk.com/app"; // будет заменён
 
     for (let s of allSubjects) { progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() }; leaderboardBySubject[s] = []; }
 
@@ -479,39 +579,30 @@
                 await vkBridge.send("VKWebAppInit");
                 const user = await vkBridge.send("VKWebAppGetUserInfo");
                 if (user && user.id) currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок', photo: user.photo_100 || '' };
-                // Получаем параметры запуска, чтобы узнать app_id
                 const launchParams = await vkBridge.send("VKWebAppGetLaunchParams");
-                if (launchParams && launchParams.vk_app_id) {
-                    appShareUrl = `https://vk.com/app${launchParams.vk_app_id}`;
-                } else {
-                    // фолбэк: пробуем получить через getAppInfo
-                    try {
-                        const appInfo = await vkBridge.send("VKWebAppGetAppInfo");
-                        if (appInfo && appInfo.id) appShareUrl = `https://vk.com/app${appInfo.id}`;
-                    } catch(e) {}
+                let appId = null;
+                if (launchParams && launchParams.vk_app_id) appId = launchParams.vk_app_id;
+                else {
+                    try { const appInfo = await vkBridge.send("VKWebAppGetAppInfo"); if (appInfo && appInfo.id) appId = appInfo.id; } catch(e) {}
                 }
-                const storageRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgressV9", "leaderboardBySubjectV2"] });
+                if (appId) appShareUrl = `https://vk.com/app${appId}`;
+                const storageRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgressV10", "leaderboardBySubjectV3"] });
                 if (storageRes && storageRes.keys) {
-                    if (storageRes.keys[0] && storageRes.keys[0].value) {
-                        let cloud = JSON.parse(storageRes.keys[0].value);
-                        for (let s of allSubjects) if (cloud[s]) progressBySubject[s] = { ...progressBySubject[s], ...cloud[s], usedQuestions: new Set(cloud[s].usedQuestions || []) };
-                    }
+                    if (storageRes.keys[0] && storageRes.keys[0].value) { let cloud = JSON.parse(storageRes.keys[0].value); for (let s of allSubjects) if (cloud[s]) progressBySubject[s] = { ...progressBySubject[s], ...cloud[s], usedQuestions: new Set(cloud[s].usedQuestions || []) }; }
                     if (storageRes.keys[1] && storageRes.keys[1].value) leaderboardBySubject = JSON.parse(storageRes.keys[1].value);
                 }
             } catch(e) { console.warn(e); }
         }
-        const local = localStorage.getItem('quizProgressV9');
-        if (local) { try { let data = JSON.parse(local); for (let s of allSubjects) if (data[s]) progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) }; } catch(e){} }
-        const localLeader = localStorage.getItem('leaderboardBySubjectV2');
-        if (localLeader) try { leaderboardBySubject = JSON.parse(localLeader); } catch(e){}
+        const local = localStorage.getItem('quizProgressV10'); if (local) { try { let data = JSON.parse(local); for (let s of allSubjects) if (data[s]) progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) }; } catch(e){} }
+        const localLeader = localStorage.getItem('leaderboardBySubjectV3'); if (localLeader) try { leaderboardBySubject = JSON.parse(localLeader); } catch(e){}
         updateUI(); loadNewQuestion(); buildSubjectsUI(); startTutorial();
     }
 
     function saveAllProgress() {
         let toSave = {}; for (let s of allSubjects) toSave[s] = { totalScore: progressBySubject[s].totalScore, level: progressBySubject[s].level, lives: progressBySubject[s].lives, combo: progressBySubject[s].combo, qInLevel: progressBySubject[s].qInLevel, levelPerfect: progressBySubject[s].levelPerfect, usedQuestions: Array.from(progressBySubject[s].usedQuestions) };
-        localStorage.setItem('quizProgressV9', JSON.stringify(toSave));
-        localStorage.setItem('leaderboardBySubjectV2', JSON.stringify(leaderboardBySubject));
-        if (window.vkBridge) { vkBridge.send("VKWebAppStorageSet", { key: "quizProgressV9", value: JSON.stringify(toSave) }).catch(e=>console.warn); vkBridge.send("VKWebAppStorageSet", { key: "leaderboardBySubjectV2", value: JSON.stringify(leaderboardBySubject) }).catch(e=>console.warn); }
+        localStorage.setItem('quizProgressV10', JSON.stringify(toSave));
+        localStorage.setItem('leaderboardBySubjectV3', JSON.stringify(leaderboardBySubject));
+        if (window.vkBridge) { vkBridge.send("VKWebAppStorageSet", { key: "quizProgressV10", value: JSON.stringify(toSave) }).catch(e=>console.warn); vkBridge.send("VKWebAppStorageSet", { key: "leaderboardBySubjectV3", value: JSON.stringify(leaderboardBySubject) }).catch(e=>console.warn); }
         updateLeaderboardForCurrentSubject();
     }
 
@@ -523,28 +614,16 @@
         if (existing !== -1) { if (totalScore > lb[existing].score) lb[existing] = entry; else if (totalScore === lb[existing].score && progressBySubject[currentSubject].level > lb[existing].level) lb[existing] = entry; } else lb.push(entry);
         lb.sort((a,b) => b.score - a.score); lb = lb.slice(0, 10);
         leaderboardBySubject[currentSubject] = lb;
-        localStorage.setItem('leaderboardBySubjectV2', JSON.stringify(leaderboardBySubject));
-        if (window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "leaderboardBySubjectV2", value: JSON.stringify(leaderboardBySubject) }).catch(e=>console.warn);
+        localStorage.setItem('leaderboardBySubjectV3', JSON.stringify(leaderboardBySubject));
+        if (window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "leaderboardBySubjectV3", value: JSON.stringify(leaderboardBySubject) }).catch(e=>console.warn);
     }
 
     function showLeaderboard() {
         const modal = document.createElement('div'); modal.className = 'modal';
         modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10 игроков</h3><div class="tabs" id="leaderTabs"></div><div id="leaderboardContent"></div><button class="close-modal">Закрыть</button></div>`;
         document.body.appendChild(modal); document.body.style.overflow = 'hidden';
-        const tabsDiv = modal.querySelector('#leaderTabs');
-        const contentDiv = modal.querySelector('#leaderboardContent');
-        allSubjects.forEach(subj => {
-            const btn = document.createElement('button');
-            btn.className = 'tab-btn';
-            if (subj === currentSubject) btn.classList.add('active-tab');
-            btn.innerText = subjectNames[subj];
-            btn.onclick = () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
-                btn.classList.add('active-tab');
-                renderLeaderboardForSubject(subj, contentDiv);
-            };
-            tabsDiv.appendChild(btn);
-        });
+        const tabsDiv = modal.querySelector('#leaderTabs'); const contentDiv = modal.querySelector('#leaderboardContent');
+        allSubjects.forEach(subj => { const btn = document.createElement('button'); btn.className = 'tab-btn'; if (subj === currentSubject) btn.classList.add('active-tab'); btn.innerText = subjectNames[subj]; btn.onclick = () => { document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active-tab')); btn.classList.add('active-tab'); renderLeaderboardForSubject(subj, contentDiv); }; tabsDiv.appendChild(btn); });
         renderLeaderboardForSubject(currentSubject, contentDiv);
         modal.querySelector('.close-modal').onclick = () => { modal.remove(); document.body.style.overflow = ''; };
         modal.onclick = (e) => { if(e.target === modal) { modal.remove(); document.body.style.overflow = ''; } };
@@ -553,10 +632,7 @@
         let lb = leaderboardBySubject[subject] || [];
         if (lb.length === 0) { container.innerHTML = '<p style="text-align:center; margin:20px;">Пока нет рекордов. Стань первым!</p>'; return; }
         const list = document.createElement('ul'); list.className = 'leaderboard-list';
-        list.innerHTML = lb.map((u, idx) => {
-            const avatarHtml = u.photo ? `<img class="leaderboard-avatar" src="${u.photo}" alt="avatar">` : `<div class="leaderboard-avatar" style="background:#6e2cf5; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-user"></i></div>`;
-            return `<li>${avatarHtml}<div><strong>${idx+1}. ${escapeHtml(u.name)}</strong><br>🎯 ${u.score} очков | Уровень ${u.level}</div></li>`;
-        }).join('');
+        list.innerHTML = lb.map((u, idx) => { const avatarHtml = u.photo ? `<img class="leaderboard-avatar" src="${u.photo}" alt="avatar">` : `<div class="leaderboard-avatar" style="background:#6e2cf5; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-user"></i></div>`; return `<li>${avatarHtml}<div><strong>${idx+1}. ${escapeHtml(u.name)}</strong><br>🎯 ${u.score} очков | Уровень ${u.level}</div></li>`; }).join('');
         container.innerHTML = ''; container.appendChild(list);
     }
     document.getElementById("leaderboardBtn").onclick = showLeaderboard;
@@ -566,6 +642,7 @@
 
     function getUniqueQuestion(subject) {
         let p = progressBySubject[subject], q = null, attempts=0;
+        const maxAttempts = 300;
         do {
             if(subject==='math') q=generateMathQuestion(); else if(subject==='russian') q=generateRussianQuestion();
             else if(subject==='geo') q=generateGeoQuestion(); else if(subject==='history') q=generateHistoryQuestion();
@@ -573,7 +650,7 @@
             else if(subject==='obzh') q=generateOBZHQuestion(); else if(subject==='society') q=generateSocietyQuestion();
             else if(subject==='biology') q=generateBiologyQuestion(); else if(subject==='chemistry') q=generateChemistryQuestion();
             else if(subject==='physics') q=generatePhysicsQuestion();
-            attempts++; if(attempts>200) return null;
+            attempts++; if(attempts>maxAttempts) { p.usedQuestions.clear(); attempts=0; continue; }
         } while(p.usedQuestions.has(q.text+q.correctHash));
         p.usedQuestions.add(q.text+q.correctHash); return q;
     }
@@ -590,49 +667,37 @@
 
     function offerAdForRevival() { if(!gameActive) return; gameActive=false; showConfirmModal("Жизни кончились! Смотреть рекламу?", async ()=>{ let success=await showRewardedAd(); if(success){ gameActive=true; waitingForNext=false; if(currentQuestion) renderUI(); else loadNewQuestion(); } else finishGame(false); },()=>finishGame(false)); }
 
-    function finishGame(success) { gameActive=false; let p=getCurrentProgress(); let resultText = success ? "🏆 ПОБЕДА!" : "💀 ПОРАЖЕНИЕ"; document.getElementById("gameArea").innerHTML=`<div class="result-area"><div class="result-score">${resultText}</div><p style="margin:12px 0; color:white; font-size:1.2rem;">Очки: ${p.totalScore} | Уровень: ${p.level}</p><button class="share-btn" id="shareBtn">📢 ПОДЕЛИТЬСЯ</button><button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button><button class="reset-btn" id="selectSubjectHint" style="margin-top:8px; background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button></div>`; 
-        const shareBtn = document.getElementById("shareBtn");
+    // Функция finishGame с ИСПРАВЛЕННЫМ шерингом – ссылка ведёт на мини-приложение
+    function finishGame(success) { 
+        gameActive=false; 
+        let p=getCurrentProgress(); 
+        let resultText = success ? "🏆 ПОБЕДА!" : "💀 ПОРАЖЕНИЕ"; 
+        document.getElementById("gameArea").innerHTML=`<div class="result-area"><div class="result-score">${resultText}</div><p style="margin:12px 0; color:white; font-size:1.2rem;">Очки: ${p.totalScore} | Уровень: ${p.level}</p><button class="share-btn" id="shareBtn">📢 ПОДЕЛИТЬСЯ</button><button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button><button class="reset-btn" id="selectSubjectHint" style="margin-top:8px; background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button></div>`; 
+        const shareBtn = document.getElementById("shareBtn"); 
         if (shareBtn) {
-            shareBtn.addEventListener("click", () => {
-                const shareText = `Я прошёл(а) «${subjectNames[currentSubject]}» в игре «Битва знаний» с результатом ${p.totalScore} очков и уровнем ${p.level}! Заходи, сыграем?`;
+            shareBtn.addEventListener("click", () => { 
+                const shareText = `Я прошёл(а) «${subjectNames[currentSubject]}» в игре «Битва знаний» с результатом ${p.totalScore} очков и уровнем ${p.level}! Заходи, сыграем?`; 
                 if (window.vkBridge) {
+                    // Используем корректную ссылку на мини-приложение (полученную ранее)
                     vkBridge.send("VKWebAppShare", { link: appShareUrl, attachment: shareText }).catch(e => console.warn);
                 } else {
                     alert("Поделиться можно только внутри VK Mini App");
                 }
-            });
+            }); 
         }
-        document.getElementById("resetBtn")?.addEventListener("click",()=>{ resetSubjectProgress(currentSubject); });
-        document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{ document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth"}); setTimeout(()=>{ if(!gameActive){ gameActive=true; waitingForNext=false; currentQuestion=null; loadNewQuestion(); } },100); }); }
+        document.getElementById("resetBtn")?.addEventListener("click",()=>{ resetSubjectProgress(currentSubject); }); 
+        document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{ document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth"}); setTimeout(()=>{ if(!gameActive){ gameActive=true; waitingForNext=false; currentQuestion=null; loadNewQuestion(); } },100); }); 
+    }
 
     function resetSubjectProgress(subject) { progressBySubject[subject] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() }; if(subject===currentSubject) { waitingForNext=false; selectedAnswer=null; gameActive=true; currentQuestion=null; saveAllProgress(); updateUI(); loadNewQuestion(); } else { saveAllProgress(); } }
 
-    function applyHint() {
-        if (hintUsed) { showTemporaryMessage("Подсказка уже использована для этого вопроса!", 2000); return; }
-        if (!currentQuestion) return;
-        const allAnswers = document.querySelectorAll(".answer-btn");
-        if (allAnswers.length === 0) return;
-        const correctAnswer = currentQuestion.options.find(opt => simpleHash(opt) === currentQuestion.correctHash);
-        let wrongButtons = Array.from(allAnswers).filter(btn => btn.getAttribute("data-answer") !== correctAnswer);
-        if (wrongButtons.length < 2) { showTemporaryMessage("Недостаточно вариантов для подсказки", 1500); return; }
-        wrongButtons = shuffle(wrongButtons);
-        const toRemove = wrongButtons.slice(0, 2);
-        toRemove.forEach(btn => {
-            btn.classList.add("disabled-hint");
-            btn.disabled = true;
-        });
-        hintUsed = true;
-        showTemporaryMessage("🔍 Подсказка: два неверных ответа убраны!", 2500);
-        const hintBtn = document.getElementById("hintBtn");
-        if (hintBtn) hintBtn.disabled = true;
-    }
+    function applyHint() { if (hintUsed) { showTemporaryMessage("Подсказка уже использована для этого вопроса!", 2000); return; } if (!currentQuestion) return; const allAnswers = document.querySelectorAll(".answer-btn"); if (allAnswers.length === 0) return; const correctAnswer = currentQuestion.options.find(opt => simpleHash(opt) === currentQuestion.correctHash); let wrongButtons = Array.from(allAnswers).filter(btn => btn.getAttribute("data-answer") !== correctAnswer); if (wrongButtons.length < 2) { showTemporaryMessage("Недостаточно вариантов для подсказки", 1500); return; } wrongButtons = shuffle(wrongButtons); const toRemove = wrongButtons.slice(0, 2); toRemove.forEach(btn => { btn.classList.add("disabled-hint"); btn.disabled = true; }); hintUsed = true; showTemporaryMessage("🔍 Подсказка: два неверных ответа убраны!", 2500); const hintBtn = document.getElementById("hintBtn"); if (hintBtn) hintBtn.disabled = true; }
 
     function renderUI() { if(!currentQuestion) return; let p=getCurrentProgress(); let livesHtml=''; for(let i=0;i<MAX_LIVES;i++) livesHtml+= i<p.lives ? '<i class="fas fa-heart"></i>' : '<i class="fas fa-heart-broken"></i>'; let html=`<div class="quest-header"><div class="level-badge">⚡ Уровень ${p.level} · ${subjectNames[currentSubject]}</div><div class="lives">${livesHtml}</div></div><div class="question-card"><div class="question-text">${escapeHtml(currentQuestion.text)}</div><div class="answers" id="answersContainer">${currentQuestion.options.map(opt=>`<button class="answer-btn" data-answer="${escapeHtml(opt)}">${escapeHtml(opt)}</button>`).join('')}</div><div class="feedback" id="feedbackMsg" style="display:none;"></div><button class="next-btn hidden" id="nextBtn">➡️ ДАЛЕЕ</button><button class="bonus-btn" id="bonusLifeBtn">❤️ +1 ЖИЗНЬ</button><button class="hint-btn" id="hintBtn"><i class="fas fa-robot"></i> Подсказка</button></div>`; document.getElementById("gameArea").innerHTML=html; hintUsed = false;
         document.querySelectorAll(".answer-btn").forEach(btn=>{ btn.addEventListener("click",()=>{ if(waitingForNext||!gameActive) return; selectedAnswer=btn.getAttribute("data-answer"); document.querySelectorAll(".answer-btn").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected"); document.getElementById("nextBtn")?.classList.remove("hidden"); }); });
         document.getElementById("nextBtn")?.addEventListener("click",()=>{ if(selectedAnswer && !waitingForNext) handleAnswerSubmit(); else if(!selectedAnswer) showTemporaryMessage("Выберите ответ"); });
         document.getElementById("bonusLifeBtn")?.addEventListener("click",async()=>{ if(p.lives>=MAX_LIVES) showTemporaryMessage("Максимум жизней"); else await showRewardedAd(); });
-        const hintBtn = document.getElementById("hintBtn");
-        if (hintBtn) hintBtn.addEventListener("click", applyHint);
+        const hintBtn = document.getElementById("hintBtn"); if (hintBtn) hintBtn.addEventListener("click", applyHint);
         updateAdButtonTimer();
     }
 
@@ -650,7 +715,7 @@
 
     document.getElementById("termsLink").onclick = () => showInfoModal("Пользовательское соглашение", "1. Соглашение регулирует отношения...<br>2. Использование приложения означает полное согласие.<br>3. Контакт: vova_polyakov_94@mail.ru");
     document.getElementById("privacyLink").onclick = () => showInfoModal("Политика конфиденциальности", "Собираем только ID, имя и аватар для рейтинга. Данные хранятся в VK Storage. Можно удалить кнопкой 'Удалить данные'.");
-    document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgressV9", value: "" }); location.reload(); }, () => {});
+    document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgressV10", value: "" }); location.reload(); }, () => {});
 
     initVK();
 </script>
