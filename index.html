@@ -364,7 +364,7 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКА (РАБОТАЕТ) =======================
+    // ======================= МУЗЫКА =======================
     (function() {
         const musicURL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3';
         const audio = new Audio(musicURL);
@@ -372,6 +372,7 @@
         audio.volume = 0.3;
         let musicEnabled = true;
         let started = false;
+
         function playMusic() {
             if (musicEnabled && audio.paused) {
                 audio.play().then(() => started = true).catch(e => console.log("Требуется взаимодействие"));
@@ -427,12 +428,16 @@
         }, 5000);
     })();
 
-    // ======================= БАЗЫ ВОПРОСОВ (СОКРАЩЕНЫ ДЛЯ КРАТКОСТИ, НО ВСЕ РАБОТАЮТ) =======================
+    // ======================= БАЗЫ ВОПРОСОВ (ИСПРАВЛЕНЫ) =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
         ["Бразилия","Бразилиа"],["Австралия","Канберра"],["Индия","Нью-Дели"],["Египет","Каир"],["Турция","Анкара"],
-        ["ОАЭ","Абу-Даби"],["Израиль","Иерусалим"],["Греция","Афины"],["Нидерланды","Амстердам"],["Швейцария","Берн"]
+        ["ОАЭ","Абу-Даби"],["Израиль","Иерусалим"],["Греция","Афины"],["Нидерланды","Амстердам"],["Швейцария","Берн"],
+        ["Бельгия","Брюссель"],["Аргентина","Буэнос-Айрес"],["Португалия","Лиссабон"],["Чехия","Прага"],["Венгрия","Будапешт"],
+        ["Австрия","Вена"],["Дания","Копенгаген"],["Швеция","Стокгольм"],["Норвегия","Осло"],["Финляндия","Хельсинки"],
+        ["Польша","Варшава"],["Украина","Киев"],["Казахстан","Астана"],["Беларусь","Минск"],["Узбекистан","Ташкент"],
+        ["ЮАР","Претория"],["Мексика","Мехико"],["Куба","Гавана"],["Марокко","Рабат"],["Саудовская Аравия","Эр-Рияд"]
     ];
     const historyQA = [
         { q: "Кто был прозван 'Грозным'?", a: "Иван IV", type: "person" },
@@ -440,37 +445,69 @@
         { q: "Кто основал Москву?", a: "Юрий Долгорукий", type: "person" },
         { q: "Кто написал 'Слово о полку Игореве'?", a: "Неизвестный автор", type: "person" },
         { q: "Кто был первым президентом США?", a: "Джордж Вашингтон", type: "person" },
+        { q: "Кто изобрёл радио?", a: "Александр Попов", type: "person" },
+        { q: "Кто был первым космонавтом?", a: "Юрий Гагарин", type: "person" },
+        { q: "Кто написал 'Божественную комедию'?", a: "Данте Алигьери", type: "person" },
+        { q: "Кто был первым канцлером Германии?", a: "Отто фон Бисмарк", type: "person" },
+        { q: "Кто был последним российским императором?", a: "Николай II", type: "person" },
+        { q: "Кто отменил крепостное право в России?", a: "Александр II", type: "person" },
+        { q: "Кто был лидером большевиков?", a: "Владимир Ленин", type: "person" },
         { q: "В каком году произошло Крещение Руси?", a: "988", type: "date" },
         { q: "В каком году была Куликовская битва?", a: "1380", type: "date" },
+        { q: "В каком году началось правление династии Романовых?", a: "1613", type: "date" },
+        { q: "В каком году началась Северная война?", a: "1700", type: "date" },
+        { q: "В каком году был основан Санкт-Петербург?", a: "1703", type: "date" },
+        { q: "В каком году произошло восстание декабристов?", a: "1825", type: "date" },
+        { q: "В каком году отменили крепостное право?", a: "1861", type: "date" },
+        { q: "В каком году началась Первая мировая война?", a: "1914", type: "date" },
+        { q: "В каком году произошла Октябрьская революция?", a: "1917", type: "date" },
         { q: "В каком году началась Великая Отечественная война?", a: "1941", type: "date" },
+        { q: "В каком году закончилась Вторая мировая война?", a: "1945", type: "date" },
         { q: "В каком году распался СССР?", a: "1991", type: "date" }
     ];
     const authorWork = [
         { author: "Лев Толстой", work: "Война и мир" }, { author: "Александр Пушкин", work: "Евгений Онегин" },
         { author: "Фёдор Достоевский", work: "Преступление и наказание" }, { author: "Николай Гоголь", work: "Мёртвые души" },
-        { author: "Михаил Булгаков", work: "Мастер и Маргарита" }
+        { author: "Михаил Булгаков", work: "Мастер и Маргарита" }, { author: "Антон Чехов", work: "Вишнёвый сад" },
+        { author: "Иван Тургенев", work: "Отцы и дети" }, { author: "Михаил Лермонтов", work: "Герой нашего времени" },
+        { author: "Иван Гончаров", work: "Обломов" }, { author: "Михаил Салтыков-Щедрин", work: "История одного города" },
+        { author: "Николай Лесков", work: "Левша" }, { author: "Александр Куприн", work: "Гранатовый браслет" },
+        { author: "Иван Бунин", work: "Тёмные аллеи" }, { author: "Анна Ахматова", work: "Реквием" },
+        { author: "Марина Цветаева", work: "Стихи о Москве" }, { author: "Владимир Маяковский", work: "Облако в штанах" },
+        { author: "Сергей Есенин", work: "Анна Снегина" }, { author: "Михаил Шолохов", work: "Тихий Дон" }
     ];
-    const engWords = [["собака","dog"],["кошка","cat"],["красный","red"],["яблоко","apple"],["учитель","teacher"]];
+    const engWords = [["собака","dog"],["кошка","cat"],["красный","red"],["идти (прош.)","went"],["яблоко","apple"],
+        ["ловить (прош.)","caught"],["учитель","teacher"],["книга","book"],["радостный","happy"],["большой","big"]];
     const obzhFacts = [
-        { q: "Номер пожарной службы?", correct: "101", wrong: ["102","103","112"] },
-        { q: "Номер скорой помощи?", correct: "103", wrong: ["101","102","112"] },
-        { q: "Номер полиции?", correct: "102", wrong: ["101","103","112"] }
+        { q: "Номер пожарной службы?", correct: "101", wrong: ["102","103","112"] }, { q: "Номер скорой помощи?", correct: "103", wrong: ["101","102","112"] },
+        { q: "Номер полиции?", correct: "102", wrong: ["101","103","112"] }, { q: "Что означает зелёный знак с белым человечком, бегущим к двери?", correct: "Выход", wrong: ["Туалет", "Запасный выход", "Путь эвакуации"] },
+        { q: "Действие при землетрясении?", correct: "Встать в дверной проём", wrong: ["Выбежать на улицу", "Спрятаться под кровать", "Включить газ"] }
     ];
     const societyFacts = [
         ["Высший орган власти РФ?", "Президент"], ["Что такое референдум?", "Всенародное голосование"],
-        ["Нижняя палата парламента РФ?", "Государственная дума"], ["Срок президентства в РФ?", "6 лет"]
+        ["Нижняя палата парламента РФ?", "Государственная дума"], ["Срок президентства в РФ?", "6 лет"],
+        ["Что такое инфляция?", "Обесценивание денег"], ["Конституция РФ принята в...", "1993"],
+        ["Сколько палат в парламенте РФ?", "Две"], ["Кто является гарантом Конституции?", "Президент"]
     ];
     const biologyFacts = [
-        ["Сколько костей у взрослого человека?", "206"], ["Сколько камер в сердце человека?", "4"],
-        ["Фотосинтез происходит в ...", "Хлоропластах"], ["Самый большой орган человека?", "Кожа"]
+        ["Фотосинтез происходит в ...", "Хлоропластах"], ["Самый большой орган человека?", "Кожа"],
+        ["Процесс деления клетки?", "Митоз"], ["Единица наследственности?", "Ген"],
+        ["Сколько камер в сердце человека?", "4"], ["Сколько костей у взрослого человека?", "206"],
+        ["Что такое ДНК?", "Носитель наследственной информации"], ["Что такое эволюция?", "Развитие живых организмов"]
     ];
-    const elements = [["Au","Золото"],["Ag","Серебро"],["Fe","Железо"],["O","Кислород"],["H","Водород"]];
+    const elements = [
+        ["Au","Золото"],["Ag","Серебро"],["Fe","Железо"],["Pb","Свинец"],["Hg","Ртуть"],
+        ["O","Кислород"],["H","Водород"],["Na","Натрий"],["Cl","Хлор"],["C","Углерод"]
+    ];
     const physicsFacts = [
         ["Единица измерения силы?", "Ньютон"], ["Закон всемирного тяготения открыл?", "Ньютон"],
-        ["Скорость света в вакууме (км/с)?", "300000"], ["Частица с положительным зарядом?", "Протон"]
+        ["Скорость света в вакууме (км/с)?", "300000"], ["Частица с положительным зарядом?", "Протон"],
+        ["Что измеряет вольтметр?", "Напряжение"], ["Радуга объясняется...", "Дисперсией"],
+        ["Единица мощности?", "Ватт"], ["Какая сила удерживает планеты на орбите?", "Гравитация"]
     ];
     const spellingWords = [
-        { word: "прекрасный", wrong: ["прекрастный","прекрасны"] }, { word: "участвовать", wrong: ["учавствовать","участвововать"] }
+        { word: "прекрасный", wrong: ["прекрастный","прекрасны"] }, { word: "участвовать", wrong: ["учавствовать","участвововать"] },
+        { word: "компромисс", wrong: ["компромиc","кампромисс"] }, { word: "блестящий", wrong: ["блистящий","блестющий"] }
     ];
 
     function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -482,15 +519,27 @@
         const exc = { "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
             "Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании","Канада":"Канады",
             "Бразилия":"Бразилии","Австралия":"Австралии","Индия":"Индии","Египет":"Египта","Турция":"Турции",
-            "ОАЭ":"ОАЭ","Израиль":"Израиля" };
+            "ОАЭ":"ОАЭ","Израиль":"Израиля","Беларусь":"Беларуси","ЮАР":"ЮАР","Саудовская Аравия":"Саудовской Аравии",
+            "Нидерланды":"Нидерландов","Мексика":"Мексики","Марокко":"Марокко" };
         return exc[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а'));
     }
-    function declineElement(n) { const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа"}; return e[n] || n; }
+    function declineElement(n) { const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа","Ртуть":"ртути","Натрий":"натрия"}; return e[n] || n; }
 
     function generateMathQuestion(level) {
-        let a = Math.floor(Math.random()*10)+2, b = Math.floor(Math.random()*10)+2;
-        let correct = a+b;
-        return { text: `${a} + ${b} = ?`, options: shuffle([correct.toString(), (correct+1).toString(), (correct-1).toString(), (correct+2).toString()]), correctHash: simpleHash(correct.toString()), points: 10 };
+        let complexity = Math.min(3 + Math.floor(level / 3), 12);
+        let a = Math.floor(Math.random() * (5 + complexity)) + 2;
+        let b = Math.floor(Math.random() * (5 + complexity)) + 2;
+        let ops = ['+', '-', '×']; if (level >= 3) ops.push('÷');
+        let op = randomItem(ops);
+        let correct, text, opts;
+        if (op === '+') { correct = a + b; text = `${a} + ${b} = ?`; opts = [correct, correct+1, correct-1, correct+2].filter(v => v > 0); }
+        else if (op === '-') { if (a < b) [a,b] = [b,a]; correct = a - b; text = `${a} - ${b} = ?`; opts = [correct, correct+1, correct-1, correct+2].filter(v => v >= 0); if (correct===0) opts=[0,1,2,3]; }
+        else if (op === '×') { correct = a * b; text = `${a} × ${b} = ?`; opts = [correct, correct+2, correct-2, correct+1].filter(v => v > 0); }
+        else { let divisor = Math.floor(Math.random() * (5+complexity)) + 2; let quotient = Math.floor(Math.random() * (5+complexity)) + 2; let dividend = divisor * quotient; correct = quotient; text = `${dividend} ÷ ${divisor} = ?`; opts = [correct, correct+1, correct-1, correct+2].filter(v => v > 0); }
+        if (opts.length < 4) opts.push(Math.abs(correct) + 3);
+        opts = unique(opts);
+        while(opts.length < 4) opts.push((Number(correct)+1).toString());
+        return { text, options: shuffle(opts.map(String)), correctHash: simpleHash(correct.toString()), points: 10 + Math.floor(level/2) };
     }
     function generateHistoryQuestion() {
         let ev = randomItem(historyQA);
@@ -588,11 +637,29 @@
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
 
-    for (let s of allSubjects) progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
+    for (let s of allSubjects) {
+        progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
+    }
 
-    async function saveToCloud() {
+    // Синхронизация прогресса и топа через VK Storage
+    async function syncAll() {
         if (!window.vkBridge || currentUser.id === 'guest') return;
         try {
+            // Загружаем прогресс
+            const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress"] });
+            if (res.keys && res.keys[0] && res.keys[0].value) {
+                const parsed = JSON.parse(res.keys[0].value);
+                for (let s of allSubjects) {
+                    if (parsed[s]) {
+                        progressBySubject[s] = {
+                            ...progressBySubject[s],
+                            ...parsed[s],
+                            usedQuestions: new Set(parsed[s].usedQuestions || [])
+                        };
+                    }
+                }
+            }
+            // Сохраняем текущий прогресс обратно
             const toSave = {};
             for (let s of allSubjects) {
                 toSave[s] = {
@@ -606,46 +673,33 @@
                 };
             }
             await vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: JSON.stringify(toSave) });
-            let totalScoreOverall = 0;
-            for (let s of allSubjects) totalScoreOverall += progressBySubject[s].totalScore;
-            await vkBridge.send("VKWebAppStorageSet", { key: `leaderboard_${currentUser.id}`, value: JSON.stringify({ id: currentUser.id, name: currentUser.name, photo: currentUser.photo, score: totalScoreOverall, timestamp: Date.now() }) });
-        } catch(e) { console.warn("Ошибка сохранения в облако VK:", e); }
-    }
-
-    async function loadFromCloud() {
-        if (!window.vkBridge || currentUser.id === 'guest') return;
-        try {
-            const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress"] });
-            if (res.keys && res.keys[0] && res.keys[0].value) {
-                const parsed = JSON.parse(res.keys[0].value);
-                for (let s of allSubjects) {
-                    if (parsed[s]) {
-                        progressBySubject[s] = { ...progressBySubject[s], ...parsed[s], usedQuestions: new Set(parsed[s].usedQuestions || []) };
-                    }
-                }
-                saveLocal();
-            }
-        } catch(e) { console.warn("Ошибка загрузки из облака VK:", e); }
+            // Обновляем топ с суммарными очками
+            let totalScore = 0;
+            for (let s of allSubjects) totalScore += progressBySubject[s].totalScore;
+            await vkBridge.send("VKWebAppStorageSet", { key: `leaderboard_${currentUser.id}`, value: JSON.stringify({ id: currentUser.id, name: currentUser.name, photo: currentUser.photo, score: totalScore, timestamp: Date.now() }) });
+        } catch(e) { console.warn("Синхронизация:", e); }
     }
 
     function saveLocal() {
         const toSave = {};
-        for (let s of allSubjects) toSave[s] = {
-            totalScore: progressBySubject[s].totalScore,
-            level: progressBySubject[s].level,
-            lives: progressBySubject[s].lives,
-            combo: progressBySubject[s].combo,
-            qInLevel: progressBySubject[s].qInLevel,
-            levelPerfect: progressBySubject[s].levelPerfect,
-            usedQuestions: Array.from(progressBySubject[s].usedQuestions)
-        };
+        for (let s of allSubjects) {
+            toSave[s] = {
+                totalScore: progressBySubject[s].totalScore,
+                level: progressBySubject[s].level,
+                lives: progressBySubject[s].lives,
+                combo: progressBySubject[s].combo,
+                qInLevel: progressBySubject[s].qInLevel,
+                levelPerfect: progressBySubject[s].levelPerfect,
+                usedQuestions: Array.from(progressBySubject[s].usedQuestions)
+            };
+        }
         localStorage.setItem('quizProgressV7', JSON.stringify(toSave));
         localStorage.setItem('quizProgressTimestamp', Date.now().toString());
     }
 
     async function saveAllProgress() {
         saveLocal();
-        await saveToCloud();
+        if (window.vkBridge && currentUser.id !== 'guest') await syncAll();
     }
 
     async function loadGlobalLeaderboard() {
@@ -659,7 +713,7 @@
                 if (res.keys && res.keys[0] && res.keys[0].value) {
                     try {
                         const data = JSON.parse(res.keys[0].value);
-                        if (data && data.score !== undefined) entries.push(data);
+                        entries.push(data);
                     } catch(e) {}
                 }
             }
@@ -817,17 +871,20 @@
         <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
         <button class="select-subject-hint" id="selectSubjectHint">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
         </div>`;
-        document.getElementById("shareBtn")?.addEventListener("click", async () => {
-            if(window.vkBridge) {
-                const shareUrl = window.location.href;
-                await vkBridge.send("VKWebAppShowWallPostBox", {
-                    message: `Я прошёл(а) ${subjectNames[currentSubject]} с результатом ${p.totalScore} очков!`,
-                    attachments: [shareUrl]
-                });
-            } else {
-                alert("Поделиться можно только в приложении VK");
-            }
-        });
+        // Исправленная кнопка "Поделиться"
+        const shareButton = document.getElementById("shareBtn");
+        if (shareButton) {
+            shareButton.onclick = () => {
+                if (window.vkBridge) {
+                    vkBridge.send("VKWebAppShowWallPostBox", {
+                        message: `Я прошёл(а) ${subjectNames[currentSubject]} с результатом ${p.totalScore} очков!`,
+                        attachments: [window.location.href]
+                    }).catch(e => console.log("Ошибка шаринга", e));
+                } else {
+                    alert("Поделиться можно только в приложении VK");
+                }
+            };
+        }
         document.getElementById("resetBtn")?.addEventListener("click",()=>{ resetSubjectProgress(currentSubject); });
         document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{
             document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth", block:"center"});
@@ -945,16 +1002,7 @@
                 if (user && user.id) {
                     currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок', photo: user.photo_100 || '' };
                 }
-                await loadFromCloud();
-                const local = localStorage.getItem('quizProgressV7');
-                if (local) {
-                    const data = JSON.parse(local);
-                    for (let s of allSubjects) {
-                        if (data[s]) {
-                            progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
-                        }
-                    }
-                }
+                await syncAll(); // загружаем прогресс из облака
             } else {
                 const local = localStorage.getItem('quizProgressV7');
                 if (local) {
