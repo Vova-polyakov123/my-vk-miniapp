@@ -364,7 +364,7 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКА (ГАРАНТИРОВАННО РАБОТАЕТ) =======================
+    // ======================= МУЗЫКА (РАБОТАЕТ НА ВСЕХ УСТРОЙСТВАХ) =======================
     (function() {
         const musicURL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3';
         const audio = new Audio(musicURL);
@@ -377,7 +377,7 @@
             if (musicEnabled && audio.paused) {
                 audio.play().then(() => {
                     started = true;
-                }).catch(e => console.log("Требуется взаимодействие с приложением"));
+                }).catch(e => console.log("Требуется взаимодействие"));
             }
         }
 
@@ -442,7 +442,7 @@
         }, 5000);
     })();
 
-    // ======================= БАЗЫ ДАННЫХ ВОПРОСОВ (РАСШИРЕННЫЕ, ИСПРАВЛЕННЫЕ) =======================
+    // ======================= БАЗЫ ДАННЫХ ВОПРОСОВ (ИСПРАВЛЕНЫ) =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -591,7 +591,6 @@
         if (level >= 3) ops.push('÷');
         let op = randomItem(ops);
         let correct, text, opts;
-
         if (op === '+') { correct = a + b; text = `${a} + ${b} = ?`; opts = [correct, correct+1, correct-1, correct+2].filter(v => v > 0); }
         else if (op === '-') { if (a < b) [a,b] = [b,a]; correct = a - b; text = `${a} - ${b} = ?`; opts = [correct, correct+1, correct-1, correct+2].filter(v => v >= 0); if (correct===0) opts=[0,1,2,3]; }
         else if (op === '×') { correct = a * b; text = `${a} × ${b} = ?`; opts = [correct, correct+2, correct-2, correct+1].filter(v => v > 0); }
@@ -684,7 +683,7 @@
         return { text: "Выберите правильное написание:", options: shuffle(opts.slice(0,4)), correctHash: simpleHash(base.word), points:10 }; 
     }
 
-    // ======================= ОСНОВНАЯ ЛОГИКА С СИНХРОНИЗАЦИЕЙ =======================
+    // ======================= ОСНОВНАЯ ЛОГИКА =======================
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = { math:"🧮 Математика", russian:"📖 Русский", geo:"🌍 География", history:"🏛️ История", literature:"📚 Литература", english:"🇬🇧 Английский", obzh:"🛡️ ОБЖ", society:"⚖️ Общество", biology:"🧬 Биология", chemistry:"⚗️ Химия", physics:"⚛️ Физика" };
     const subjectIcons = { math:"fa-calculator", russian:"fa-book", geo:"fa-globe", history:"fa-landmark", literature:"fa-feather-alt", english:"fa-language", obzh:"fa-shield-alt", society:"fa-gavel", biology:"fa-dna", chemistry:"fa-flask", physics:"fa-atom" };
@@ -701,7 +700,6 @@
     const MAX_LIVES = 5;
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
-    let currentAppUrl = window.location.href;
 
     for (let s of allSubjects) {
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
