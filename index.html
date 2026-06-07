@@ -428,7 +428,7 @@
         }, 5000);
     })();
 
-    // ======================= БАЗЫ ВОПРОСОВ (СОКРАЩЕНЫ ДЛЯ КРАТКОСТИ, НО РАБОТАЮТ) =======================
+    // ======================= БАЗЫ ВОПРОСОВ (ИСПРАВЛЕНЫ) =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -440,18 +440,30 @@
         ["ЮАР","Претория"],["Мексика","Мехико"],["Куба","Гавана"],["Марокко","Рабат"],["Саудовская Аравия","Эр-Рияд"]
     ];
     const historyQA = [
-        { q: "Кто был прозван 'Грозным'?", a: "Иван IV", type: "person" }, { q: "Кто был первым императором России?", a: "Пётр I", type: "person" },
-        { q: "Кто основал Москву?", a: "Юрий Долгорукий", type: "person" }, { q: "Кто написал 'Слово о полку Игореве'?", a: "Неизвестный автор", type: "person" },
-        { q: "Кто был первым президентом США?", a: "Джордж Вашингтон", type: "person" }, { q: "Кто изобрёл радио?", a: "Александр Попов", type: "person" },
-        { q: "Кто был первым космонавтом?", a: "Юрий Гагарин", type: "person" }, { q: "Кто написал 'Божественную комедию'?", a: "Данте Алигьери", type: "person" },
-        { q: "Кто был первым канцлером Германии?", a: "Отто фон Бисмарк", type: "person" }, { q: "Кто был последним российским императором?", a: "Николай II", type: "person" },
-        { q: "Кто отменил крепостное право в России?", a: "Александр II", type: "person" }, { q: "Кто был лидером большевиков?", a: "Владимир Ленин", type: "person" },
-        { q: "В каком году произошло Крещение Руси?", a: "988", type: "date" }, { q: "В каком году была Куликовская битва?", a: "1380", type: "date" },
-        { q: "В каком году началось правление династии Романовых?", a: "1613", type: "date" }, { q: "В каком году началась Северная война?", a: "1700", type: "date" },
-        { q: "В каком году был основан Санкт-Петербург?", a: "1703", type: "date" }, { q: "В каком году произошло восстание декабристов?", a: "1825", type: "date" },
-        { q: "В каком году отменили крепостное право?", a: "1861", type: "date" }, { q: "В каком году началась Первая мировая война?", a: "1914", type: "date" },
-        { q: "В каком году произошла Октябрьская революция?", a: "1917", type: "date" }, { q: "В каком году началась Великая Отечественная война?", a: "1941", type: "date" },
-        { q: "В каком году закончилась Вторая мировая война?", a: "1945", type: "date" }, { q: "В каком году распался СССР?", a: "1991", type: "date" }
+        { q: "Кто был прозван 'Грозным'?", a: "Иван IV", type: "person" },
+        { q: "Кто был первым императором России?", a: "Пётр I", type: "person" },
+        { q: "Кто основал Москву?", a: "Юрий Долгорукий", type: "person" },
+        { q: "Кто написал 'Слово о полку Игореве'?", a: "Неизвестный автор", type: "person" },
+        { q: "Кто был первым президентом США?", a: "Джордж Вашингтон", type: "person" },
+        { q: "Кто изобрёл радио?", a: "Александр Попов", type: "person" },
+        { q: "Кто был первым космонавтом?", a: "Юрий Гагарин", type: "person" },
+        { q: "Кто написал 'Божественную комедию'?", a: "Данте Алигьери", type: "person" },
+        { q: "Кто был первым канцлером Германии?", a: "Отто фон Бисмарк", type: "person" },
+        { q: "Кто был последним российским императором?", a: "Николай II", type: "person" },
+        { q: "Кто отменил крепостное право в России?", a: "Александр II", type: "person" },
+        { q: "Кто был лидером большевиков?", a: "Владимир Ленин", type: "person" },
+        { q: "В каком году произошло Крещение Руси?", a: "988", type: "date" },
+        { q: "В каком году была Куликовская битва?", a: "1380", type: "date" },
+        { q: "В каком году началось правление династии Романовых?", a: "1613", type: "date" },
+        { q: "В каком году началась Северная война?", a: "1700", type: "date" },
+        { q: "В каком году был основан Санкт-Петербург?", a: "1703", type: "date" },
+        { q: "В каком году произошло восстание декабристов?", a: "1825", type: "date" },
+        { q: "В каком году отменили крепостное право?", a: "1861", type: "date" },
+        { q: "В каком году началась Первая мировая война?", a: "1914", type: "date" },
+        { q: "В каком году произошла Октябрьская революция?", a: "1917", type: "date" },
+        { q: "В каком году началась Великая Отечественная война?", a: "1941", type: "date" },
+        { q: "В каком году закончилась Вторая мировая война?", a: "1945", type: "date" },
+        { q: "В каком году распался СССР?", a: "1991", type: "date" }
     ];
     const authorWork = [
         { author: "Лев Толстой", work: "Война и мир" }, { author: "Александр Пушкин", work: "Евгений Онегин" },
@@ -629,31 +641,10 @@
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
     }
 
-    async function syncAll() {
+    // Сохранение в облако VK
+    async function syncToCloud() {
         if (!window.vkBridge || currentUser.id === 'guest') return;
         try {
-            // Загружаем прогресс из облака
-            const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress", "quizProgressTimestamp"] });
-            let cloudProgress = null, cloudTimestamp = 0;
-            for (let item of res.keys) {
-                if (item.key === "quizProgress") cloudProgress = item.value;
-                if (item.key === "quizProgressTimestamp") cloudTimestamp = parseInt(item.value) || 0;
-            }
-            if (cloudProgress) {
-                const parsed = JSON.parse(cloudProgress);
-                for (let s of allSubjects) {
-                    if (parsed[s]) {
-                        progressBySubject[s] = {
-                            ...progressBySubject[s],
-                            ...parsed[s],
-                            usedQuestions: new Set(parsed[s].usedQuestions || [])
-                        };
-                    }
-                }
-                localStorage.setItem('quizProgressV7', JSON.stringify(parsed));
-                localStorage.setItem('quizProgressTimestamp', cloudTimestamp.toString());
-            }
-            // Сохраняем текущий прогресс в облако
             const toSave = {};
             for (let s of allSubjects) {
                 toSave[s] = {
@@ -667,16 +658,22 @@
                 };
             }
             await vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: JSON.stringify(toSave) });
-            await vkBridge.send("VKWebAppStorageSet", { key: "quizProgressTimestamp", value: Date.now().toString() });
-            // Обновляем глобальный топ
+            // Сохраняем общий счёт для топа (сумма по всем предметам)
             let totalScore = 0;
             for (let s of allSubjects) totalScore += progressBySubject[s].totalScore;
-            await vkBridge.send("VKWebAppStorageSet", { key: `leaderboard_${currentUser.id}`, value: JSON.stringify({ id: currentUser.id, name: currentUser.name, photo: currentUser.photo, score: totalScore, timestamp: Date.now() }) });
+            const leaderData = {
+                id: currentUser.id,
+                name: currentUser.name,
+                photo: currentUser.photo,
+                score: totalScore,
+                timestamp: Date.now()
+            };
+            await vkBridge.send("VKWebAppStorageSet", { key: `leaderboard_${currentUser.id}`, value: JSON.stringify(leaderData) });
         } catch(e) { console.warn("Ошибка синхронизации:", e); }
     }
 
-    async function loadFromCloudOnStart() {
-        if (!window.vkBridge || currentUser.id === 'guest') return;
+    async function loadFromCloud() {
+        if (!window.vkBridge || currentUser.id === 'guest') return false;
         try {
             const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress"] });
             if (res.keys && res.keys[0] && res.keys[0].value) {
@@ -690,9 +687,49 @@
                         };
                     }
                 }
-                localStorage.setItem('quizProgressV7', JSON.stringify(parsed));
+                return true;
             }
         } catch(e) { console.warn("Ошибка загрузки из облака:", e); }
+        return false;
+    }
+
+    function saveLocal() {
+        const toSave = {};
+        for (let s of allSubjects) {
+            toSave[s] = {
+                totalScore: progressBySubject[s].totalScore,
+                level: progressBySubject[s].level,
+                lives: progressBySubject[s].lives,
+                combo: progressBySubject[s].combo,
+                qInLevel: progressBySubject[s].qInLevel,
+                levelPerfect: progressBySubject[s].levelPerfect,
+                usedQuestions: Array.from(progressBySubject[s].usedQuestions)
+            };
+        }
+        localStorage.setItem('quizProgressV7', JSON.stringify(toSave));
+        localStorage.setItem('quizProgressTimestamp', Date.now().toString());
+    }
+
+    async function saveAllProgress() {
+        saveLocal();
+        await syncToCloud();
+    }
+
+    async function loadAllProgress() {
+        const loaded = await loadFromCloud();
+        if (!loaded) {
+            const local = localStorage.getItem('quizProgressV7');
+            if (local) {
+                try {
+                    const data = JSON.parse(local);
+                    for (let s of allSubjects) {
+                        if (data[s]) {
+                            progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
+                        }
+                    }
+                } catch(e) {}
+            }
+        }
     }
 
     async function loadGlobalLeaderboard() {
@@ -713,30 +750,6 @@
             entries.sort((a,b) => b.score - a.score);
             return entries.slice(0,10);
         } catch(e) { return []; }
-    }
-
-    function saveLocalProgress() {
-        const toSave = {};
-        for (let s of allSubjects) {
-            toSave[s] = {
-                totalScore: progressBySubject[s].totalScore,
-                level: progressBySubject[s].level,
-                lives: progressBySubject[s].lives,
-                combo: progressBySubject[s].combo,
-                qInLevel: progressBySubject[s].qInLevel,
-                levelPerfect: progressBySubject[s].levelPerfect,
-                usedQuestions: Array.from(progressBySubject[s].usedQuestions)
-            };
-        }
-        localStorage.setItem('quizProgressV7', JSON.stringify(toSave));
-        localStorage.setItem('quizProgressTimestamp', Date.now().toString());
-    }
-
-    async function saveAllProgress() {
-        saveLocalProgress();
-        if (window.vkBridge && currentUser.id !== 'guest') {
-            await syncAll();
-        }
     }
 
     async function showLeaderboard() {
@@ -1013,27 +1026,12 @@
                 if (user && user.id) {
                     currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок', photo: user.photo_100 || '' };
                 }
-                // Принудительно загружаем прогресс из облака
-                await loadFromCloudOnStart();
-                // Обновляем локальное хранилище
-                saveLocalProgress();
-                // Синхронизируем топ
-                await syncAll();
+                await loadAllProgress();
+                await syncToCloud(); // принудительно сохраняем текущего пользователя в топ
             } else {
-                const local = localStorage.getItem('quizProgressV7');
-                if (local) {
-                    try {
-                        const data = JSON.parse(local);
-                        for (let s of allSubjects) {
-                            if (data[s]) {
-                                progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
-                            }
-                        }
-                    } catch(e) {}
-                }
+                await loadAllProgress();
             }
-        } catch(e) { console.warn("Ошибка при инициализации:", e); }
-        
+        } catch(e) { console.warn("Ошибка инициализации:", e); }
         buildSubjectsUI();
         updateUI();
         loadNewQuestion();
