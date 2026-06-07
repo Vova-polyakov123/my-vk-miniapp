@@ -369,26 +369,20 @@
         audio.volume = 0.3;
         let musicEnabled = true;
         let started = false;
-        let initialPlayAttempt = false;
 
         function playMusic() {
             if (musicEnabled && audio.paused) {
                 audio.play().then(() => {
                     started = true;
-                    console.log("Музыка запущена");
-                }).catch(e => {
-                    console.log("Автовоспроизведение заблокировано (требуется явный клик)", e);
-                });
+                }).catch(e => console.log("Автовоспроизведение заблокировано (требуется клик)"));
             }
         }
 
-        // Запуск музыки по первому клику/тапу пользователя
         const firstInteraction = () => {
             if (!started && musicEnabled) {
                 audio.play().then(() => {
                     started = true;
-                    console.log("Музыка запущена после взаимодействия");
-                }).catch(e => console.log("Ошибка запуска после взаимодействия:", e));
+                }).catch(e => console.log("Ошибка запуска после клика:", e));
             }
             document.removeEventListener('click', firstInteraction);
             document.removeEventListener('touchstart', firstInteraction);
@@ -396,7 +390,6 @@
         document.addEventListener('click', firstInteraction);
         document.addEventListener('touchstart', firstInteraction);
 
-        // Кнопка управления музыкой
         const musicBtn = document.getElementById('musicToggleBtn');
         if (musicBtn) {
             musicBtn.onclick = (e) => {
@@ -404,9 +397,9 @@
                 musicEnabled = !musicEnabled;
                 if (musicEnabled) {
                     if (!started) {
-                        audio.play().then(() => started = true).catch(e => console.log);
+                        audio.play().then(() => started = true).catch(e=>console.log);
                     } else {
-                        audio.play().catch(e => console.log);
+                        audio.play().catch(e=>console.log);
                     }
                     musicBtn.innerHTML = '<i class="fas fa-music"></i> Вкл/Выкл';
                 } else {
@@ -416,7 +409,6 @@
             };
         }
 
-        // Регулятор громкости
         const volSlider = document.getElementById('globalVolume');
         if (volSlider) {
             volSlider.addEventListener('input', (e) => {
@@ -574,7 +566,6 @@
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
 
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ СКЛОНЕНИЯ СТРАН
     function declineCountry(c) {
         const exc = {
             "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
@@ -591,7 +582,6 @@
         return e[n] || n; 
     }
 
-    // ФУНКЦИЯ МАТЕМАТИКИ (+, -, ×, ÷)
     function generateMathQuestion(level) {
         let complexity = Math.min(3 + Math.floor(level / 3), 12);
         let a = Math.floor(Math.random() * (5 + complexity)) + 2;
@@ -730,7 +720,7 @@
         return { text: "Выберите правильное написание:", options: shuffle(opts.slice(0,4)), correctHash: simpleHash(base.word), points:10 }; 
     }
 
-    // ======================= ОСНОВНАЯ ЛОГИКА С СИНХРОНИЗАЦИЕЙ =======================
+    // ======================= ОСНОВНАЯ ЛОГИКА С ПОЛНОЙ СИНХРОНИЗАЦИЕЙ =======================
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = { math:"🧮 Математика", russian:"📖 Русский", geo:"🌍 География", history:"🏛️ История", literature:"📚 Литература", english:"🇬🇧 Английский", obzh:"🛡️ ОБЖ", society:"⚖️ Общество", biology:"🧬 Биология", chemistry:"⚗️ Химия", physics:"⚛️ Физика" };
     const subjectIcons = { math:"fa-calculator", russian:"fa-book", geo:"fa-globe", history:"fa-landmark", literature:"fa-feather-alt", english:"fa-language", obzh:"fa-shield-alt", society:"fa-gavel", biology:"fa-dna", chemistry:"fa-flask", physics:"fa-atom" };
@@ -747,8 +737,6 @@
     const MAX_LIVES = 5;
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
-    let currentAppUrl = window.location.href;
-    let isVKInitialized = false;
     let isSyncing = false;
 
     for (let s of allSubjects) {
@@ -770,24 +758,24 @@
                     usedQuestions: Array.from(progressBySubject[s].usedQuestions)
                 };
             }
-            await vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: JSON.stringify(toSave) });
-            await vkBridge.send("VKWebAppStorageSet", { key: "quizProgressTimestamp", value: Date.now().toString() });
+            await vkBridge.send("VKWebAppStorageSet", { key: `quizProgress_${currentUser.id}`, value: JSON.stringify(toSave) });
+            await vkBridge.send("VKWebAppStorageSet", { key: `quizProgressTimestamp_${currentUser.id}`, value: Date.now().toString() });
         } catch(e) { console.warn("Ошибка сохранения в облако VK:", e); }
     }
 
     async function loadProgressFromCloud() {
         if (!window.vkBridge || currentUser.id === 'guest') return false;
         try {
-            const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress", "quizProgressTimestamp"] });
+            const res = await vkBridge.send("VKWebAppStorageGet", { keys: [`quizProgress_${currentUser.id}`, `quizProgressTimestamp_${currentUser.id}`] });
             let cloudProgress = null;
             let cloudTimestamp = 0;
             for (let item of res.keys) {
-                if (item.key === "quizProgress") cloudProgress = item.value;
-                if (item.key === "quizProgressTimestamp") cloudTimestamp = parseInt(item.value) || 0;
+                if (item.key === `quizProgress_${currentUser.id}`) cloudProgress = item.value;
+                if (item.key === `quizProgressTimestamp_${currentUser.id}`) cloudTimestamp = parseInt(item.value) || 0;
             }
             if (cloudProgress) {
-                const localTimestamp = parseInt(localStorage.getItem('quizProgressTimestamp') || '0');
-                if (cloudTimestamp > localTimestamp || localTimestamp === 0) {
+                const localTimestamp = parseInt(localStorage.getItem(`quizProgressTimestamp_${currentUser.id}`) || '0');
+                if (cloudTimestamp > localTimestamp) {
                     const parsed = JSON.parse(cloudProgress);
                     for (let s of allSubjects) {
                         if (parsed[s]) {
@@ -798,8 +786,8 @@
                             };
                         }
                     }
-                    localStorage.setItem('quizProgressV7', JSON.stringify(parsed));
-                    localStorage.setItem('quizProgressTimestamp', cloudTimestamp.toString());
+                    localStorage.setItem(`quizProgress_${currentUser.id}`, JSON.stringify(parsed));
+                    localStorage.setItem(`quizProgressTimestamp_${currentUser.id}`, cloudTimestamp.toString());
                     return true;
                 }
             }
@@ -838,7 +826,7 @@
                 }
             }
             entries.sort((a,b) => b.score - a.score);
-            localStorage.setItem('globalLeaderboard', JSON.stringify(entries.slice(0,20)));
+            localStorage.setItem('globalLeaderboard', JSON.stringify(entries.slice(0,10)));
         } catch(e) { console.warn("Ошибка загрузки топа:", e); }
     }
 
@@ -855,11 +843,13 @@
                 usedQuestions: Array.from(progressBySubject[s].usedQuestions)
             };
         }
-        localStorage.setItem('quizProgressV7', JSON.stringify(toSave));
-        localStorage.setItem('quizProgressTimestamp', Date.now().toString());
-        if (window.vkBridge && currentUser.id !== 'guest') {
+        if (currentUser.id !== 'guest') {
+            localStorage.setItem(`quizProgress_${currentUser.id}`, JSON.stringify(toSave));
+            localStorage.setItem(`quizProgressTimestamp_${currentUser.id}`, Date.now().toString());
             saveProgressToCloud();
             saveUserToLeaderboard();
+        } else {
+            localStorage.setItem('quizProgressV7', JSON.stringify(toSave));
         }
         updateLeaderboardStorage();
     }
@@ -875,7 +865,7 @@
             leaderboard.push(entry);
         }
         leaderboard.sort((a,b) => b.score - a.score);
-        localStorage.setItem('globalLeaderboard', JSON.stringify(leaderboard.slice(0, 20)));
+        localStorage.setItem('globalLeaderboard', JSON.stringify(leaderboard.slice(0, 10)));
         if (window.vkBridge) loadGlobalLeaderboard();
     }
 
@@ -883,7 +873,7 @@
         await loadGlobalLeaderboard();
         const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
         const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-20 игроков</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
+        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10 игроков</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
         document.body.appendChild(modal);
         const listDiv = modal.querySelector('#leaderList');
         if (leaderboard.length === 0) listDiv.innerHTML = '<li>Пока нет рекордов. Стань первым!</li>';
@@ -1142,7 +1132,7 @@
 
     document.getElementById("termsLink").onclick = () => showInfoModal("Пользовательское соглашение", userAgreement);
     document.getElementById("privacyLink").onclick = () => showInfoModal("Политика конфиденциальности", privacyPolicy);
-    document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: "" }); location.reload(); }, () => {});
+    document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: `quizProgress_${currentUser.id}`, value: "" }); location.reload(); }, () => {});
 
     async function startApp() {
         try {
@@ -1154,7 +1144,7 @@
                 }
                 const cloudLoaded = await loadProgressFromCloud();
                 if (!cloudLoaded) {
-                    const local = localStorage.getItem('quizProgressV7');
+                    const local = localStorage.getItem(`quizProgress_${currentUser.id}`);
                     if (local) {
                         try {
                             const data = JSON.parse(local);
@@ -1164,9 +1154,23 @@
                                 }
                             }
                         } catch(e) {}
+                    } else {
+                        const fallback = localStorage.getItem('quizProgressV7');
+                        if (fallback) {
+                            try {
+                                const data = JSON.parse(fallback);
+                                for (let s of allSubjects) {
+                                    if (data[s]) {
+                                        progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
+                                    }
+                                }
+                            } catch(e) {}
+                        }
                     }
                 }
                 await loadGlobalLeaderboard();
+                await saveProgressToCloud();
+                await saveUserToLeaderboard();
             } else {
                 const local = localStorage.getItem('quizProgressV7');
                 if (local) {
