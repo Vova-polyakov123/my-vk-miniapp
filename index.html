@@ -569,7 +569,7 @@
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
     let leaderboardBySubject = {};
-    let appShareUrl = "https://vk.com/app"; // будет заменён
+    let appShareUrl = "https://vk.com/app";
 
     for (let s of allSubjects) { progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() }; leaderboardBySubject[s] = []; }
 
@@ -579,13 +579,24 @@
                 await vkBridge.send("VKWebAppInit");
                 const user = await vkBridge.send("VKWebAppGetUserInfo");
                 if (user && user.id) currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок', photo: user.photo_100 || '' };
-                const launchParams = await vkBridge.send("VKWebAppGetLaunchParams");
                 let appId = null;
-                if (launchParams && launchParams.vk_app_id) appId = launchParams.vk_app_id;
-                else {
-                    try { const appInfo = await vkBridge.send("VKWebAppGetAppInfo"); if (appInfo && appInfo.id) appId = appInfo.id; } catch(e) {}
+                try {
+                    const appInfo = await vkBridge.send("VKWebAppGetAppInfo");
+                    if (appInfo && appInfo.id) appId = appInfo.id;
+                } catch(e) { console.warn("getAppInfo failed", e); }
+                if (!appId) {
+                    try {
+                        const launchParams = await vkBridge.send("VKWebAppGetLaunchParams");
+                        if (launchParams && launchParams.vk_app_id) appId = launchParams.vk_app_id;
+                    } catch(e) {}
                 }
-                if (appId) appShareUrl = `https://vk.com/app${appId}`;
+                if (appId) {
+                    appShareUrl = `https://vk.com/app${appId}`;
+                    localStorage.setItem('vk_app_share_url', appShareUrl);
+                } else {
+                    const saved = localStorage.getItem('vk_app_share_url');
+                    if (saved && saved.startsWith('https://vk.com/app')) appShareUrl = saved;
+                }
                 const storageRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgressV10", "leaderboardBySubjectV3"] });
                 if (storageRes && storageRes.keys) {
                     if (storageRes.keys[0] && storageRes.keys[0].value) { let cloud = JSON.parse(storageRes.keys[0].value); for (let s of allSubjects) if (cloud[s]) progressBySubject[s] = { ...progressBySubject[s], ...cloud[s], usedQuestions: new Set(cloud[s].usedQuestions || []) }; }
@@ -667,7 +678,9 @@
 
     function offerAdForRevival() { if(!gameActive) return; gameActive=false; showConfirmModal("Жизни кончились! Смотреть рекламу?", async ()=>{ let success=await showRewardedAd(); if(success){ gameActive=true; waitingForNext=false; if(currentQuestion) renderUI(); else loadNewQuestion(); } else finishGame(false); },()=>finishGame(false)); }
 
-    // Функция finishGame с ИСПРАВЛЕННЫМ шерингом – ссылка ведёт на мини-приложение
+    // ИСПРАВЛЕННАЯ функция finishGame:
+    // 1) Кнопка "ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ" только скроллит к панели предметов, не трогает состояние игры.
+    // 2) Кнопка "ПОДЕЛИТЬСЯ" отправляет ссылку на мини-приложение и текст (как работало раньше).
     function finishGame(success) { 
         gameActive=false; 
         let p=getCurrentProgress(); 
@@ -678,7 +691,7 @@
             shareBtn.addEventListener("click", () => { 
                 const shareText = `Я прошёл(а) «${subjectNames[currentSubject]}» в игре «Битва знаний» с результатом ${p.totalScore} очков и уровнем ${p.level}! Заходи, сыграем?`; 
                 if (window.vkBridge) {
-                    // Используем корректную ссылку на мини-приложение (полученную ранее)
+                    // Отправляем ссылку на приложение и текст (как в исходном рабочем коде)
                     vkBridge.send("VKWebAppShare", { link: appShareUrl, attachment: shareText }).catch(e => console.warn);
                 } else {
                     alert("Поделиться можно только внутри VK Mini App");
@@ -686,7 +699,14 @@
             }); 
         }
         document.getElementById("resetBtn")?.addEventListener("click",()=>{ resetSubjectProgress(currentSubject); }); 
-        document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{ document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth"}); setTimeout(()=>{ if(!gameActive){ gameActive=true; waitingForNext=false; currentQuestion=null; loadNewQuestion(); } },100); }); 
+        // ИСПРАВЛЕНИЕ: кнопка "ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ" только скроллит, не перезапускает игру и не вызывает рекламу
+        const selectSubjectBtn = document.getElementById("selectSubjectHint");
+        if (selectSubjectBtn) {
+            selectSubjectBtn.addEventListener("click", () => {
+                document.querySelector('.subjects-wrapper').scrollIntoView({ behavior: "smooth" });
+                // Никаких дополнительных действий! Пользователь сам выберет предмет.
+            });
+        }
     }
 
     function resetSubjectProgress(subject) { progressBySubject[subject] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() }; if(subject===currentSubject) { waitingForNext=false; selectedAnswer=null; gameActive=true; currentQuestion=null; saveAllProgress(); updateUI(); loadNewQuestion(); } else { saveAllProgress(); } }
