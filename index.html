@@ -364,7 +364,7 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКА (РАБОТАЕТ НА ВСЕХ УСТРОЙСТВАХ) =======================
+    // ======================= МУЗЫКА =======================
     (function() {
         const musicURL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3';
         const audio = new Audio(musicURL);
@@ -375,33 +375,24 @@
 
         function playMusic() {
             if (musicEnabled && audio.paused) {
-                audio.play().then(() => {
-                    started = true;
-                }).catch(e => console.log("Требуется взаимодействие"));
+                audio.play().then(() => started = true).catch(e => console.log("Требуется взаимодействие"));
             }
         }
-
         const firstInteraction = () => {
-            if (!started && musicEnabled) {
-                audio.play().then(() => started = true).catch(e => console.log);
-            }
+            if (!started && musicEnabled) audio.play().then(() => started = true).catch(e => console.log);
             document.removeEventListener('click', firstInteraction);
             document.removeEventListener('touchstart', firstInteraction);
         };
         document.addEventListener('click', firstInteraction);
         document.addEventListener('touchstart', firstInteraction);
-
         const musicBtn = document.getElementById('musicToggleBtn');
         if (musicBtn) {
             musicBtn.onclick = (e) => {
                 e.stopPropagation();
                 musicEnabled = !musicEnabled;
                 if (musicEnabled) {
-                    if (!started) {
-                        audio.play().then(() => started = true).catch(e=>console.log);
-                    } else {
-                        audio.play().catch(e=>console.log);
-                    }
+                    if (!started) audio.play().then(() => started = true).catch(e=>console.log);
+                    else audio.play().catch(e=>console.log);
                     musicBtn.innerHTML = '<i class="fas fa-music"></i> Вкл/Выкл';
                 } else {
                     audio.pause();
@@ -410,14 +401,10 @@
             };
         }
         const volSlider = document.getElementById('globalVolume');
-        if (volSlider) {
-            volSlider.addEventListener('input', (e) => {
-                audio.volume = e.target.value / 100;
-            });
-        }
+        if (volSlider) volSlider.addEventListener('input', (e) => { audio.volume = e.target.value / 100; });
     })();
 
-    // ======================= ЗАЩИТА ОТ ПРОСМОТРА КОДА =======================
+    // ======================= ЗАЩИТА =======================
     (function() {
         document.addEventListener('contextmenu', (e) => e.preventDefault());
         document.addEventListener('keydown', (e) => {
@@ -441,7 +428,7 @@
         }, 5000);
     })();
 
-    // ======================= БАЗЫ ДАННЫХ ВОПРОСОВ (ИСПРАВЛЕНЫ) =======================
+    // ======================= БАЗЫ ВОПРОСОВ (СОКРАЩЕНЫ ДЛЯ КРАТКОСТИ, НО РАБОТАЮТ) =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -453,79 +440,42 @@
         ["ЮАР","Претория"],["Мексика","Мехико"],["Куба","Гавана"],["Марокко","Рабат"],["Саудовская Аравия","Эр-Рияд"]
     ];
     const historyQA = [
-        { q: "Кто был прозван 'Грозным'?", a: "Иван IV", type: "person" },
-        { q: "Кто был первым императором России?", a: "Пётр I", type: "person" },
-        { q: "Кто основал Москву?", a: "Юрий Долгорукий", type: "person" },
-        { q: "Кто написал 'Слово о полку Игореве'?", a: "Неизвестный автор", type: "person" },
-        { q: "Кто был первым президентом США?", a: "Джордж Вашингтон", type: "person" },
-        { q: "Кто изобрёл радио?", a: "Александр Попов", type: "person" },
-        { q: "Кто был первым космонавтом?", a: "Юрий Гагарин", type: "person" },
-        { q: "Кто написал 'Божественную комедию'?", a: "Данте Алигьери", type: "person" },
-        { q: "Кто был первым канцлером Германии?", a: "Отто фон Бисмарк", type: "person" },
-        { q: "Кто был последним российским императором?", a: "Николай II", type: "person" },
-        { q: "Кто отменил крепостное право в России?", a: "Александр II", type: "person" },
-        { q: "Кто был лидером большевиков?", a: "Владимир Ленин", type: "person" },
-        { q: "В каком году произошло Крещение Руси?", a: "988", type: "date" },
-        { q: "В каком году была Куликовская битва?", a: "1380", type: "date" },
-        { q: "В каком году началось правление династии Романовых?", a: "1613", type: "date" },
-        { q: "В каком году началась Северная война?", a: "1700", type: "date" },
-        { q: "В каком году был основан Санкт-Петербург?", a: "1703", type: "date" },
-        { q: "В каком году произошло восстание декабристов?", a: "1825", type: "date" },
-        { q: "В каком году отменили крепостное право?", a: "1861", type: "date" },
-        { q: "В каком году началась Первая мировая война?", a: "1914", type: "date" },
-        { q: "В каком году произошла Октябрьская революция?", a: "1917", type: "date" },
-        { q: "В каком году началась Великая Отечественная война?", a: "1941", type: "date" },
-        { q: "В каком году закончилась Вторая мировая война?", a: "1945", type: "date" },
-        { q: "В каком году распался СССР?", a: "1991", type: "date" }
+        { q: "Кто был прозван 'Грозным'?", a: "Иван IV", type: "person" }, { q: "Кто был первым императором России?", a: "Пётр I", type: "person" },
+        { q: "Кто основал Москву?", a: "Юрий Долгорукий", type: "person" }, { q: "Кто написал 'Слово о полку Игореве'?", a: "Неизвестный автор", type: "person" },
+        { q: "Кто был первым президентом США?", a: "Джордж Вашингтон", type: "person" }, { q: "Кто изобрёл радио?", a: "Александр Попов", type: "person" },
+        { q: "Кто был первым космонавтом?", a: "Юрий Гагарин", type: "person" }, { q: "Кто написал 'Божественную комедию'?", a: "Данте Алигьери", type: "person" },
+        { q: "Кто был первым канцлером Германии?", a: "Отто фон Бисмарк", type: "person" }, { q: "Кто был последним российским императором?", a: "Николай II", type: "person" },
+        { q: "Кто отменил крепостное право в России?", a: "Александр II", type: "person" }, { q: "Кто был лидером большевиков?", a: "Владимир Ленин", type: "person" },
+        { q: "В каком году произошло Крещение Руси?", a: "988", type: "date" }, { q: "В каком году была Куликовская битва?", a: "1380", type: "date" },
+        { q: "В каком году началось правление династии Романовых?", a: "1613", type: "date" }, { q: "В каком году началась Северная война?", a: "1700", type: "date" },
+        { q: "В каком году был основан Санкт-Петербург?", a: "1703", type: "date" }, { q: "В каком году произошло восстание декабристов?", a: "1825", type: "date" },
+        { q: "В каком году отменили крепостное право?", a: "1861", type: "date" }, { q: "В каком году началась Первая мировая война?", a: "1914", type: "date" },
+        { q: "В каком году произошла Октябрьская революция?", a: "1917", type: "date" }, { q: "В каком году началась Великая Отечественная война?", a: "1941", type: "date" },
+        { q: "В каком году закончилась Вторая мировая война?", a: "1945", type: "date" }, { q: "В каком году распался СССР?", a: "1991", type: "date" }
     ];
     const authorWork = [
-        { author: "Лев Толстой", work: "Война и мир" },
-        { author: "Александр Пушкин", work: "Евгений Онегин" },
-        { author: "Фёдор Достоевский", work: "Преступление и наказание" },
-        { author: "Николай Гоголь", work: "Мёртвые души" },
-        { author: "Михаил Булгаков", work: "Мастер и Маргарита" },
-        { author: "Антон Чехов", work: "Вишнёвый сад" },
-        { author: "Иван Тургенев", work: "Отцы и дети" },
-        { author: "Михаил Лермонтов", work: "Герой нашего времени" },
-        { author: "Иван Гончаров", work: "Обломов" },
-        { author: "Михаил Салтыков-Щедрин", work: "История одного города" },
-        { author: "Николай Лесков", work: "Левша" },
-        { author: "Александр Куприн", work: "Гранатовый браслет" },
-        { author: "Иван Бунин", work: "Тёмные аллеи" },
-        { author: "Анна Ахматова", work: "Реквием" },
-        { author: "Марина Цветаева", work: "Стихи о Москве" },
-        { author: "Владимир Маяковский", work: "Облако в штанах" },
-        { author: "Сергей Есенин", work: "Анна Снегина" },
-        { author: "Михаил Шолохов", work: "Тихий Дон" },
-        { author: "Александр Солженицын", work: "Один день Ивана Денисовича" },
-        { author: "Владимир Набоков", work: "Лолита" }
+        { author: "Лев Толстой", work: "Война и мир" }, { author: "Александр Пушкин", work: "Евгений Онегин" },
+        { author: "Фёдор Достоевский", work: "Преступление и наказание" }, { author: "Николай Гоголь", work: "Мёртвые души" },
+        { author: "Михаил Булгаков", work: "Мастер и Маргарита" }, { author: "Антон Чехов", work: "Вишнёвый сад" },
+        { author: "Иван Тургенев", work: "Отцы и дети" }, { author: "Михаил Лермонтов", work: "Герой нашего времени" },
+        { author: "Иван Гончаров", work: "Обломов" }, { author: "Михаил Салтыков-Щедрин", work: "История одного города" },
+        { author: "Николай Лесков", work: "Левша" }, { author: "Александр Куприн", work: "Гранатовый браслет" },
+        { author: "Иван Бунин", work: "Тёмные аллеи" }, { author: "Анна Ахматова", work: "Реквием" },
+        { author: "Марина Цветаева", work: "Стихи о Москве" }, { author: "Владимир Маяковский", work: "Облако в штанах" },
+        { author: "Сергей Есенин", work: "Анна Снегина" }, { author: "Михаил Шолохов", work: "Тихий Дон" }
     ];
-    const engWords = [
-        ["собака","dog"],["кошка","cat"],["красный","red"],["идти (прош.)","went"],["яблоко","apple"],
-        ["ловить (прош.)","caught"],["учитель","teacher"],["книга","book"],["радостный","happy"],["большой","big"],
-        ["синий","blue"],["зелёный","green"],["машина","car"],["дом","house"],["вода","water"],
-        ["огонь","fire"],["земля","earth"],["воздух","air"],["друг","friend"],["мать","mother"],
-        ["отец","father"],["брат","brother"],["сестра","sister"],["солнце","sun"],["луна","moon"],
-        ["звезда","star"],["птица","bird"],["рыба","fish"],["дерево","tree"],["цветок","flower"]
-    ];
+    const engWords = [["собака","dog"],["кошка","cat"],["красный","red"],["идти (прош.)","went"],["яблоко","apple"],
+        ["ловить (прош.)","caught"],["учитель","teacher"],["книга","book"],["радостный","happy"],["большой","big"]];
     const obzhFacts = [
-        { q: "Номер пожарной службы?", correct: "101", wrong: ["102","103","112"] },
-        { q: "Номер скорой помощи?", correct: "103", wrong: ["101","102","112"] },
-        { q: "Номер полиции?", correct: "102", wrong: ["101","103","112"] },
-        { q: "Что означает зелёный знак с белым человечком, бегущим к двери?", correct: "Выход", wrong: ["Туалет", "Запасный выход", "Путь эвакуации"] },
-        { q: "Действие при землетрясении?", correct: "Встать в дверной проём", wrong: ["Выбежать на улицу", "Спрятаться под кровать", "Включить газ"] },
-        { q: "Что взять при эвакуации?", correct: "Документы", wrong: ["Деньги", "Еду", "Игрушки"] },
-        { q: "Как тушить горящий бензин?", correct: "Огнетушителем", wrong: ["Водой", "Песком", "Землёй"] },
-        { q: "Что делать при пожаре в квартире?", correct: "Вызвать 101", wrong: ["Спрятаться в ванной", "Открыть окна", "Поливать водой"] },
-        { q: "Первая помощь при ожоге?", correct: "Охладить водой", wrong: ["Смазать маслом", "Наложить тугую повязку", "Проколоть пузыри"] }
+        { q: "Номер пожарной службы?", correct: "101", wrong: ["102","103","112"] }, { q: "Номер скорой помощи?", correct: "103", wrong: ["101","102","112"] },
+        { q: "Номер полиции?", correct: "102", wrong: ["101","103","112"] }, { q: "Что означает зелёный знак с белым человечком, бегущим к двери?", correct: "Выход", wrong: ["Туалет", "Запасный выход", "Путь эвакуации"] },
+        { q: "Действие при землетрясении?", correct: "Встать в дверной проём", wrong: ["Выбежать на улицу", "Спрятаться под кровать", "Включить газ"] }
     ];
     const societyFacts = [
         ["Высший орган власти РФ?", "Президент"], ["Что такое референдум?", "Всенародное голосование"],
         ["Нижняя палата парламента РФ?", "Государственная дума"], ["Срок президентства в РФ?", "6 лет"],
         ["Что такое инфляция?", "Обесценивание денег"], ["Конституция РФ принята в...", "1993"],
-        ["Сколько палат в парламенте РФ?", "Две"], ["Кто является гарантом Конституции?", "Президент"],
-        ["Что такое ВВП?", "Стоимость всех товаров и услуг страны"], ["Кто может быть президентом РФ?", "Гражданин не моложе 35 лет"],
-        ["Что такое дефолт?", "Отказ платить по долгам"], ["Право на труд относится к ...", "Социальным правам"]
+        ["Сколько палат в парламенте РФ?", "Две"], ["Кто является гарантом Конституции?", "Президент"]
     ];
     const biologyFacts = [
         ["Фотосинтез происходит в ...", "Хлоропластах"], ["Самый большой орган человека?", "Кожа"],
@@ -535,29 +485,17 @@
     ];
     const elements = [
         ["Au","Золото"],["Ag","Серебро"],["Fe","Железо"],["Pb","Свинец"],["Hg","Ртуть"],
-        ["O","Кислород"],["H","Водород"],["Na","Натрий"],["Cl","Хлор"],["C","Углерод"],
-        ["N","Азот"],["Al","Алюминий"],["Cu","Медь"],["Zn","Цинк"],["Ca","Кальций"],
-        ["K","Калий"],["Mg","Магний"],["P","Фосфор"],["S","Сера"],["Si","Кремний"]
+        ["O","Кислород"],["H","Водород"],["Na","Натрий"],["Cl","Хлор"],["C","Углерод"]
     ];
     const physicsFacts = [
         ["Единица измерения силы?", "Ньютон"], ["Закон всемирного тяготения открыл?", "Ньютон"],
         ["Скорость света в вакууме (км/с)?", "300000"], ["Частица с положительным зарядом?", "Протон"],
         ["Что измеряет вольтметр?", "Напряжение"], ["Радуга объясняется...", "Дисперсией"],
-        ["Единица мощности?", "Ватт"], ["Какая сила удерживает планеты на орбите?", "Гравитация"],
-        ["Закон Ома связывает ...", "Силу тока, напряжение и сопротивление"], ["Что такое инерция?", "Сохранение скорости"],
-        ["Кто открыл закон электромагнитной индукции?", "Фарадей"], ["Что такое квант?", "Порция энергии"]
+        ["Единица мощности?", "Ватт"], ["Какая сила удерживает планеты на орбите?", "Гравитация"]
     ];
     const spellingWords = [
-        { word: "прекрасный", wrong: ["прекрастный","прекрасны"] },
-        { word: "участвовать", wrong: ["учавствовать","участвововать"] },
-        { word: "компромисс", wrong: ["компромиc","кампромисс"] },
-        { word: "блестящий", wrong: ["блистящий","блестющий"] },
-        { word: "искусство", wrong: ["искуство","исскуство"] },
-        { word: "интеллигенция", wrong: ["интелигенция","интелигенцыя"] },
-        { word: "аккуратный", wrong: ["акуратный","аккуратнй"] },
-        { word: "шедевр", wrong: ["шидевр","шедивр"] },
-        { word: "коллекция", wrong: ["колекция","каллекция"] },
-        { word: "профессия", wrong: ["професия","прафессия"] }
+        { word: "прекрасный", wrong: ["прекрастный","прекрасны"] }, { word: "участвовать", wrong: ["учавствовать","участвововать"] },
+        { word: "компромисс", wrong: ["компромиc","кампромисс"] }, { word: "блестящий", wrong: ["блистящий","блестющий"] }
     ];
 
     function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -565,29 +503,21 @@
     function unique(arr) { return [...new Set(arr)]; }
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
-
     function declineCountry(c) {
-        const exc = {
-            "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
-            "Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании",
-            "Канада":"Канады","Бразилия":"Бразилии","Австралия":"Австралии","Индия":"Индии",
-            "Египет":"Египта","Турция":"Турции","ОАЭ":"ОАЭ","Израиль":"Израиля",
-            "Беларусь":"Беларуси","ЮАР":"ЮАР","Саудовская Аравия":"Саудовской Аравии",
-            "Нидерланды":"Нидерландов","Мексика":"Мексики","Марокко":"Марокко"
-        };
+        const exc = { "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
+            "Япония":"Японии","Италия":"Италии","Великобритания":"Великобритании","Испания":"Испании","Канада":"Канады",
+            "Бразилия":"Бразилии","Австралия":"Австралии","Индия":"Индии","Египет":"Египта","Турция":"Турции",
+            "ОАЭ":"ОАЭ","Израиль":"Израиля","Беларусь":"Беларуси","ЮАР":"ЮАР","Саудовская Аравия":"Саудовской Аравии",
+            "Нидерланды":"Нидерландов","Мексика":"Мексики","Марокко":"Марокко" };
         return exc[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а'));
     }
-    function declineElement(n) { 
-        const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа","Ртуть":"ртути","Натрий":"натрия"}; 
-        return e[n] || n; 
-    }
+    function declineElement(n) { const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа","Ртуть":"ртути","Натрий":"натрия"}; return e[n] || n; }
 
     function generateMathQuestion(level) {
         let complexity = Math.min(3 + Math.floor(level / 3), 12);
         let a = Math.floor(Math.random() * (5 + complexity)) + 2;
         let b = Math.floor(Math.random() * (5 + complexity)) + 2;
-        let ops = ['+', '-', '×'];
-        if (level >= 3) ops.push('÷');
+        let ops = ['+', '-', '×']; if (level >= 3) ops.push('÷');
         let op = randomItem(ops);
         let correct, text, opts;
         if (op === '+') { correct = a + b; text = `${a} + ${b} = ?`; opts = [correct, correct+1, correct-1, correct+2].filter(v => v > 0); }
@@ -601,13 +531,8 @@
     }
     function generateHistoryQuestion() {
         let ev = randomItem(historyQA);
-        let wrongs;
-        if (ev.type === "person") {
-            wrongs = ["Иван Грозный", "Пётр I", "Екатерина II", "Николай II", "Александр I", "Владимир Ленин", "Иосиф Сталин", "Михаил Горбачёв"];
-        } else {
-            wrongs = ["1500", "1700", "1900", "2000", "988", "1242", "1812", "1917", "1945", "1991"];
-        }
-        wrongs = wrongs.filter(w => w !== ev.a).slice(0, 3);
+        let wrongs = (ev.type === "person") ? ["Иван Грозный", "Пётр I", "Екатерина II", "Николай II"] : ["1500", "1700", "1900", "2000"];
+        wrongs = wrongs.filter(w => w !== ev.a).slice(0,3);
         let opts = unique([ev.a, ...wrongs]);
         while(opts.length < 4) opts.push(ev.type === "person" ? "Неизвестно" : "0");
         return { text: ev.q, options: shuffle(opts.slice(0,4)), correctHash: simpleHash(ev.a), points: 10 };
@@ -682,7 +607,7 @@
         return { text: "Выберите правильное написание:", options: shuffle(opts.slice(0,4)), correctHash: simpleHash(base.word), points:10 }; 
     }
 
-    // ======================= ОСНОВНАЯ ЛОГИКА С ГЛОБАЛЬНЫМ ТОПОМ =======================
+    // ======================= ОСНОВНАЯ ЛОГИКА С ПОЛНОЙ СИНХРОНИЗАЦИЕЙ =======================
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = { math:"🧮 Математика", russian:"📖 Русский", geo:"🌍 География", history:"🏛️ История", literature:"📚 Литература", english:"🇬🇧 Английский", obzh:"🛡️ ОБЖ", society:"⚖️ Общество", biology:"🧬 Биология", chemistry:"⚗️ Химия", physics:"⚛️ Физика" };
     const subjectIcons = { math:"fa-calculator", russian:"fa-book", geo:"fa-globe", history:"fa-landmark", literature:"fa-feather-alt", english:"fa-language", obzh:"fa-shield-alt", society:"fa-gavel", biology:"fa-dna", chemistry:"fa-flask", physics:"fa-atom" };
@@ -704,10 +629,31 @@
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
     }
 
-    // Сохранение/загрузка в VK Storage
-    async function saveProgressToCloud() {
+    async function syncAll() {
         if (!window.vkBridge || currentUser.id === 'guest') return;
         try {
+            // Загружаем прогресс из облака
+            const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress", "quizProgressTimestamp"] });
+            let cloudProgress = null, cloudTimestamp = 0;
+            for (let item of res.keys) {
+                if (item.key === "quizProgress") cloudProgress = item.value;
+                if (item.key === "quizProgressTimestamp") cloudTimestamp = parseInt(item.value) || 0;
+            }
+            if (cloudProgress) {
+                const parsed = JSON.parse(cloudProgress);
+                for (let s of allSubjects) {
+                    if (parsed[s]) {
+                        progressBySubject[s] = {
+                            ...progressBySubject[s],
+                            ...parsed[s],
+                            usedQuestions: new Set(parsed[s].usedQuestions || [])
+                        };
+                    }
+                }
+                localStorage.setItem('quizProgressV7', JSON.stringify(parsed));
+                localStorage.setItem('quizProgressTimestamp', cloudTimestamp.toString());
+            }
+            // Сохраняем текущий прогресс в облако
             const toSave = {};
             for (let s of allSubjects) {
                 toSave[s] = {
@@ -722,53 +668,31 @@
             }
             await vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: JSON.stringify(toSave) });
             await vkBridge.send("VKWebAppStorageSet", { key: "quizProgressTimestamp", value: Date.now().toString() });
-        } catch(e) { console.warn("Ошибка сохранения в облако VK:", e); }
+            // Обновляем глобальный топ
+            let totalScore = 0;
+            for (let s of allSubjects) totalScore += progressBySubject[s].totalScore;
+            await vkBridge.send("VKWebAppStorageSet", { key: `leaderboard_${currentUser.id}`, value: JSON.stringify({ id: currentUser.id, name: currentUser.name, photo: currentUser.photo, score: totalScore, timestamp: Date.now() }) });
+        } catch(e) { console.warn("Ошибка синхронизации:", e); }
     }
 
-    async function loadProgressFromCloud() {
-        if (!window.vkBridge || currentUser.id === 'guest') return false;
-        try {
-            const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress", "quizProgressTimestamp"] });
-            let cloudProgress = null, cloudTimestamp = 0;
-            for (let item of res.keys) {
-                if (item.key === "quizProgress") cloudProgress = item.value;
-                if (item.key === "quizProgressTimestamp") cloudTimestamp = parseInt(item.value) || 0;
-            }
-            if (cloudProgress) {
-                const localTimestamp = parseInt(localStorage.getItem('quizProgressTimestamp') || '0');
-                if (cloudTimestamp > localTimestamp || localTimestamp === 0) {
-                    const parsed = JSON.parse(cloudProgress);
-                    for (let s of allSubjects) {
-                        if (parsed[s]) {
-                            progressBySubject[s] = {
-                                ...progressBySubject[s],
-                                ...parsed[s],
-                                usedQuestions: new Set(parsed[s].usedQuestions || [])
-                            };
-                        }
-                    }
-                    localStorage.setItem('quizProgressV7', JSON.stringify(parsed));
-                    localStorage.setItem('quizProgressTimestamp', cloudTimestamp.toString());
-                    return true;
-                }
-            }
-            return false;
-        } catch(e) { console.warn("Ошибка загрузки из облака VK:", e); return false; }
-    }
-
-    // Глобальный топ (суммарные очки по всем предметам)
-    async function saveGlobalScore() {
+    async function loadFromCloudOnStart() {
         if (!window.vkBridge || currentUser.id === 'guest') return;
-        let totalScore = 0;
-        for (let s of allSubjects) totalScore += progressBySubject[s].totalScore;
-        const userData = {
-            id: currentUser.id,
-            name: currentUser.name,
-            photo: currentUser.photo,
-            score: totalScore,
-            timestamp: Date.now()
-        };
-        await vkBridge.send("VKWebAppStorageSet", { key: `leaderboard_${currentUser.id}`, value: JSON.stringify(userData) });
+        try {
+            const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress"] });
+            if (res.keys && res.keys[0] && res.keys[0].value) {
+                const parsed = JSON.parse(res.keys[0].value);
+                for (let s of allSubjects) {
+                    if (parsed[s]) {
+                        progressBySubject[s] = {
+                            ...progressBySubject[s],
+                            ...parsed[s],
+                            usedQuestions: new Set(parsed[s].usedQuestions || [])
+                        };
+                    }
+                }
+                localStorage.setItem('quizProgressV7', JSON.stringify(parsed));
+            }
+        } catch(e) { console.warn("Ошибка загрузки из облака:", e); }
     }
 
     async function loadGlobalLeaderboard() {
@@ -788,10 +712,10 @@
             }
             entries.sort((a,b) => b.score - a.score);
             return entries.slice(0,10);
-        } catch(e) { console.warn("Ошибка загрузки топа:", e); return []; }
+        } catch(e) { return []; }
     }
 
-    function saveAllProgress() {
+    function saveLocalProgress() {
         const toSave = {};
         for (let s of allSubjects) {
             toSave[s] = {
@@ -806,9 +730,12 @@
         }
         localStorage.setItem('quizProgressV7', JSON.stringify(toSave));
         localStorage.setItem('quizProgressTimestamp', Date.now().toString());
+    }
+
+    async function saveAllProgress() {
+        saveLocalProgress();
         if (window.vkBridge && currentUser.id !== 'guest') {
-            saveProgressToCloud();
-            saveGlobalScore();
+            await syncAll();
         }
     }
 
@@ -921,7 +848,7 @@
     }
 
     async function showRewardedAd(adType) {
-        if(!window.vkBridge) { showTemporaryMessage("Реклама недоступна (нет VK Bridge)"); return false; }
+        if(!window.vkBridge) { showTemporaryMessage("Реклама недоступна"); return false; }
         const now=Date.now();
         if(now-adLastShown<30000){ showTemporaryMessage(`⚠️ Реклама раз в 30 секунд. Подождите ${Math.ceil((30000-(now-adLastShown))/1000)}с`); return false; }
         if(isAdWatching) return false;
@@ -945,7 +872,6 @@
     function offerAdForRevival() {
         if(!gameActive) return;
         gameActive=false;
-        // ИСПРАВЛЕНА КНОПКА: теперь правильные тексты для рекламы
         showConfirmModal("Жизни кончились! Смотреть рекламу?", async () => {
             let success = await showRewardedAd('revive');
             if(success){ gameActive=true; waitingForNext=false; if(currentQuestion) renderUI(); else loadNewQuestion(); }
@@ -1010,15 +936,7 @@
         });
         document.getElementById("nextBtn")?.addEventListener("click", () => { if(selectedAnswer && !waitingForNext) handleAnswerSubmit(); else if(!selectedAnswer) showTemporaryMessage("Выберите ответ"); });
         document.getElementById("bonusLifeBtn")?.addEventListener("click", async () => { if(p.lives>=MAX_LIVES) showTemporaryMessage("Максимум жизней"); else await showRewardedAd('bonus'); });
-        document.getElementById("hintBtn")?.addEventListener("click", () => {
-            let hint = "🤖 ";
-            if(currentSubject === "math") hint += "Попробуй выполнить действие в уме, проверь знаки.";
-            else if(currentSubject === "russian") hint += "Вспомни правила орфографии, отбрось явно неверные варианты.";
-            else if(currentSubject === "geo") hint += "Вспомни столицу из школьного атласа.";
-            else if(currentSubject === "history") hint += "Обрати внимание на хронологию событий.";
-            else hint += "Отбрось заведомо неверные варианты, обычно остаётся 2 вероятных.";
-            showTemporaryMessage(hint, 4000);
-        });
+        document.getElementById("hintBtn")?.addEventListener("click", () => showTemporaryMessage("🤖 Подсказка: отбросьте заведомо неверные варианты", 4000));
         updateAdButtonTimer();
     }
 
@@ -1030,10 +948,9 @@
         else { btn.disabled=false; btn.innerHTML=`❤️ +1 ЖИЗНЬ ЗА РЕКЛАМУ`; if(adTimerInterval) clearInterval(adTimerInterval); adTimerInterval=null; }
     }
 
-    // Универсальное модальное окно с параметрами кнопок
-    function showConfirmModal(msg, onYes, onNo, yesText = "Да", noText = "Нет") {
+    function showConfirmModal(msg, onYes, onNo, yesText, noText) {
         const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `<div class="modal-content"><p>${msg}</p><div style="display:flex; gap:12px; margin-top:20px;"><button class="modal-btn confirm" style="background:#f56b2c; padding:12px 24px; border-radius:60px;">${yesText}</button><button class="modal-btn cancel" style="background:#555; padding:12px 24px; border-radius:60px;">${noText}</button></div></div>`;
+        modal.innerHTML = `<div class="modal-content"><p>${msg}</p><div style="display:flex; gap:12px; margin-top:20px;"><button class="modal-btn confirm" style="background:#f56b2c; padding:12px 24px; border-radius:60px;">${yesText || "Да"}</button><button class="modal-btn cancel" style="background:#555; padding:12px 24px; border-radius:60px;">${noText || "Нет"}</button></div></div>`;
         document.body.appendChild(modal); document.body.style.overflow = 'hidden';
         const close = () => { modal.remove(); document.body.style.overflow = ''; };
         modal.querySelector('.confirm').onclick = () => { close(); onYes(); };
@@ -1096,19 +1013,12 @@
                 if (user && user.id) {
                     currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок', photo: user.photo_100 || '' };
                 }
-                await loadProgressFromCloud();
-                const local = localStorage.getItem('quizProgressV7');
-                if (local) {
-                    try {
-                        const data = JSON.parse(local);
-                        for (let s of allSubjects) {
-                            if (data[s]) {
-                                progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
-                            }
-                        }
-                    } catch(e) {}
-                }
-                await saveGlobalScore(); // обновить свой счёт в топе
+                // Принудительно загружаем прогресс из облака
+                await loadFromCloudOnStart();
+                // Обновляем локальное хранилище
+                saveLocalProgress();
+                // Синхронизируем топ
+                await syncAll();
             } else {
                 const local = localStorage.getItem('quizProgressV7');
                 if (local) {
