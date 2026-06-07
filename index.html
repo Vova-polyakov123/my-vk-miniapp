@@ -18,7 +18,7 @@
             align-items: center;
         }
         .app-container {
-            max-width: 650px;
+            max-width: 700px;
             width: 100%;
             background: rgba(18, 25, 45, 0.85);
             backdrop-filter: blur(12px);
@@ -74,15 +74,16 @@
             background: rgba(0,0,0,0.3);
             overflow-x: auto;
             white-space: nowrap;
+            scrollbar-width: thin;
         }
-        .subjects-grid { display: inline-flex; gap: 12px; }
+        .subjects-grid { display: inline-flex; gap: 14px; }
         .subject-btn {
             background: rgba(20,28,45,0.9);
             border: 1px solid rgba(255,255,255,0.2);
-            padding: 12px 24px;
+            padding: 14px 28px;
             border-radius: 60px;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: white;
             cursor: pointer;
             display: inline-flex;
@@ -90,6 +91,7 @@
             gap: 12px;
             transition: 0.2s;
         }
+        .subject-btn i { font-size: 1.3rem; }
         .subject-btn.active {
             background: #f56b2c;
             border-color: #ffaa66;
@@ -225,8 +227,8 @@
             font-size: 1rem;
         }
         .leaderboard-avatar {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             object-fit: cover;
             background: #2a3a5a;
@@ -279,7 +281,7 @@
             background: none;
             border: none;
             color: #ffaa66;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             cursor: pointer;
         }
         .volume-slider { display: flex; align-items: center; gap: 10px; }
@@ -313,7 +315,7 @@
             margin-bottom: 16px;
             letter-spacing: 2px;
         }
-        .share-btn, .reset-btn {
+        .share-btn, .reset-btn, .select-subject-hint {
             border: none;
             padding: 14px 24px;
             border-radius: 60px;
@@ -324,13 +326,7 @@
         }
         .share-btn { background: #2688eb; color: white; }
         .reset-btn { background: #f56b2c; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-        .subject-btn {
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .subject-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255,170,102,0.3);
-        }
+        .select-subject-hint { background: #6e2cf5; color: white; }
     </style>
 </head>
 <body>
@@ -368,7 +364,7 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКА (РАБОТАЕТ НА ВСЕХ УСТРОЙСТВАХ) =======================
+    // ======================= МУЗЫКА (ГАРАНТИРОВАННО РАБОТАЕТ) =======================
     (function() {
         const musicURL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3';
         const audio = new Audio(musicURL);
@@ -376,26 +372,18 @@
         audio.volume = 0.3;
         let musicEnabled = true;
         let started = false;
-        let initialPlayAttempt = false;
 
         function playMusic() {
             if (musicEnabled && audio.paused) {
                 audio.play().then(() => {
                     started = true;
-                    console.log("Музыка запущена");
-                }).catch(e => {
-                    console.log("Автовоспроизведение заблокировано (требуется явный клик)", e);
-                });
+                }).catch(e => console.log("Требуется взаимодействие с приложением"));
             }
         }
 
-        // Запуск музыки по первому клику/тапу пользователя
         const firstInteraction = () => {
             if (!started && musicEnabled) {
-                audio.play().then(() => {
-                    started = true;
-                    console.log("Музыка запущена после взаимодействия");
-                }).catch(e => console.log("Ошибка запуска после взаимодействия:", e));
+                audio.play().then(() => started = true).catch(e => console.log);
             }
             document.removeEventListener('click', firstInteraction);
             document.removeEventListener('touchstart', firstInteraction);
@@ -403,7 +391,6 @@
         document.addEventListener('click', firstInteraction);
         document.addEventListener('touchstart', firstInteraction);
 
-        // Кнопка управления музыкой
         const musicBtn = document.getElementById('musicToggleBtn');
         if (musicBtn) {
             musicBtn.onclick = (e) => {
@@ -411,9 +398,9 @@
                 musicEnabled = !musicEnabled;
                 if (musicEnabled) {
                     if (!started) {
-                        audio.play().then(() => started = true).catch(e => console.log);
+                        audio.play().then(() => started = true).catch(e=>console.log);
                     } else {
-                        audio.play().catch(e => console.log);
+                        audio.play().catch(e=>console.log);
                     }
                     musicBtn.innerHTML = '<i class="fas fa-music"></i> Вкл/Выкл';
                 } else {
@@ -423,7 +410,6 @@
             };
         }
 
-        // Регулятор громкости
         const volSlider = document.getElementById('globalVolume');
         if (volSlider) {
             volSlider.addEventListener('input', (e) => {
@@ -456,7 +442,7 @@
         }, 5000);
     })();
 
-    // ======================= БАЗЫ ДАННЫХ ВОПРОСОВ (РАСШИРЕННЫЕ) =======================
+    // ======================= БАЗЫ ДАННЫХ ВОПРОСОВ (РАСШИРЕННЫЕ, ИСПРАВЛЕННЫЕ) =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -563,16 +549,16 @@
         ["Кто открыл закон электромагнитной индукции?", "Фарадей"], ["Что такое квант?", "Порция энергии"]
     ];
     const spellingWords = [
-        { word: "прекрасный", wrong: ["прекрастный","прекрасныйь","прекрасны"] },
-        { word: "участвовать", wrong: ["учавствовать","участвововать","учавствоать"] },
-        { word: "компромисс", wrong: ["компромиc","кампромисс","компромис"] },
-        { word: "блестящий", wrong: ["блистящий","блестющий","блистющий"] },
-        { word: "искусство", wrong: ["искуство","исскуство","искуства"] },
-        { word: "интеллигенция", wrong: ["интелигенция","интелигенцыя","интелегнция"] },
-        { word: "аккуратный", wrong: ["акуратный","аккуратнй","акуратныйь"] },
-        { word: "шедевр", wrong: ["шидевр","шедивр","шидивр"] },
-        { word: "коллекция", wrong: ["колекция","каллекция","колеция"] },
-        { word: "профессия", wrong: ["професия","прафессия","профессья"] }
+        { word: "прекрасный", wrong: ["прекрастный","прекрасны"] },
+        { word: "участвовать", wrong: ["учавствовать","участвововать"] },
+        { word: "компромисс", wrong: ["компромиc","кампромисс"] },
+        { word: "блестящий", wrong: ["блистящий","блестющий"] },
+        { word: "искусство", wrong: ["искуство","исскуство"] },
+        { word: "интеллигенция", wrong: ["интелигенция","интелигенцыя"] },
+        { word: "аккуратный", wrong: ["акуратный","аккуратнй"] },
+        { word: "шедевр", wrong: ["шидевр","шедивр"] },
+        { word: "коллекция", wrong: ["колекция","каллекция"] },
+        { word: "профессия", wrong: ["професия","прафессия"] }
     ];
 
     function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -581,7 +567,6 @@
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
 
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ СКЛОНЕНИЯ СТРАН
     function declineCountry(c) {
         const exc = {
             "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
@@ -594,11 +579,10 @@
         return exc[c] || (c.endsWith('я') ? c.slice(0,-1)+'и' : (c.endsWith('а') ? c.slice(0,-1)+'ы' : c+'а'));
     }
     function declineElement(n) { 
-        const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа"}; 
+        const e = {"Золото":"золота","Серебро":"серебра","Железо":"железа","Ртуть":"ртути","Натрий":"натрия"}; 
         return e[n] || n; 
     }
 
-    // ФУНКЦИЯ МАТЕМАТИКИ (+, -, ×, ÷)
     function generateMathQuestion(level) {
         let complexity = Math.min(3 + Math.floor(level / 3), 12);
         let a = Math.floor(Math.random() * (5 + complexity)) + 2;
@@ -608,43 +592,15 @@
         let op = randomItem(ops);
         let correct, text, opts;
 
-        if (op === '+') {
-            correct = a + b;
-            text = `${a} + ${b} = ?`;
-            opts = [correct, correct+1, correct-1, correct+2].filter(v => v > 0);
-        } 
-        else if (op === '-') {
-            if (a < b) [a, b] = [b, a];
-            correct = a - b;
-            text = `${a} - ${b} = ?`;
-            opts = [correct, correct+1, correct-1, correct+2].filter(v => v >= 0);
-            if (correct === 0) opts = [0, 1, 2, 3];
-        }
-        else if (op === '×') {
-            correct = a * b;
-            text = `${a} × ${b} = ?`;
-            opts = [correct, correct+2, correct-2, correct+1].filter(v => v > 0);
-        }
-        else { 
-            let divisor = Math.floor(Math.random() * (5 + complexity)) + 2;
-            let quotient = Math.floor(Math.random() * (5 + complexity)) + 2;
-            let dividend = divisor * quotient;
-            correct = quotient;
-            text = `${dividend} ÷ ${divisor} = ?`;
-            opts = [correct, correct+1, correct-1, correct+2].filter(v => v > 0);
-        }
-
+        if (op === '+') { correct = a + b; text = `${a} + ${b} = ?`; opts = [correct, correct+1, correct-1, correct+2].filter(v => v > 0); }
+        else if (op === '-') { if (a < b) [a,b] = [b,a]; correct = a - b; text = `${a} - ${b} = ?`; opts = [correct, correct+1, correct-1, correct+2].filter(v => v >= 0); if (correct===0) opts=[0,1,2,3]; }
+        else if (op === '×') { correct = a * b; text = `${a} × ${b} = ?`; opts = [correct, correct+2, correct-2, correct+1].filter(v => v > 0); }
+        else { let divisor = Math.floor(Math.random() * (5+complexity)) + 2; let quotient = Math.floor(Math.random() * (5+complexity)) + 2; let dividend = divisor * quotient; correct = quotient; text = `${dividend} ÷ ${divisor} = ?`; opts = [correct, correct+1, correct-1, correct+2].filter(v => v > 0); }
         if (opts.length < 4) opts.push(Math.abs(correct) + 3);
         opts = unique(opts);
-        while (opts.length < 4) opts.push((Number(correct) + 1).toString());
-        return { 
-            text, 
-            options: shuffle(opts.map(String)), 
-            correctHash: simpleHash(correct.toString()), 
-            points: 10 + Math.floor(level / 2) 
-        };
+        while(opts.length < 4) opts.push((Number(correct)+1).toString());
+        return { text, options: shuffle(opts.map(String)), correctHash: simpleHash(correct.toString()), points: 10 + Math.floor(level/2) };
     }
-
     function generateHistoryQuestion() {
         let ev = randomItem(historyQA);
         let wrongs;
@@ -658,7 +614,6 @@
         while(opts.length < 4) opts.push(ev.type === "person" ? "Неизвестно" : "0");
         return { text: ev.q, options: shuffle(opts.slice(0,4)), correctHash: simpleHash(ev.a), points: 10 };
     }
-
     function generateGeoQuestion() { 
         let p = randomItem(countryCapital); 
         let text = `Столица ${declineCountry(p[0])}?`; 
@@ -668,7 +623,6 @@
         while(opts.length < 4) opts.push("Лондон");
         return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; 
     }
-
     function generateLiteratureQuestion() { 
         let item = randomItem(authorWork); 
         let text = `Кто написал "${item.work}"?`; 
@@ -678,7 +632,6 @@
         while(opts.length < 4) opts.push("Неизвестный автор");
         return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; 
     }
-
     function generateEnglishQuestion() { 
         let w = randomItem(engWords); 
         let correct = w[1]; 
@@ -687,14 +640,12 @@
         while(opts.length < 4) opts.push("unknown");
         return { text: `Перевод слова "${w[0]}":`, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; 
     }
-
     function generateOBZHQuestion() { 
         let f = randomItem(obzhFacts); 
         let opts = unique([f.correct, ...f.wrong]);
         while(opts.length < 4) opts.push("Неизвестно");
         return { text: f.q, options: shuffle(opts), correctHash: simpleHash(f.correct), points:10 }; 
     }
-
     function generateSocietyQuestion() { 
         let f = randomItem(societyFacts); 
         let wrongs = societyFacts.filter(s => s[1] !== f[1]).map(s => s[1]).slice(0,3);
@@ -702,7 +653,6 @@
         while(opts.length < 4) opts.push("Неизвестно");
         return { text: f[0], options: shuffle(opts), correctHash: simpleHash(f[1]), points:10 }; 
     }
-
     function generateBiologyQuestion() { 
         let f = randomItem(biologyFacts); 
         let correct = f[1]; 
@@ -711,7 +661,6 @@
         while(opts.length < 4) opts.push("Неизвестно");
         return { text: f[0], options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; 
     }
-
     function generateChemistryQuestion() { 
         let e = randomItem(elements); 
         let text = `Химический символ ${declineElement(e[1])}?`; 
@@ -721,7 +670,6 @@
         while(opts.length < 4) opts.push("??");
         return { text, options: shuffle(opts), correctHash: simpleHash(correct), points:10 }; 
     }
-
     function generatePhysicsQuestion() { 
         let f = randomItem(physicsFacts); 
         let wrongs = physicsFacts.filter(p => p[1] !== f[1]).map(p => p[1]).slice(0,3);
@@ -729,7 +677,6 @@
         while(opts.length < 4) opts.push("Энергия");
         return { text: f[0], options: shuffle(opts), correctHash: simpleHash(f[1]), points:10 }; 
     }
-
     function generateRussianQuestion() { 
         let base = randomItem(spellingWords); 
         let opts = unique([base.word, ...base.wrong]);
@@ -755,8 +702,6 @@
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
     let currentAppUrl = window.location.href;
-    let isVKInitialized = false;
-    let isSyncing = false;
 
     for (let s of allSubjects) {
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
@@ -786,8 +731,7 @@
         if (!window.vkBridge || currentUser.id === 'guest') return false;
         try {
             const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress", "quizProgressTimestamp"] });
-            let cloudProgress = null;
-            let cloudTimestamp = 0;
+            let cloudProgress = null, cloudTimestamp = 0;
             for (let item of res.keys) {
                 if (item.key === "quizProgress") cloudProgress = item.value;
                 if (item.key === "quizProgressTimestamp") cloudTimestamp = parseInt(item.value) || 0;
@@ -817,12 +761,12 @@
     async function saveUserToLeaderboard() {
         if (!window.vkBridge || currentUser.id === 'guest') return;
         try {
-            const totalScore = progressBySubject[currentSubject]?.totalScore || 0;
+            let totalScoreOverall = 0;
+            for (let s of allSubjects) totalScoreOverall += progressBySubject[s].totalScore;
             const userData = {
                 name: currentUser.name,
                 photo: currentUser.photo,
-                score: totalScore,
-                level: progressBySubject[currentSubject]?.level || 1,
+                score: totalScoreOverall,
                 timestamp: Date.now()
             };
             await vkBridge.send("VKWebAppStorageSet", { key: `leaderboard_${currentUser.id}`, value: JSON.stringify(userData) });
@@ -830,7 +774,7 @@
     }
 
     async function loadGlobalLeaderboard() {
-        if (!window.vkBridge) return;
+        if (!window.vkBridge) return [];
         try {
             const keysRes = await vkBridge.send("VKWebAppStorageGetKeys", {});
             const leaderboardKeys = (keysRes.keys || []).filter(k => k.startsWith("leaderboard_"));
@@ -845,8 +789,9 @@
                 }
             }
             entries.sort((a,b) => b.score - a.score);
-            localStorage.setItem('globalLeaderboard', JSON.stringify(entries.slice(0,20)));
-        } catch(e) { console.warn("Ошибка загрузки топа:", e); }
+            localStorage.setItem('globalLeaderboard', JSON.stringify(entries.slice(0,10)));
+            return entries.slice(0,10);
+        } catch(e) { console.warn("Ошибка загрузки топа:", e); return []; }
     }
 
     function saveAllProgress() {
@@ -868,40 +813,24 @@
             saveProgressToCloud();
             saveUserToLeaderboard();
         }
-        updateLeaderboardStorage();
-    }
-
-    function updateLeaderboardStorage() {
-        const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
-        const totalScore = progressBySubject[currentSubject]?.totalScore || 0;
-        const existingIndex = leaderboard.findIndex(entry => entry.name === currentUser.name);
-        const entry = { name: currentUser.name, photo: currentUser.photo, score: totalScore, level: progressBySubject[currentSubject]?.level || 1, timestamp: Date.now() };
-        if (existingIndex !== -1) {
-            if (totalScore > leaderboard[existingIndex].score) leaderboard[existingIndex] = entry;
-        } else {
-            leaderboard.push(entry);
-        }
-        leaderboard.sort((a,b) => b.score - a.score);
-        localStorage.setItem('globalLeaderboard', JSON.stringify(leaderboard.slice(0, 20)));
-        if (window.vkBridge) loadGlobalLeaderboard();
     }
 
     async function showLeaderboard() {
-        await loadGlobalLeaderboard();
-        const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
+        const entries = await loadGlobalLeaderboard();
         const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10 игроков (${subjectNames[currentSubject]})</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
+        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10 игроков</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
         document.body.appendChild(modal);
+        document.body.style.overflow = 'hidden';
         const listDiv = modal.querySelector('#leaderList');
-        if (leaderboard.length === 0) listDiv.innerHTML = '<li>Пока нет рекордов. Стань первым!</li>';
+        if (entries.length === 0) listDiv.innerHTML = '<li>Пока нет рекордов. Стань первым!</li>';
         else {
-            listDiv.innerHTML = leaderboard.map((u, idx) => {
+            listDiv.innerHTML = entries.map((u, idx) => {
                 const avatarHtml = u.photo ? `<img class="leaderboard-avatar" src="${u.photo}" alt="avatar">` : `<div class="leaderboard-avatar" style="background:#6e2cf5; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-user"></i></div>`;
-                return `<li>${avatarHtml}<div><strong>${idx+1}. ${u.name}</strong><br>🎯 ${u.score} очков | Уровень ${u.level}</div></li>`;
+                return `<li>${avatarHtml}<div><strong>${idx+1}. ${u.name}</strong><br>🎯 ${u.score} очков</div></li>`;
             }).join('');
         }
-        modal.querySelector('.close-modal').onclick = () => modal.remove();
-        modal.onclick = (e) => { if(e.target === modal) modal.remove(); };
+        modal.querySelector('.close-modal').onclick = () => { modal.remove(); document.body.style.overflow = ''; };
+        modal.onclick = (e) => { if(e.target === modal) { modal.remove(); document.body.style.overflow = ''; } };
     }
     document.getElementById("leaderboardBtn").onclick = showLeaderboard;
 
@@ -1033,29 +962,26 @@
         document.getElementById("gameArea").innerHTML=`<div class="result-area"><div class="result-score">${resultText}</div><p style="margin:12px 0; color:white; font-size:1.2rem;">Очки: ${p.totalScore} | Уровень: ${p.level}</p>
         <button class="share-btn" id="shareBtn">📢 ПОДЕЛИТЬСЯ</button>
         <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
-        <button class="reset-btn" id="selectSubjectHint" style="margin-top:8px; background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
+        <button class="select-subject-hint" id="selectSubjectHint">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
         </div>`;
-        // ИСПРАВЛЕНА КНОПКА ПОДЕЛИТЬСЯ — ИСПОЛЬЗУЕТСЯ VKWebAppShowWallPostBox
         document.getElementById("shareBtn")?.addEventListener("click",()=>{
             if(window.vkBridge) {
-                // Определяем ссылку на приложение
-                let shareUrl = window.location.href;
-                // Если приложение запущено не в домене VK, формируем правильную ссылку
-                if (!shareUrl.includes('vk.com') && currentUser.id !== 'guest') {
-                    // Пытаемся получить ID приложения из настроек или используем стандартный формат
-                    // Здесь можно указать ваш ID приложения
-                    shareUrl = `https://vk.com/appYOUR_APP_ID`;
-                }
                 vkBridge.send("VKWebAppShowWallPostBox", {
                     message: `Я прошёл(а) ${subjectNames[currentSubject]} с результатом ${p.totalScore} очков!`,
-                    attachments: [shareUrl]
+                    attachments: [window.location.href]
                 });
             } else {
                 alert("Поделиться можно только в приложении VK");
             }
         });
-        document.getElementById("resetBtn")?.addEventListener("click",()=>{ resetSubjectProgress(currentSubject); });
-        document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{ document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth"}); });
+        document.getElementById("resetBtn")?.addEventListener("click",()=>{
+            resetSubjectProgress(currentSubject);
+        });
+        document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{
+            document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth", block:"center"});
+            document.querySelector('.subjects-wrapper').style.animation = "none";
+            setTimeout(()=>{ document.querySelector('.subjects-wrapper').style.animation = ""; }, 10);
+        });
     }
 
     function resetSubjectProgress(subject) {
@@ -1092,7 +1018,15 @@
         });
         document.getElementById("nextBtn")?.addEventListener("click", () => { if(selectedAnswer && !waitingForNext) handleAnswerSubmit(); else if(!selectedAnswer) showTemporaryMessage("Выберите ответ"); });
         document.getElementById("bonusLifeBtn")?.addEventListener("click", async () => { if(p.lives>=MAX_LIVES) showTemporaryMessage("Максимум жизней"); else await showRewardedAd('bonus'); });
-        document.getElementById("hintBtn")?.addEventListener("click", () => showTemporaryMessage("🤖 Подсказка: отбросьте заведомо неверные варианты, останется 2-3 возможных.", 4000));
+        document.getElementById("hintBtn")?.addEventListener("click", () => {
+            let hint = "🤖 ";
+            if(currentSubject === "math") hint += "Попробуй выполнить действие в уме, проверь знаки.";
+            else if(currentSubject === "russian") hint += "Вспомни правила орфографии, отбрось явно неверные варианты.";
+            else if(currentSubject === "geo") hint += "Вспомни столицу из школьного атласа.";
+            else if(currentSubject === "history") hint += "Обрати внимание на хронологию событий.";
+            else hint += "Отбрось заведомо неверные варианты, обычно остаётся 2 вероятных.";
+            showTemporaryMessage(hint, 4000);
+        });
         updateAdButtonTimer();
     }
 
@@ -1106,7 +1040,7 @@
 
     function showConfirmModal(msg, onYes, onNo) {
         const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `<div class="modal-content"><p>${msg}</p><div style="display:flex; gap:12px; margin-top:20px;"><button class="modal-btn confirm" style="background:#f56b2c; padding:12px 24px; border-radius:60px;">Да, смотреть</button><button class="modal-btn cancel" style="background:#555; padding:12px 24px; border-radius:60px;">Нет, закончить</button></div></div>`;
+        modal.innerHTML = `<div class="modal-content"><p>${msg}</p><div style="display:flex; gap:12px; margin-top:20px;"><button class="modal-btn confirm" style="background:#f56b2c; padding:12px 24px; border-radius:60px;">🗑️ Да, удалить</button><button class="modal-btn cancel" style="background:#555; padding:12px 24px; border-radius:60px;">🔙 Отмена</button></div></div>`;
         document.body.appendChild(modal); document.body.style.overflow = 'hidden';
         const close = () => { modal.remove(); document.body.style.overflow = ''; };
         modal.querySelector('.confirm').onclick = () => { close(); onYes(); };
@@ -1142,15 +1076,16 @@
     function showInfoModal(title, text) {
         const m = document.createElement('div'); m.className = 'modal';
         m.innerHTML = `<div class="modal-content"><h3>${title}</h3><p>${text}</p><button class="close-modal">Закрыть</button></div>`;
-        document.body.appendChild(m); m.querySelector('.close-modal').onclick = () => m.remove();
+        document.body.appendChild(m); document.body.style.overflow = 'hidden';
+        m.querySelector('.close-modal').onclick = () => { m.remove(); document.body.style.overflow = ''; };
     }
 
     function startTutorial() {
         if(localStorage.getItem('tutorialShown')) return;
         const overlay = document.createElement('div'); overlay.className = 'modal';
-        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 сохраняется в облаке VK с аватарками<br>• Музыка включается/выключается кнопкой</p><button class="close-modal">Начать</button></div>`;
-        document.body.appendChild(overlay);
-        overlay.querySelector('.close-modal').onclick = () => { overlay.remove(); localStorage.setItem('tutorialShown','true'); };
+        overlay.innerHTML = `<div class="modal-content"><h3>🎓 Добро пожаловать!</h3><p>• Выбирайте предмет вверху<br>• Отвечайте на вопросы<br>• За ошибку теряете жизнь<br>• Реклама даёт +1 жизнь (раз в 30 сек)<br>• Комбо увеличивает очки<br>• Топ-10 — общий рейтинг игроков<br>• Музыка включается/выключается кнопкой</p><button class="close-modal">Начать</button></div>`;
+        document.body.appendChild(overlay); document.body.style.overflow = 'hidden';
+        overlay.querySelector('.close-modal').onclick = () => { overlay.remove(); document.body.style.overflow = ''; localStorage.setItem('tutorialShown','true'); };
     }
 
     const userAgreement = `<strong>Пользовательское соглашение</strong><br><br>1. Настоящее соглашение регулирует отношения между разработчиком и пользователем мини-приложения "Битва знаний".<br>2. Использование приложения означает полное согласие с условиями.<br>3. Разработчик не несёт ответственности за возможные убытки.<br>4. Пользователь обязуется не нарушать работу приложения.<br>5. Контактная информация: vova_polyakov_94@mail.ru`;
@@ -1168,21 +1103,18 @@
                 if (user && user.id) {
                     currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок', photo: user.photo_100 || '' };
                 }
-                const cloudLoaded = await loadProgressFromCloud();
-                if (!cloudLoaded) {
-                    const local = localStorage.getItem('quizProgressV7');
-                    if (local) {
-                        try {
-                            const data = JSON.parse(local);
-                            for (let s of allSubjects) {
-                                if (data[s]) {
-                                    progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
-                                }
+                await loadProgressFromCloud();
+                const local = localStorage.getItem('quizProgressV7');
+                if (local) {
+                    try {
+                        const data = JSON.parse(local);
+                        for (let s of allSubjects) {
+                            if (data[s]) {
+                                progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
                             }
-                        } catch(e) {}
-                    }
+                        }
+                    } catch(e) {}
                 }
-                await loadGlobalLeaderboard();
             } else {
                 const local = localStorage.getItem('quizProgressV7');
                 if (local) {
