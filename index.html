@@ -409,7 +409,6 @@
                 }
             };
         }
-
         const volSlider = document.getElementById('globalVolume');
         if (volSlider) {
             volSlider.addEventListener('input', (e) => {
@@ -683,7 +682,7 @@
         return { text: "Выберите правильное написание:", options: shuffle(opts.slice(0,4)), correctHash: simpleHash(base.word), points:10 }; 
     }
 
-    // ======================= ОСНОВНАЯ ЛОГИКА =======================
+    // ======================= ОСНОВНАЯ ЛОГИКА С ГЛОБАЛЬНЫМ ТОПОМ =======================
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = { math:"🧮 Математика", russian:"📖 Русский", geo:"🌍 География", history:"🏛️ История", literature:"📚 Литература", english:"🇬🇧 Английский", obzh:"🛡️ ОБЖ", society:"⚖️ Общество", biology:"🧬 Биология", chemistry:"⚗️ Химия", physics:"⚛️ Физика" };
     const subjectIcons = { math:"fa-calculator", russian:"fa-book", geo:"fa-globe", history:"fa-landmark", literature:"fa-feather-alt", english:"fa-language", obzh:"fa-shield-alt", society:"fa-gavel", biology:"fa-dna", chemistry:"fa-flask", physics:"fa-atom" };
@@ -705,6 +704,7 @@
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
     }
 
+    // Сохранение/загрузка в VK Storage
     async function saveProgressToCloud() {
         if (!window.vkBridge || currentUser.id === 'guest') return;
         try {
@@ -756,19 +756,19 @@
         } catch(e) { console.warn("Ошибка загрузки из облака VK:", e); return false; }
     }
 
-    async function saveUserToLeaderboard() {
+    // Глобальный топ (суммарные очки по всем предметам)
+    async function saveGlobalScore() {
         if (!window.vkBridge || currentUser.id === 'guest') return;
-        try {
-            let totalScoreOverall = 0;
-            for (let s of allSubjects) totalScoreOverall += progressBySubject[s].totalScore;
-            const userData = {
-                name: currentUser.name,
-                photo: currentUser.photo,
-                score: totalScoreOverall,
-                timestamp: Date.now()
-            };
-            await vkBridge.send("VKWebAppStorageSet", { key: `leaderboard_${currentUser.id}`, value: JSON.stringify(userData) });
-        } catch(e) { console.warn("Ошибка сохранения в топ:", e); }
+        let totalScore = 0;
+        for (let s of allSubjects) totalScore += progressBySubject[s].totalScore;
+        const userData = {
+            id: currentUser.id,
+            name: currentUser.name,
+            photo: currentUser.photo,
+            score: totalScore,
+            timestamp: Date.now()
+        };
+        await vkBridge.send("VKWebAppStorageSet", { key: `leaderboard_${currentUser.id}`, value: JSON.stringify(userData) });
     }
 
     async function loadGlobalLeaderboard() {
@@ -787,7 +787,6 @@
                 }
             }
             entries.sort((a,b) => b.score - a.score);
-            localStorage.setItem('globalLeaderboard', JSON.stringify(entries.slice(0,10)));
             return entries.slice(0,10);
         } catch(e) { console.warn("Ошибка загрузки топа:", e); return []; }
     }
@@ -809,7 +808,7 @@
         localStorage.setItem('quizProgressTimestamp', Date.now().toString());
         if (window.vkBridge && currentUser.id !== 'guest') {
             saveProgressToCloud();
-            saveUserToLeaderboard();
+            saveGlobalScore();
         }
     }
 
@@ -946,11 +945,12 @@
     function offerAdForRevival() {
         if(!gameActive) return;
         gameActive=false;
-        showConfirmModal("Жизни кончились! Смотреть рекламу?", async ()=>{
-            let success=await showRewardedAd('revive');
+        // ИСПРАВЛЕНА КНОПКА: теперь правильные тексты для рекламы
+        showConfirmModal("Жизни кончились! Смотреть рекламу?", async () => {
+            let success = await showRewardedAd('revive');
             if(success){ gameActive=true; waitingForNext=false; if(currentQuestion) renderUI(); else loadNewQuestion(); }
             else finishGame(false);
-        },()=>finishGame(false));
+        }, () => finishGame(false), "Да, смотреть", "Нет, закончить");
     }
 
     function finishGame(success) {
@@ -968,17 +968,11 @@
                     message: `Я прошёл(а) ${subjectNames[currentSubject]} с результатом ${p.totalScore} очков!`,
                     attachments: [window.location.href]
                 });
-            } else {
-                alert("Поделиться можно только в приложении VK");
-            }
+            } else { alert("Поделиться можно только в приложении VK"); }
         });
-        document.getElementById("resetBtn")?.addEventListener("click",()=>{
-            resetSubjectProgress(currentSubject);
-        });
+        document.getElementById("resetBtn")?.addEventListener("click",()=>{ resetSubjectProgress(currentSubject); });
         document.getElementById("selectSubjectHint")?.addEventListener("click",()=>{
             document.querySelector('.subjects-wrapper').scrollIntoView({behavior:"smooth", block:"center"});
-            document.querySelector('.subjects-wrapper').style.animation = "none";
-            setTimeout(()=>{ document.querySelector('.subjects-wrapper').style.animation = ""; }, 10);
         });
     }
 
@@ -1036,9 +1030,10 @@
         else { btn.disabled=false; btn.innerHTML=`❤️ +1 ЖИЗНЬ ЗА РЕКЛАМУ`; if(adTimerInterval) clearInterval(adTimerInterval); adTimerInterval=null; }
     }
 
-    function showConfirmModal(msg, onYes, onNo) {
+    // Универсальное модальное окно с параметрами кнопок
+    function showConfirmModal(msg, onYes, onNo, yesText = "Да", noText = "Нет") {
         const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `<div class="modal-content"><p>${msg}</p><div style="display:flex; gap:12px; margin-top:20px;"><button class="modal-btn confirm" style="background:#f56b2c; padding:12px 24px; border-radius:60px;">🗑️ Да, удалить</button><button class="modal-btn cancel" style="background:#555; padding:12px 24px; border-radius:60px;">🔙 Отмена</button></div></div>`;
+        modal.innerHTML = `<div class="modal-content"><p>${msg}</p><div style="display:flex; gap:12px; margin-top:20px;"><button class="modal-btn confirm" style="background:#f56b2c; padding:12px 24px; border-radius:60px;">${yesText}</button><button class="modal-btn cancel" style="background:#555; padding:12px 24px; border-radius:60px;">${noText}</button></div></div>`;
         document.body.appendChild(modal); document.body.style.overflow = 'hidden';
         const close = () => { modal.remove(); document.body.style.overflow = ''; };
         modal.querySelector('.confirm').onclick = () => { close(); onYes(); };
@@ -1091,7 +1086,7 @@
 
     document.getElementById("termsLink").onclick = () => showInfoModal("Пользовательское соглашение", userAgreement);
     document.getElementById("privacyLink").onclick = () => showInfoModal("Политика конфиденциальности", privacyPolicy);
-    document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: "" }); location.reload(); }, () => {});
+    document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: "" }); location.reload(); }, () => {}, "🗑️ Да, удалить", "🔙 Отмена");
 
     async function startApp() {
         try {
@@ -1113,6 +1108,7 @@
                         }
                     } catch(e) {}
                 }
+                await saveGlobalScore(); // обновить свой счёт в топе
             } else {
                 const local = localStorage.getItem('quizProgressV7');
                 if (local) {
