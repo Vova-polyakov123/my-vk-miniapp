@@ -361,7 +361,7 @@
 </div>
 
 <script>
-    // ======================= МУЗЫКА (РАБОТАЕТ НА ТЕЛЕФОНЕ И ПК) =======================
+    // ======================= МУЗЫКА (РАБОТАЕТ НА ВСЕХ УСТРОЙСТВАХ) =======================
     (function() {
         const musicURL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=good-beginning-111718.mp3';
         const audio = new Audio(musicURL);
@@ -369,37 +369,34 @@
         audio.volume = 0.3;
         let musicEnabled = true;
         let started = false;
+        let initialPlayAttempt = false;
 
         function playMusic() {
-            if (musicEnabled && !started) {
+            if (musicEnabled && audio.paused) {
                 audio.play().then(() => {
                     started = true;
-                }).catch(e => console.log("Нужен клик для музыки"));
+                    console.log("Музыка запущена");
+                }).catch(e => {
+                    console.log("Автовоспроизведение заблокировано (требуется явный клик)", e);
+                });
             }
         }
 
-        const startOnInteraction = () => {
-            if (!started) {
-                audio.play().then(() => {
-                    started = true;
-                }).catch(e => console.log("Автовоспроизведение заблокировано"));
-            }
-            document.removeEventListener('click', startOnInteraction);
-            document.removeEventListener('touchstart', startOnInteraction);
-        };
-        document.addEventListener('click', startOnInteraction);
-        document.addEventListener('touchstart', startOnInteraction);
-
-        const forceStartOnClick = (e) => {
+        // Запуск музыки по первому клику/тапу пользователя
+        const firstInteraction = () => {
             if (!started && musicEnabled) {
                 audio.play().then(() => {
                     started = true;
-                }).catch(e => console.log);
+                    console.log("Музыка запущена после взаимодействия");
+                }).catch(e => console.log("Ошибка запуска после взаимодействия:", e));
             }
+            document.removeEventListener('click', firstInteraction);
+            document.removeEventListener('touchstart', firstInteraction);
         };
-        document.body.addEventListener('click', forceStartOnClick);
-        document.body.addEventListener('touchstart', forceStartOnClick);
+        document.addEventListener('click', firstInteraction);
+        document.addEventListener('touchstart', firstInteraction);
 
+        // Кнопка управления музыкой
         const musicBtn = document.getElementById('musicToggleBtn');
         if (musicBtn) {
             musicBtn.onclick = (e) => {
@@ -407,9 +404,9 @@
                 musicEnabled = !musicEnabled;
                 if (musicEnabled) {
                     if (!started) {
-                        audio.play().then(() => started = true).catch(e=>console.log);
+                        audio.play().then(() => started = true).catch(e => console.log);
                     } else {
-                        audio.play().catch(e=>console.log);
+                        audio.play().catch(e => console.log);
                     }
                     musicBtn.innerHTML = '<i class="fas fa-music"></i> Вкл/Выкл';
                 } else {
@@ -419,6 +416,7 @@
             };
         }
 
+        // Регулятор громкости
         const volSlider = document.getElementById('globalVolume');
         if (volSlider) {
             volSlider.addEventListener('input', (e) => {
@@ -451,7 +449,7 @@
         }, 5000);
     })();
 
-    // ======================= БАЗЫ ДАННЫХ (ПОЛНОСТЬЮ ИСПРАВЛЕНЫ) =======================
+    // ======================= БАЗЫ ДАННЫХ ВОПРОСОВ (РАСШИРЕННЫЕ) =======================
     const countryCapital = [
         ["Россия","Москва"],["США","Вашингтон"],["Франция","Париж"],["Германия","Берлин"],["Китай","Пекин"],
         ["Япония","Токио"],["Италия","Рим"],["Великобритания","Лондон"],["Испания","Мадрид"],["Канада","Оттава"],
@@ -462,7 +460,6 @@
         ["Польша","Варшава"],["Украина","Киев"],["Казахстан","Астана"],["Беларусь","Минск"],["Узбекистан","Ташкент"],
         ["ЮАР","Претория"],["Мексика","Мехико"],["Куба","Гавана"],["Марокко","Рабат"],["Саудовская Аравия","Эр-Рияд"]
     ];
-
     const historyQA = [
         { q: "Кто был прозван 'Грозным'?", a: "Иван IV", type: "person" },
         { q: "Кто был первым императором России?", a: "Пётр I", type: "person" },
@@ -489,7 +486,6 @@
         { q: "В каком году закончилась Вторая мировая война?", a: "1945", type: "date" },
         { q: "В каком году распался СССР?", a: "1991", type: "date" }
     ];
-
     const authorWork = [
         { author: "Лев Толстой", work: "Война и мир" },
         { author: "Александр Пушкин", work: "Евгений Онегин" },
@@ -512,7 +508,6 @@
         { author: "Александр Солженицын", work: "Один день Ивана Денисовича" },
         { author: "Владимир Набоков", work: "Лолита" }
     ];
-
     const engWords = [
         ["собака","dog"],["кошка","cat"],["красный","red"],["идти (прош.)","went"],["яблоко","apple"],
         ["ловить (прош.)","caught"],["учитель","teacher"],["книга","book"],["радостный","happy"],["большой","big"],
@@ -521,7 +516,6 @@
         ["отец","father"],["брат","brother"],["сестра","sister"],["солнце","sun"],["луна","moon"],
         ["звезда","star"],["птица","bird"],["рыба","fish"],["дерево","tree"],["цветок","flower"]
     ];
-
     const obzhFacts = [
         { q: "Номер пожарной службы?", correct: "101", wrong: ["102","103","112"] },
         { q: "Номер скорой помощи?", correct: "103", wrong: ["101","102","112"] },
@@ -533,7 +527,6 @@
         { q: "Что делать при пожаре в квартире?", correct: "Вызвать 101", wrong: ["Спрятаться в ванной", "Открыть окна", "Поливать водой"] },
         { q: "Первая помощь при ожоге?", correct: "Охладить водой", wrong: ["Смазать маслом", "Наложить тугую повязку", "Проколоть пузыри"] }
     ];
-
     const societyFacts = [
         ["Высший орган власти РФ?", "Президент"], ["Что такое референдум?", "Всенародное голосование"],
         ["Нижняя палата парламента РФ?", "Государственная дума"], ["Срок президентства в РФ?", "6 лет"],
@@ -542,21 +535,18 @@
         ["Что такое ВВП?", "Стоимость всех товаров и услуг страны"], ["Кто может быть президентом РФ?", "Гражданин не моложе 35 лет"],
         ["Что такое дефолт?", "Отказ платить по долгам"], ["Право на труд относится к ...", "Социальным правам"]
     ];
-
     const biologyFacts = [
         ["Фотосинтез происходит в ...", "Хлоропластах"], ["Самый большой орган человека?", "Кожа"],
         ["Процесс деления клетки?", "Митоз"], ["Единица наследственности?", "Ген"],
         ["Сколько камер в сердце человека?", "4"], ["Сколько костей у взрослого человека?", "206"],
         ["Что такое ДНК?", "Носитель наследственной информации"], ["Что такое эволюция?", "Развитие живых организмов"]
     ];
-
     const elements = [
         ["Au","Золото"],["Ag","Серебро"],["Fe","Железо"],["Pb","Свинец"],["Hg","Ртуть"],
         ["O","Кислород"],["H","Водород"],["Na","Натрий"],["Cl","Хлор"],["C","Углерод"],
         ["N","Азот"],["Al","Алюминий"],["Cu","Медь"],["Zn","Цинк"],["Ca","Кальций"],
         ["K","Калий"],["Mg","Магний"],["P","Фосфор"],["S","Сера"],["Si","Кремний"]
     ];
-
     const physicsFacts = [
         ["Единица измерения силы?", "Ньютон"], ["Закон всемирного тяготения открыл?", "Ньютон"],
         ["Скорость света в вакууме (км/с)?", "300000"], ["Частица с положительным зарядом?", "Протон"],
@@ -565,7 +555,6 @@
         ["Закон Ома связывает ...", "Силу тока, напряжение и сопротивление"], ["Что такое инерция?", "Сохранение скорости"],
         ["Кто открыл закон электромагнитной индукции?", "Фарадей"], ["Что такое квант?", "Порция энергии"]
     ];
-
     const spellingWords = [
         { word: "прекрасный", wrong: ["прекрастный","прекрасныйь","прекрасны"] },
         { word: "участвовать", wrong: ["учавствовать","участвововать","учавствоать"] },
@@ -585,6 +574,7 @@
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
 
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ СКЛОНЕНИЯ СТРАН
     function declineCountry(c) {
         const exc = {
             "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
@@ -601,6 +591,7 @@
         return e[n] || n; 
     }
 
+    // ФУНКЦИЯ МАТЕМАТИКИ (+, -, ×, ÷)
     function generateMathQuestion(level) {
         let complexity = Math.min(3 + Math.floor(level / 3), 12);
         let a = Math.floor(Math.random() * (5 + complexity)) + 2;
@@ -739,7 +730,7 @@
         return { text: "Выберите правильное написание:", options: shuffle(opts.slice(0,4)), correctHash: simpleHash(base.word), points:10 }; 
     }
 
-    // ======================= ОСНОВНАЯ ЛОГИКА =======================
+    // ======================= ОСНОВНАЯ ЛОГИКА С СИНХРОНИЗАЦИЕЙ =======================
     const allSubjects = ["math","russian","geo","history","literature","english","obzh","society","biology","chemistry","physics"];
     const subjectNames = { math:"🧮 Математика", russian:"📖 Русский", geo:"🌍 География", history:"🏛️ История", literature:"📚 Литература", english:"🇬🇧 Английский", obzh:"🛡️ ОБЖ", society:"⚖️ Общество", biology:"🧬 Биология", chemistry:"⚗️ Химия", physics:"⚛️ Физика" };
     const subjectIcons = { math:"fa-calculator", russian:"fa-book", geo:"fa-globe", history:"fa-landmark", literature:"fa-feather-alt", english:"fa-language", obzh:"fa-shield-alt", society:"fa-gavel", biology:"fa-dna", chemistry:"fa-flask", physics:"fa-atom" };
@@ -757,9 +748,98 @@
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
     let currentAppUrl = window.location.href;
+    let isVKInitialized = false;
+    let isSyncing = false;
 
     for (let s of allSubjects) {
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
+    }
+
+    async function saveProgressToCloud() {
+        if (!window.vkBridge || currentUser.id === 'guest') return;
+        try {
+            const toSave = {};
+            for (let s of allSubjects) {
+                toSave[s] = {
+                    totalScore: progressBySubject[s].totalScore,
+                    level: progressBySubject[s].level,
+                    lives: progressBySubject[s].lives,
+                    combo: progressBySubject[s].combo,
+                    qInLevel: progressBySubject[s].qInLevel,
+                    levelPerfect: progressBySubject[s].levelPerfect,
+                    usedQuestions: Array.from(progressBySubject[s].usedQuestions)
+                };
+            }
+            await vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: JSON.stringify(toSave) });
+            await vkBridge.send("VKWebAppStorageSet", { key: "quizProgressTimestamp", value: Date.now().toString() });
+        } catch(e) { console.warn("Ошибка сохранения в облако VK:", e); }
+    }
+
+    async function loadProgressFromCloud() {
+        if (!window.vkBridge || currentUser.id === 'guest') return false;
+        try {
+            const res = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress", "quizProgressTimestamp"] });
+            let cloudProgress = null;
+            let cloudTimestamp = 0;
+            for (let item of res.keys) {
+                if (item.key === "quizProgress") cloudProgress = item.value;
+                if (item.key === "quizProgressTimestamp") cloudTimestamp = parseInt(item.value) || 0;
+            }
+            if (cloudProgress) {
+                const localTimestamp = parseInt(localStorage.getItem('quizProgressTimestamp') || '0');
+                if (cloudTimestamp > localTimestamp || localTimestamp === 0) {
+                    const parsed = JSON.parse(cloudProgress);
+                    for (let s of allSubjects) {
+                        if (parsed[s]) {
+                            progressBySubject[s] = {
+                                ...progressBySubject[s],
+                                ...parsed[s],
+                                usedQuestions: new Set(parsed[s].usedQuestions || [])
+                            };
+                        }
+                    }
+                    localStorage.setItem('quizProgressV7', JSON.stringify(parsed));
+                    localStorage.setItem('quizProgressTimestamp', cloudTimestamp.toString());
+                    return true;
+                }
+            }
+            return false;
+        } catch(e) { console.warn("Ошибка загрузки из облака VK:", e); return false; }
+    }
+
+    async function saveUserToLeaderboard() {
+        if (!window.vkBridge || currentUser.id === 'guest') return;
+        try {
+            const totalScore = progressBySubject[currentSubject]?.totalScore || 0;
+            const userData = {
+                name: currentUser.name,
+                photo: currentUser.photo,
+                score: totalScore,
+                level: progressBySubject[currentSubject]?.level || 1,
+                timestamp: Date.now()
+            };
+            await vkBridge.send("VKWebAppStorageSet", { key: `leaderboard_${currentUser.id}`, value: JSON.stringify(userData) });
+        } catch(e) { console.warn("Ошибка сохранения в топ:", e); }
+    }
+
+    async function loadGlobalLeaderboard() {
+        if (!window.vkBridge) return;
+        try {
+            const keysRes = await vkBridge.send("VKWebAppStorageGetKeys", {});
+            const leaderboardKeys = (keysRes.keys || []).filter(k => k.startsWith("leaderboard_"));
+            const entries = [];
+            for (const key of leaderboardKeys) {
+                const res = await vkBridge.send("VKWebAppStorageGet", { keys: [key] });
+                if (res.keys && res.keys[0] && res.keys[0].value) {
+                    try {
+                        const data = JSON.parse(res.keys[0].value);
+                        entries.push(data);
+                    } catch(e) {}
+                }
+            }
+            entries.sort((a,b) => b.score - a.score);
+            localStorage.setItem('globalLeaderboard', JSON.stringify(entries.slice(0,20)));
+        } catch(e) { console.warn("Ошибка загрузки топа:", e); }
     }
 
     function saveAllProgress() {
@@ -776,30 +856,34 @@
             };
         }
         localStorage.setItem('quizProgressV7', JSON.stringify(toSave));
-        if (window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: JSON.stringify(toSave) }).catch(e=>console.warn);
+        localStorage.setItem('quizProgressTimestamp', Date.now().toString());
+        if (window.vkBridge && currentUser.id !== 'guest') {
+            saveProgressToCloud();
+            saveUserToLeaderboard();
+        }
         updateLeaderboardStorage();
     }
 
     function updateLeaderboardStorage() {
-        let leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
-        const totalScore = progressBySubject[currentSubject].totalScore;
-        const existingIndex = leaderboard.findIndex(entry => entry.id === currentUser.id);
-        const entry = { id: currentUser.id, name: currentUser.name, photo: currentUser.photo, score: totalScore, level: progressBySubject[currentSubject].level, timestamp: Date.now() };
+        const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
+        const totalScore = progressBySubject[currentSubject]?.totalScore || 0;
+        const existingIndex = leaderboard.findIndex(entry => entry.name === currentUser.name);
+        const entry = { name: currentUser.name, photo: currentUser.photo, score: totalScore, level: progressBySubject[currentSubject]?.level || 1, timestamp: Date.now() };
         if (existingIndex !== -1) {
             if (totalScore > leaderboard[existingIndex].score) leaderboard[existingIndex] = entry;
         } else {
             leaderboard.push(entry);
         }
         leaderboard.sort((a,b) => b.score - a.score);
-        leaderboard = leaderboard.slice(0, 10);
-        localStorage.setItem('globalLeaderboard', JSON.stringify(leaderboard));
-        if (window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "globalLeaderboard", value: JSON.stringify(leaderboard) }).catch(e=>console.warn);
+        localStorage.setItem('globalLeaderboard', JSON.stringify(leaderboard.slice(0, 20)));
+        if (window.vkBridge) loadGlobalLeaderboard();
     }
 
-    function showLeaderboard() {
+    async function showLeaderboard() {
+        await loadGlobalLeaderboard();
         const leaderboard = JSON.parse(localStorage.getItem('globalLeaderboard') || '[]');
         const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10 (${subjectNames[currentSubject]})</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
+        modal.innerHTML = `<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-20 игроков</h3><ul class="leaderboard-list" id="leaderList"></ul><button class="close-modal">Закрыть</button></div>`;
         document.body.appendChild(modal);
         const listDiv = modal.querySelector('#leaderList');
         if (leaderboard.length === 0) listDiv.innerHTML = '<li>Пока нет рекордов. Стань первым!</li>';
@@ -1060,9 +1144,7 @@
     document.getElementById("privacyLink").onclick = () => showInfoModal("Политика конфиденциальности", privacyPolicy);
     document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: "" }); location.reload(); }, () => {});
 
-    // ГЛАВНЫЙ ЗАПУСК — ГАРАНТИРОВАННОЕ ОТОБРАЖЕНИЕ
     async function startApp() {
-        // Пытаемся получить данные VK, но даже при ошибке — запускаем интерфейс
         try {
             if (window.vkBridge) {
                 await vkBridge.send("VKWebAppInit");
@@ -1070,40 +1152,36 @@
                 if (user && user.id) {
                     currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок', photo: user.photo_100 || '' };
                 }
-                const storageRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress"] });
-                if (storageRes && storageRes.keys && storageRes.keys[0] && storageRes.keys[0].value) {
+                const cloudLoaded = await loadProgressFromCloud();
+                if (!cloudLoaded) {
+                    const local = localStorage.getItem('quizProgressV7');
+                    if (local) {
+                        try {
+                            const data = JSON.parse(local);
+                            for (let s of allSubjects) {
+                                if (data[s]) {
+                                    progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
+                                }
+                            }
+                        } catch(e) {}
+                    }
+                }
+                await loadGlobalLeaderboard();
+            } else {
+                const local = localStorage.getItem('quizProgressV7');
+                if (local) {
                     try {
-                        const cloudProgress = JSON.parse(storageRes.keys[0].value);
+                        const data = JSON.parse(local);
                         for (let s of allSubjects) {
-                            if (cloudProgress[s]) {
-                                progressBySubject[s] = { ...progressBySubject[s], ...cloudProgress[s], usedQuestions: new Set(cloudProgress[s].usedQuestions || []) };
+                            if (data[s]) {
+                                progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
                             }
                         }
                     } catch(e) {}
                 }
-                const leaderRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["globalLeaderboard"] });
-                if (leaderRes && leaderRes.keys && leaderRes.keys[0] && leaderRes.keys[0].value) {
-                    try {
-                        const cloudLeader = JSON.parse(leaderRes.keys[0].value);
-                        localStorage.setItem('globalLeaderboard', JSON.stringify(cloudLeader));
-                    } catch(e) {}
-                }
             }
-        } catch(e) { console.warn("VK Bridge ошибка, но приложение запустится в локальном режиме", e); }
+        } catch(e) { console.warn("Ошибка при инициализации:", e); }
         
-        const local = localStorage.getItem('quizProgressV7');
-        if (local) {
-            try {
-                const data = JSON.parse(local);
-                for (let s of allSubjects) {
-                    if (data[s]) {
-                        progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
-                    }
-                }
-            } catch(e) {}
-        }
-        
-        // Принудительно отрисовываем интерфейс
         buildSubjectsUI();
         updateUI();
         loadNewQuestion();
