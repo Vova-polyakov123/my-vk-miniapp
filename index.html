@@ -585,7 +585,6 @@
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function simpleHash(str) { let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i),h|=0; return h; }
 
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ СКЛОНЕНИЯ СТРАН
     function declineCountry(c) {
         const exc = {
             "Россия":"России","США":"США","Франция":"Франции","Германия":"Германии","Китай":"Китая",
@@ -602,12 +601,10 @@
         return e[n] || n; 
     }
 
-    // НОВАЯ ФУНКЦИЯ МАТЕМАТИКИ (+, -, ×, ÷)
     function generateMathQuestion(level) {
-        // С увеличением уровня сложность растёт
         let complexity = Math.min(3 + Math.floor(level / 3), 12);
         let a = Math.floor(Math.random() * (5 + complexity)) + 2;
-        let b = Math.floor(Math.random() (5 + complexity)) + 2;
+        let b = Math.floor(Math.random() * (5 + complexity)) + 2;
         let ops = ['+', '-', '×'];
         if (level >= 3) ops.push('÷');
         let op = randomItem(ops);
@@ -630,8 +627,7 @@
             text = `${a} × ${b} = ?`;
             opts = [correct, correct+2, correct-2, correct+1].filter(v => v > 0);
         }
-        else { // деление
-            // Генерируем делимое и делитель так, чтобы результат был целым
+        else { 
             let divisor = Math.floor(Math.random() * (5 + complexity)) + 2;
             let quotient = Math.floor(Math.random() * (5 + complexity)) + 2;
             let dividend = divisor * quotient;
@@ -760,55 +756,10 @@
     const MAX_LIVES = 5;
     const Q_PER_LEVEL = 3;
     let currentUser = { id: 'guest', name: 'Гость', photo: '' };
-    let currentAppUrl = window.location.href; // для шаринга
+    let currentAppUrl = window.location.href;
 
     for (let s of allSubjects) {
         progressBySubject[s] = { totalScore:0, level:1, lives:3, combo:0, qInLevel:0, levelPerfect:true, usedQuestions:new Set() };
-    }
-
-    async function initVK() {
-        if (window.vkBridge) {
-            try {
-                await vkBridge.send("VKWebAppInit");
-                const user = await vkBridge.send("VKWebAppGetUserInfo");
-                if (user && user.id) {
-                    currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок', photo: user.photo_100 || '' };
-                }
-                const storageRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress"] });
-                if (storageRes && storageRes.keys && storageRes.keys[0] && storageRes.keys[0].value) {
-                    try {
-                        const cloudProgress = JSON.parse(storageRes.keys[0].value);
-                        for (let s of allSubjects) {
-                            if (cloudProgress[s]) {
-                                progressBySubject[s] = { ...progressBySubject[s], ...cloudProgress[s], usedQuestions: new Set(cloudProgress[s].usedQuestions || []) };
-                            }
-                        }
-                    } catch(e) {}
-                }
-                const leaderRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["globalLeaderboard"] });
-                if (leaderRes && leaderRes.keys && leaderRes.keys[0] && leaderRes.keys[0].value) {
-                    try {
-                        const cloudLeader = JSON.parse(leaderRes.keys[0].value);
-                        localStorage.setItem('globalLeaderboard', JSON.stringify(cloudLeader));
-                    } catch(e) {}
-                }
-            } catch(e) { console.warn(e); }
-        }
-        const local = localStorage.getItem('quizProgressV7');
-        if (local) {
-            try {
-                const data = JSON.parse(local);
-                for (let s of allSubjects) {
-                    if (data[s]) {
-                        progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
-                    }
-                }
-            } catch(e) {}
-        }
-        updateUI();
-        loadNewQuestion();
-        buildSubjectsUI();
-        startTutorial();
     }
 
     function saveAllProgress() {
@@ -993,7 +944,6 @@
         <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
         <button class="reset-btn" id="selectSubjectHint" style="margin-top:8px; background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
         </div>`;
-        // ИСПРАВЛЕНА КНОПКА ПОДЕЛИТЬСЯ: теперь открывает текущее приложение, а не страницу VK
         document.getElementById("shareBtn")?.addEventListener("click",()=>{
             if(window.vkBridge) {
                 vkBridge.send("VKWebAppShare", {
@@ -1110,7 +1060,57 @@
     document.getElementById("privacyLink").onclick = () => showInfoModal("Политика конфиденциальности", privacyPolicy);
     document.getElementById("deleteDataLink").onclick = () => showConfirmModal("🗑️ Удалить весь прогресс безвозвратно?", () => { localStorage.clear(); if(window.vkBridge) vkBridge.send("VKWebAppStorageSet", { key: "quizProgress", value: "" }); location.reload(); }, () => {});
 
-    initVK();
+    // ГЛАВНЫЙ ЗАПУСК — ГАРАНТИРОВАННОЕ ОТОБРАЖЕНИЕ
+    async function startApp() {
+        // Пытаемся получить данные VK, но даже при ошибке — запускаем интерфейс
+        try {
+            if (window.vkBridge) {
+                await vkBridge.send("VKWebAppInit");
+                const user = await vkBridge.send("VKWebAppGetUserInfo");
+                if (user && user.id) {
+                    currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок', photo: user.photo_100 || '' };
+                }
+                const storageRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["quizProgress"] });
+                if (storageRes && storageRes.keys && storageRes.keys[0] && storageRes.keys[0].value) {
+                    try {
+                        const cloudProgress = JSON.parse(storageRes.keys[0].value);
+                        for (let s of allSubjects) {
+                            if (cloudProgress[s]) {
+                                progressBySubject[s] = { ...progressBySubject[s], ...cloudProgress[s], usedQuestions: new Set(cloudProgress[s].usedQuestions || []) };
+                            }
+                        }
+                    } catch(e) {}
+                }
+                const leaderRes = await vkBridge.send("VKWebAppStorageGet", { keys: ["globalLeaderboard"] });
+                if (leaderRes && leaderRes.keys && leaderRes.keys[0] && leaderRes.keys[0].value) {
+                    try {
+                        const cloudLeader = JSON.parse(leaderRes.keys[0].value);
+                        localStorage.setItem('globalLeaderboard', JSON.stringify(cloudLeader));
+                    } catch(e) {}
+                }
+            }
+        } catch(e) { console.warn("VK Bridge ошибка, но приложение запустится в локальном режиме", e); }
+        
+        const local = localStorage.getItem('quizProgressV7');
+        if (local) {
+            try {
+                const data = JSON.parse(local);
+                for (let s of allSubjects) {
+                    if (data[s]) {
+                        progressBySubject[s] = { ...progressBySubject[s], ...data[s], usedQuestions: new Set(data[s].usedQuestions || []) };
+                    }
+                }
+            } catch(e) {}
+        }
+        
+        // Принудительно отрисовываем интерфейс
+        buildSubjectsUI();
+        updateUI();
+        loadNewQuestion();
+        startTutorial();
+    }
+
+    startApp();
 </script>
 </body>
 </html>
