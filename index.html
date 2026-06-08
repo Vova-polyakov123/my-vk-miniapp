@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Битва знаний — VK Mini App</title>
+    <title>Битва знаний — универсальная версия</title>
     <style>
         * {
             margin: 0;
@@ -385,17 +385,23 @@
 
 <script>
     // ------------------------------------------------------------------
-    // 1. ИНИЦИАЛИЗАЦИЯ VK BRIDGE
+    // 1. ОПРЕДЕЛЕНИЕ ОКРУЖЕНИЯ (VK или обычный браузер)
     // ------------------------------------------------------------------
+    let isVK = false;
     let vkBridge = null;
-    let currentUser = { id: 'guest', name: 'Гость', photo: '' };
+    if (typeof window.vkBridge !== 'undefined') {
+        vkBridge = window.vkBridge;
+        isVK = true;
+    } else if (typeof window !== 'undefined' && window.location.href.includes('vk.com')) {
+        // иногда vkBridge загружается позже, но мы попробуем
+        isVK = true;
+    }
+
+    let currentUser = { id: 'guest', name: 'Игрок', photo: '' };
     let appShareUrl = 'https://vk.com/app';
 
     async function initVK() {
-        if (typeof vkBridge === 'undefined') {
-            console.warn('VK Bridge не загружен');
-            return;
-        }
+        if (!isVK || !vkBridge) return;
         try {
             await vkBridge.send('VKWebAppInit');
             const user = await vkBridge.send('VKWebAppGetUserInfo');
@@ -415,7 +421,8 @@
                 if (saved) appShareUrl = saved;
             }
         } catch (e) {
-            console.error('VK init error', e);
+            console.warn('VK init error', e);
+            isVK = false; // fallback
         }
     }
 
@@ -531,8 +538,6 @@
     let selectedAnswer = null;
     let waitingNext = false;
     let hintUsed = false;
-
-    // Рейтинг (топ-10) для каждого предмета
     let leaderboard = {};
     subjects.forEach(s => leaderboard[s] = []);
 
@@ -556,8 +561,12 @@
         document.getElementById('scoreValue').innerText = score;
         document.getElementById('levelValue').innerText = level;
         document.getElementById('comboValue').innerText = combo;
-        const progressPercent = (currentIndex / currentQuestions.length) * 100;
-        document.getElementById('levelProgressFill').style.width = progressPercent + '%';
+        if (currentQuestions.length) {
+            const progressPercent = (currentIndex / currentQuestions.length) * 100;
+            document.getElementById('levelProgressFill').style.width = progressPercent + '%';
+        } else {
+            document.getElementById('levelProgressFill').style.width = '0%';
+        }
     }
 
     function showFeedback(msg, isError = false) {
@@ -567,8 +576,10 @@
         fb.innerHTML = msg;
         fb.style.color = isError ? '#ffaaaa' : '#aaffaa';
         setTimeout(() => {
-            fb.style.display = 'none';
-            fb.innerHTML = '';
+            if (fb) {
+                fb.style.display = 'none';
+                fb.innerHTML = '';
+            }
         }, 2000);
     }
 
@@ -579,8 +590,10 @@
             fb.innerHTML = msg;
             fb.style.color = '#ffd966';
             setTimeout(() => {
-                fb.style.display = 'none';
-                fb.innerHTML = '';
+                if (fb) {
+                    fb.style.display = 'none';
+                    fb.innerHTML = '';
+                }
             }, duration);
         }
     }
@@ -588,62 +601,70 @@
     function saveProgressLocally() {
         const save = {
             currentSubject, currentIndex, score, level, combo, lives,
-            currentQuestionsIds: currentQuestions.map(q => q.text)
+            currentQuestionsIds: currentQuestions.map(q => q.text),
+            leaderboard: leaderboard
         };
-        localStorage.setItem('quiz_progress', JSON.stringify(save));
+        localStorage.setItem('quiz_progress_universal', JSON.stringify(save));
     }
 
     function loadProgressFromLocal() {
-        const saved = localStorage.getItem('quiz_progress');
+        const saved = localStorage.getItem('quiz_progress_universal');
         if (!saved) return false;
         try {
             const data = JSON.parse(saved);
-            currentSubject = data.currentSubject;
-            currentIndex = data.currentIndex;
-            score = data.score;
-            level = data.level;
-            combo = data.combo;
-            lives = data.lives;
-            // вопросы перезагрузим заново
+            currentSubject = data.currentSubject || 'math';
+            currentIndex = data.currentIndex || 0;
+            score = data.score || 0;
+            level = data.level || 1;
+            combo = data.combo || 0;
+            lives = data.lives || 3;
+            if (data.leaderboard) leaderboard = data.leaderboard;
             currentQuestions = loadQuestionsForSubject(currentSubject);
             return true;
         } catch(e) { return false; }
     }
 
     async function saveToVKStorage() {
-        if (!vkBridge) return;
+        if (!isVK || !vkBridge) return;
         try {
             await vkBridge.send('VKWebAppStorageSet', {
-                key: 'quizProgress',
-                value: JSON.stringify({ score, level, combo, lives, currentSubject, currentIndex })
-            });
-            await vkBridge.send('VKWebAppStorageSet', {
-                key: 'leaderboard',
-                value: JSON.stringify(leaderboard)
+                key: 'quizProgressUniversal',
+                value: JSON.stringify({ score, level, combo, lives, currentSubject, currentIndex, leaderboard })
             });
         } catch(e) {}
     }
 
     async function loadFromVKStorage() {
-        if (!vkBridge) return;
+        if (!isVK || !vkBridge) return;
         try {
-            const res = await vkBridge.send('VKWebAppStorageGet', { keys: ['quizProgress', 'leaderboard'] });
-            if (res && res.keys) {
-                const prog = res.keys.find(k => k.key === 'quizProgress');
-                if (prog && prog.value) {
-                    const data = JSON.parse(prog.value);
-                    score = data.score || 0;
-                    level = data.level || 1;
-                    combo = data.combo || 0;
-                    lives = data.lives || 3;
-                    currentSubject = data.currentSubject || 'math';
-                    currentIndex = data.currentIndex || 0;
-                }
-                const lb = res.keys.find(k => k.key === 'leaderboard');
-                if (lb && lb.value) leaderboard = JSON.parse(lb.value);
+            const res = await vkBridge.send('VKWebAppStorageGet', { keys: ['quizProgressUniversal'] });
+            if (res && res.keys && res.keys[0] && res.keys[0].value) {
+                const data = JSON.parse(res.keys[0].value);
+                score = data.score || 0;
+                level = data.level || 1;
+                combo = data.combo || 0;
+                lives = data.lives || 3;
+                currentSubject = data.currentSubject || 'math';
+                currentIndex = data.currentIndex || 0;
+                if (data.leaderboard) leaderboard = data.leaderboard;
             }
         } catch(e) {}
         currentQuestions = loadQuestionsForSubject(currentSubject);
+    }
+
+    function updateLeaderboard() {
+        if (!leaderboard[currentSubject]) leaderboard[currentSubject] = [];
+        const existing = leaderboard[currentSubject].findIndex(e => e.id === currentUser.id);
+        const entry = { id: currentUser.id, name: currentUser.name, photo: currentUser.photo, score: score, level: level, timestamp: Date.now() };
+        if (existing !== -1) {
+            if (score > leaderboard[currentSubject][existing].score) leaderboard[currentSubject][existing] = entry;
+        } else {
+            leaderboard[currentSubject].push(entry);
+        }
+        leaderboard[currentSubject].sort((a,b) => b.score - a.score);
+        leaderboard[currentSubject] = leaderboard[currentSubject].slice(0,10);
+        saveProgressLocally();
+        if (isVK && vkBridge) saveToVKStorage();
     }
 
     // ------------------------------------------------------------------
@@ -732,7 +753,7 @@
                 showTemporaryMessage('У вас уже максимум жизней!');
                 return;
             }
-            // Имитация рекламы (в реальном проекте вставьте VKWebAppShowNativeAds)
+            // Имитация рекламы (в VK можно заменить на VKWebAppShowNativeAds)
             if (confirm('Посмотреть рекламу и получить +1 жизнь?')) {
                 lives = Math.min(3, lives + 1);
                 updateUIStats();
@@ -858,32 +879,19 @@
 
     function saveProgress() {
         saveProgressLocally();
-        if (vkBridge) saveToVKStorage();
+        if (isVK && vkBridge) saveToVKStorage();
         updateLeaderboard();
-    }
-
-    function updateLeaderboard() {
-        if (!leaderboard[currentSubject]) leaderboard[currentSubject] = [];
-        const existing = leaderboard[currentSubject].findIndex(e => e.id === currentUser.id);
-        const entry = { id: currentUser.id, name: currentUser.name, photo: currentUser.photo, score: score, level: level, timestamp: Date.now() };
-        if (existing !== -1) {
-            if (score > leaderboard[currentSubject][existing].score) leaderboard[currentSubject][existing] = entry;
-        } else {
-            leaderboard[currentSubject].push(entry);
-        }
-        leaderboard[currentSubject].sort((a,b) => b.score - a.score);
-        leaderboard[currentSubject] = leaderboard[currentSubject].slice(0,10);
-        if (vkBridge) saveToVKStorage();
     }
 
     function shareGame() {
         const text = `🔥 Я набрал ${score} очков в предмете «${subjectNames[currentSubject]}» на уровне ${level} в игре «Битва знаний»! Сможешь побить мой рекорд? Присоединяйся! 🧠⚡`;
-        if (vkBridge) {
+        if (isVK && vkBridge) {
             vkBridge.send('VKWebAppShare', { link: appShareUrl, attachment: text }).catch(() => {
                 alert('Не удалось открыть диалог. Скопируйте ссылку: ' + appShareUrl);
             });
         } else {
-            alert('Поделиться можно только внутри VK Mini App\nСсылка: ' + appShareUrl);
+            // На ПК просто показываем сообщение
+            alert(text + '\n\nСсылка: ' + appShareUrl);
         }
     }
 
@@ -946,27 +954,30 @@
     // 6. ЗАПУСК
     // ------------------------------------------------------------------
     window.addEventListener('load', async () => {
-        if (typeof vkBridge !== 'undefined') {
-            vkBridge = window.vkBridge;
+        // Пытаемся загрузить сохранения
+        if (isVK && vkBridge) {
             await initVK();
             await loadFromVKStorage();
         } else {
             loadProgressFromLocal();
         }
-        currentQuestions = loadQuestionsForSubject(currentSubject);
+        // Если после загрузки нет вопросов — создаём
+        if (!currentQuestions.length) {
+            currentQuestions = loadQuestionsForSubject(currentSubject);
+        }
         buildSubjectsUI();
         renderGame();
         updateUIStats();
 
+        // Кнопки
         document.getElementById('leaderboardBtn').onclick = showLeaderboard;
-        document.getElementById('termsLink').onclick = () => showInfoModal('Пользовательское соглашение', 'Используя приложение, вы соглашаетесь с условиями VK Mini Apps. Ваши данные (ID, имя, аватар) используются для рейтинга и хранятся в VK Storage. Подробнее: https://vk.com/terms');
+        document.getElementById('termsLink').onclick = () => showInfoModal('Пользовательское соглашение', 'Используя приложение, вы соглашаетесь с условиями VK Mini Apps. Ваши данные (ID, имя, аватар) используются для рейтинга и хранятся в VK Storage или локально. Подробнее: https://vk.com/terms');
         document.getElementById('privacyLink').onclick = () => showInfoModal('Политика конфиденциальности', 'Мы обрабатываем только открытые данные VK ID, имя, фото для игровой статистики. Данные не передаются третьим лицам. Вы можете удалить прогресс кнопкой ниже.');
         document.getElementById('deleteDataLink').onclick = () => {
             if (confirm('Удалить весь прогресс безвозвратно?')) {
                 localStorage.clear();
-                if (vkBridge) {
-                    vkBridge.send('VKWebAppStorageSet', { key: 'quizProgress', value: '' });
-                    vkBridge.send('VKWebAppStorageSet', { key: 'leaderboard', value: '' });
+                if (isVK && vkBridge) {
+                    vkBridge.send('VKWebAppStorageSet', { key: 'quizProgressUniversal', value: '' });
                 }
                 alert('Данные удалены. Перезагрузите страницу.');
                 location.reload();
