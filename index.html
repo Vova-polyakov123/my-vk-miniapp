@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Битва знаний — с обучением и рекламой</title>
+    <title>Битва знаний — премиум версия</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -20,7 +20,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
         }
         .app {
             max-width: 650px;
@@ -58,6 +57,7 @@
             background: rgba(255,255,255,0.2);
             padding: 4px 12px;
             border-radius: 40px;
+            letter-spacing: 0.5px;
         }
         .score-board {
             display: flex;
@@ -303,91 +303,6 @@
             transform: scale(1.02);
             box-shadow: 0 6px 16px rgba(0,0,0,0.4);
         }
-        /* Стили для помощника (мальчик) */
-        .assistant {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-        .assistant.centered {
-            bottom: 50%;
-            right: 50%;
-            transform: translate(50%, 50%);
-            pointer-events: auto;
-        }
-        .assistant-bubble {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(8px);
-            border-radius: 28px;
-            padding: 12px 18px;
-            max-width: 260px;
-            margin-bottom: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,215,0,0.5);
-            transition: all 0.3s ease;
-            transform-origin: bottom right;
-            animation: bubblePop 0.3s ease-out;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            color: #1a1a2e;
-            font-weight: 500;
-            pointer-events: none;
-        }
-        @keyframes bubblePop {
-            0% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        .assistant-avatar {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(145deg, #f5b042, #ff8c2c);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-            border: 2px solid #ffd966;
-            cursor: pointer;
-            pointer-events: auto;
-            transition: 0.2s;
-        }
-        .assistant-avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(245,107,44,0.5);
-        }
-        .assistant-avatar i {
-            font-size: 32px;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        /* Затемнённый фон для туториала */
-        .tutorial-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(4px);
-            z-index: 1500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .tutorial-highlight {
-            position: relative;
-            z-index: 1600;
-            box-shadow: 0 0 0 4px #ffd966, 0 0 0 8px rgba(255,217,102,0.3);
-            border-radius: 60px;
-            transition: all 0.2s;
-        }
         .modal {
             position: fixed;
             top: 0;
@@ -544,9 +459,6 @@
             .answer-btn { padding: 12px 18px; font-size: 0.9rem; }
             .subject-btn { padding: 8px 18px; font-size: 0.85rem; }
             .heart { font-size: 26px; }
-            .assistant-bubble { max-width: 200px; font-size: 0.8rem; padding: 8px 14px; }
-            .assistant-avatar { width: 48px; height: 48px; }
-            .assistant-avatar i { font-size: 28px; }
         }
     </style>
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
@@ -575,14 +487,6 @@
         </div>
         <div style="margin-top: 8px;">📧 vova_polyakov_94@mail.ru</div>
     </footer>
-</div>
-
-<!-- Помощник (мальчик) -->
-<div class="assistant" id="assistant">
-    <div class="assistant-bubble" id="assistantBubble">✨ Привет! Я твой умный помощник</div>
-    <div class="assistant-avatar" id="assistantAvatar">
-        <i class="fas fa-user-graduate"></i>
-    </div>
 </div>
 
 <script>
@@ -626,93 +530,7 @@
     }
 
     // ------------------------------------------------------------------
-    // 2. ПОМОЩНИК (обучение, перемещение)
-    // ------------------------------------------------------------------
-    let assistantTimeout = null;
-    let tutorialStep = 0;
-    let tutorialSubjects = ['math', 'russian', 'geo']; // первые три предмета для обучения
-    let currentTutorialSubjectIndex = 0;
-    let tutorialOverlay = null;
-
-    function assistantSay(message, duration = 4000) {
-        const bubble = document.getElementById('assistantBubble');
-        if (!bubble) return;
-        bubble.innerText = message;
-        bubble.style.opacity = '1';
-        if (assistantTimeout) clearTimeout(assistantTimeout);
-        assistantTimeout = setTimeout(() => {
-            bubble.style.opacity = '0';
-            setTimeout(() => {
-                if (bubble.innerText === message) bubble.innerText = '✨ Нажми на меня для совета';
-            }, 300);
-        }, duration);
-    }
-
-    function moveAssistantToCorner() {
-        const assistant = document.getElementById('assistant');
-        assistant.classList.remove('centered');
-        assistant.style.bottom = '20px';
-        assistant.style.right = '20px';
-        assistant.style.transform = '';
-    }
-
-    function moveAssistantToCenter() {
-        const assistant = document.getElementById('assistant');
-        assistant.classList.add('centered');
-        assistant.style.bottom = '50%';
-        assistant.style.right = '50%';
-        assistant.style.transform = 'translate(50%, 50%)';
-    }
-
-    function startTutorial() {
-        if (localStorage.getItem('tutorialCompleted') === 'true') {
-            moveAssistantToCorner();
-            assistantSay(`✨ С возвращением, ${currentUser.name !== 'Гость' ? currentUser.name : 'друг'}! Я всегда рядом.`);
-            return;
-        }
-        // Создаём затемнённый фон
-        tutorialOverlay = document.createElement('div');
-        tutorialOverlay.className = 'tutorial-overlay';
-        document.body.appendChild(tutorialOverlay);
-        moveAssistantToCenter();
-        assistantSay('👋 Привет! Я твой репетитор. Давай я покажу, как пользоваться приложением.', 5000);
-        setTimeout(() => {
-            nextTutorialStep();
-        }, 5000);
-    }
-
-    function nextTutorialStep() {
-        if (currentTutorialSubjectIndex >= tutorialSubjects.length) {
-            // Обучение завершено
-            if (tutorialOverlay) tutorialOverlay.remove();
-            moveAssistantToCorner();
-            assistantSay('🎉 Отлично! Ты всё усвоил. Теперь я буду в уголке, помогать советам. Удачи в битве знаний!', 5000);
-            localStorage.setItem('tutorialCompleted', 'true');
-            return;
-        }
-        const subjectKey = tutorialSubjects[currentTutorialSubjectIndex];
-        const subjectName = subjectNames[subjectKey];
-        // Подсветим кнопку предмета
-        const subjectBtn = document.querySelector(`.subject-btn[data-subj="${subjectKey}"]`);
-        if (subjectBtn) {
-            subjectBtn.classList.add('tutorial-highlight');
-            // Убираем подсветку через 2 секунды
-            setTimeout(() => subjectBtn.classList.remove('tutorial-highlight'), 2000);
-        }
-        assistantSay(`👉 Нажми на предмет «${subjectName}», чтобы выбрать его.`, 4000);
-        // Ждём, пока пользователь нажмёт на эту кнопку
-        const handler = (e) => {
-            if (e.currentTarget.dataset.subj === subjectKey) {
-                subjectBtn.removeEventListener('click', handler);
-                currentTutorialSubjectIndex++;
-                nextTutorialStep();
-            }
-        };
-        subjectBtn.addEventListener('click', handler);
-    }
-
-    // ------------------------------------------------------------------
-    // 3. БАЗА ВОПРОСОВ
+    // 2. БАЗА ВОПРОСОВ (расширенная, без ошибок)
     // ------------------------------------------------------------------
     const questionDB = {
         math: [
@@ -811,7 +629,7 @@
     };
 
     // ------------------------------------------------------------------
-    // 4. СОСТОЯНИЕ ИГРЫ
+    // 3. СОСТОЯНИЕ ИГРЫ
     // ------------------------------------------------------------------
     let currentSubject = 'math';
     let currentQuestions = [];
@@ -827,7 +645,7 @@
     subjects.forEach(s => leaderboard[s] = []);
 
     // ------------------------------------------------------------------
-    // 5. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+    // 4. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
     // ------------------------------------------------------------------
     function shuffleArray(arr) {
         for (let i = arr.length - 1; i > 0; i--) {
@@ -866,6 +684,26 @@
                 fb.innerHTML = '';
             }
         }, 2000);
+    }
+
+    function showModalMessage(title, text, onClose = null) {
+        const modal = document.createElement('div'); modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3>${title}</h3>
+                <p>${text}</p>
+                <button class="close-modal">Закрыть</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        document.body.style.overflow = 'hidden';
+        const closeBtn = modal.querySelector('.close-modal');
+        closeBtn.onclick = () => {
+            modal.remove();
+            document.body.style.overflow = '';
+            if (onClose) onClose();
+        };
+        modal.onclick = (e) => { if (e.target === modal) { modal.remove(); document.body.style.overflow = ''; if (onClose) onClose(); } };
     }
 
     function showAdOffer(callback) {
@@ -960,7 +798,7 @@
     }
 
     // ------------------------------------------------------------------
-    // 6. ОТРИСОВКА ИГРЫ
+    // 5. ОТРИСОВКА ИГРЫ
     // ------------------------------------------------------------------
     function renderGame() {
         if (lives <= 0) {
@@ -1018,7 +856,7 @@
         `;
         document.getElementById('gameArea').innerHTML = html;
 
-        // Обработчики
+        // Обработчики ответов
         document.querySelectorAll('.answer-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 if (waitingNext) return;
@@ -1033,7 +871,6 @@
             if (waitingNext) return;
             if (!selectedAnswer) {
                 showFeedback('⚠️ Выберите ответ!', true);
-                assistantSay('👆 Сначала выбери вариант ответа!', 2000);
                 return;
             }
             checkAnswer();
@@ -1042,28 +879,21 @@
         document.getElementById('bonusLifeBtn')?.addEventListener('click', async () => {
             if (lives >= 3) {
                 showFeedback('У вас максимум жизней!', false);
-                assistantSay('❤️ У тебя уже полные жизни! Продолжай отвечать.', 2500);
                 return;
             }
-            // Имитация рекламы с вопросом
-            showAdOffer((accepted) => {
-                if (accepted) {
-                    lives = Math.min(3, lives + 1);
-                    updateUIStats();
-                    renderGame();
-                    showFeedback('❤️ +1 жизнь получена!');
-                    assistantSay('❤️ Ура! +1 жизнь. Теперь можно продолжать!', 2500);
-                    saveProgress();
-                } else {
-                    assistantSay('❌ Жаль. Но ты можешь начать заново или выбрать другой предмет.', 3000);
-                }
-            });
+            // Имитация рекламы (в VK замените на VKWebAppShowNativeAds)
+            if (confirm('Посмотреть рекламу и получить +1 жизнь?')) {
+                lives = Math.min(3, lives + 1);
+                updateUIStats();
+                renderGame();
+                showFeedback('❤️ +1 жизнь получена!');
+                saveProgress();
+            }
         });
 
         document.getElementById('hintBtn')?.addEventListener('click', () => {
             if (hintUsed) {
                 showFeedback('Подсказка уже использована', true);
-                assistantSay('🔍 Ты уже использовал подсказку в этом вопросе!', 2500);
                 return;
             }
             const correct = q.correct;
@@ -1076,11 +906,9 @@
                 });
                 hintUsed = true;
                 showFeedback('🔍 Два неверных ответа убраны!');
-                assistantSay('🔍 Подсказка активирована! Два неверных ответа убраны.', 3000);
                 document.getElementById('hintBtn').disabled = true;
             } else {
                 showFeedback('Недостаточно вариантов для подсказки', true);
-                assistantSay('⚠️ Не хватает вариантов для подсказки, но ты справишься сам!', 2500);
             }
         });
     }
@@ -1095,7 +923,6 @@
             score += add;
             combo++;
             showFeedback(`✅ Верно! +${add} очков (комбо x${combo})`);
-            assistantSay(`🎉 Отлично! +${add} очков. Комбо x${combo}! Так держать!`, 2500);
             updateUIStats();
             setTimeout(() => {
                 currentIndex++;
@@ -1110,7 +937,6 @@
             combo = 0;
             updateUIStats();
             showFeedback(`❌ Ошибка! Правильно: ${q.correct}. Осталось жизней: ${lives}`, true);
-            assistantSay(`❌ Неправильно. Правильный ответ: ${q.correct}. Осталось жизней: ${lives}`, 3000);
             if (lives <= 0) {
                 setTimeout(() => {
                     renderGame();
@@ -1133,7 +959,6 @@
         combo = 0;
         updateUIStats();
         showFeedback(`🎉 УРОВЕНЬ ${level}! +50 бонусов!`);
-        assistantSay(`🎉 Поздравляю! Ты достиг ${level} уровня! +50 бонусов. Так держать!`, 4000);
         currentQuestions = loadQuestionsForSubject(currentSubject);
         currentIndex = 0;
         waitingNext = false;
@@ -1155,7 +980,6 @@
         currentQuestions = loadQuestionsForSubject(currentSubject);
         saveProgress();
         renderGame();
-        assistantSay('🔄 Прогресс сброшен. Начинай сначала, я с тобой!', 3000);
     }
 
     function switchSubject(subject) {
@@ -1177,7 +1001,6 @@
             if (btn.dataset.subj === subject) btn.classList.add('active');
             else btn.classList.remove('active');
         });
-        assistantSay(`📚 Теперь ты изучаешь "${subjectNames[subject]}". Удачи!`, 3000);
     }
 
     function saveProgress() {
@@ -1266,28 +1089,8 @@
         return String(str).replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
     }
 
-    function showModalMessage(title, text, onClose = null) {
-        const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <h3>${title}</h3>
-                <p>${text}</p>
-                <button class="close-modal">Закрыть</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        document.body.style.overflow = 'hidden';
-        const closeBtn = modal.querySelector('.close-modal');
-        closeBtn.onclick = () => {
-            modal.remove();
-            document.body.style.overflow = '';
-            if (onClose) onClose();
-        };
-        modal.onclick = (e) => { if (e.target === modal) { modal.remove(); document.body.style.overflow = ''; if (onClose) onClose(); } };
-    }
-
     // ------------------------------------------------------------------
-    // 7. ЗАПУСК
+    // 6. ЗАПУСК
     // ------------------------------------------------------------------
     window.addEventListener('load', async () => {
         if (isVK && vkBridge) {
@@ -1300,21 +1103,6 @@
         buildSubjectsUI();
         renderGame();
         updateUIStats();
-
-        // Обработчик клика по аватару помощника (даже после обучения)
-        document.getElementById('assistantAvatar')?.addEventListener('click', () => {
-            const tips = [
-                "💡 Совет: используй подсказку, если сомневаешься!",
-                "🏆 Комбо даёт бонусные очки! Отвечай правильно подряд.",
-                "❤️ Если жизни кончились, нажми +1 жизнь за рекламу — я помогу!",
-                "📚 Старайся учить новые вопросы, они повторяются редко.",
-                "👑 Топ-10 по каждому предмету — покажи всем свой уровень!"
-            ];
-            assistantSay(tips[Math.floor(Math.random() * tips.length)], 3500);
-        });
-
-        // Запускаем обучение, если оно не было пройдено
-        startTutorial();
 
         document.getElementById('leaderboardBtn').onclick = showLeaderboard;
         document.getElementById('termsLink').onclick = () => showModalMessage(
