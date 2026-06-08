@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Битва знаний — премиум версия</title>
+    <title>Битва знаний — с AI помощником</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -20,6 +20,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
         }
         .app {
             max-width: 650px;
@@ -57,7 +58,6 @@
             background: rgba(255,255,255,0.2);
             padding: 4px 12px;
             border-radius: 40px;
-            letter-spacing: 0.5px;
         }
         .score-board {
             display: flex;
@@ -303,6 +303,62 @@
             transform: scale(1.02);
             box-shadow: 0 6px 16px rgba(0,0,0,0.4);
         }
+        /* Стили для помощника (мальчик с облачком) */
+        .assistant {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            pointer-events: none;
+        }
+        .assistant-bubble {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 12px 18px;
+            max-width: 260px;
+            margin-bottom: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,215,0,0.5);
+            transition: all 0.3s ease;
+            transform-origin: bottom right;
+            animation: bubblePop 0.3s ease-out;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #1a1a2e;
+            font-weight: 500;
+            pointer-events: none;
+        }
+        @keyframes bubblePop {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .assistant-avatar {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(145deg, #f5b042, #ff8c2c);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+            border: 2px solid #ffd966;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: 0.2s;
+        }
+        .assistant-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(245,107,44,0.5);
+        }
+        .assistant-avatar i {
+            font-size: 32px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
         .modal {
             position: fixed;
             top: 0;
@@ -459,6 +515,9 @@
             .answer-btn { padding: 12px 18px; font-size: 0.9rem; }
             .subject-btn { padding: 8px 18px; font-size: 0.85rem; }
             .heart { font-size: 26px; }
+            .assistant-bubble { max-width: 200px; font-size: 0.8rem; padding: 8px 14px; }
+            .assistant-avatar { width: 48px; height: 48px; }
+            .assistant-avatar i { font-size: 28px; }
         }
     </style>
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
@@ -489,9 +548,17 @@
     </footer>
 </div>
 
+<!-- Помощник -->
+<div class="assistant">
+    <div class="assistant-bubble" id="assistantBubble">✨ Привет! Я твой умный помощник</div>
+    <div class="assistant-avatar" id="assistantAvatar">
+        <i class="fas fa-user-graduate"></i>
+    </div>
+</div>
+
 <script>
     // ------------------------------------------------------------------
-    // 1. ОКРУЖЕНИЕ (VK или браузер)
+    // 1. ОКРУЖЕНИЕ (VK или браузер) + ПОМОЩНИК
     // ------------------------------------------------------------------
     let isVK = false;
     let vkBridge = null;
@@ -503,6 +570,82 @@
     let currentUser = { id: 'guest', name: 'Игрок', photo: '' };
     let appShareUrl = 'https://vk.com/app';
 
+    // Функции помощника
+    let assistantTimeout = null;
+    function assistantSay(message, duration = 4000) {
+        const bubble = document.getElementById('assistantBubble');
+        if (!bubble) return;
+        bubble.innerText = message;
+        bubble.style.opacity = '1';
+        if (assistantTimeout) clearTimeout(assistantTimeout);
+        assistantTimeout = setTimeout(() => {
+            bubble.style.opacity = '0';
+            setTimeout(() => {
+                if (bubble.innerText === message) bubble.innerText = '✨ Нажми на меня для совета';
+            }, 300);
+        }, duration);
+    }
+
+    function assistantWelcome() {
+        const name = currentUser.name !== 'Гость' ? currentUser.name : 'друг';
+        assistantSay(`✨ Привет, ${name}! Я твой персональный репетитор. Отвечай на вопросы, зарабатывай очки, а я буду помогать советам! 👨‍🏫`, 5000);
+    }
+
+    function assistantOnSubjectChange(subject) {
+        const tips = {
+            math: "📐 Математика — тренируй логику и вычисления! Удачи!",
+            russian: "📖 Русский язык — проверь грамотность. Помни о падежах и ударениях!",
+            geo: "🌍 География — открывай мир. Столицы, реки, горы ждут!",
+            history: "🏛 История — прошлое помогает понять настоящее. Дерзай!",
+            literature: "📚 Литература — классика бессмертна. Вспоминай авторов и героев!",
+            english: "🇬🇧 English — учи слова, практикуй перевод. You can do it!",
+            obzh: "🛡 ОБЖ — безопасность превыше всего. Запоминай номера и правила!",
+            society: "⚖️ Обществознание — разбирайся в праве и обществе.",
+            biology: "🧬 Биология — узнай, как устроен человек и природа.",
+            chemistry: "🧪 Химия — элементы и формулы. Будь внимателен!",
+            physics: "⚛ Физика — законы Вселенной. Успехов!"
+        };
+        assistantSay(tips[subject] || `Перешли на "${subjectNames[subject]}". Жми на ответы!`);
+    }
+
+    function assistantOnCorrect(combo) {
+        const phrases = [
+            "🎉 Отлично! Так держать!", "🧠 Блестяще! Твоя эрудиция растёт!",
+            "⭐ Верно! Ты настоящий знаток!", "🏆 Превосходно! + в копилку знаний!",
+            "🔥 Комбо растёт! Продолжай в том же духе!"
+        ];
+        let msg = phrases[Math.floor(Math.random() * phrases.length)];
+        if (combo >= 2) msg += ` Комбо x${combo}! 🔥`;
+        assistantSay(msg, 2500);
+    }
+
+    function assistantOnWrong(correctAnswer) {
+        const phrases = [
+            "❌ Неправильно. Попробуй ещё раз!", "🤔 Ошибка — это опыт. Правильный ответ: " + correctAnswer,
+            "📚 Не расстраивайся! Запомни: " + correctAnswer, "💡 В следующий раз получится! Ответ: " + correctAnswer
+        ];
+        assistantSay(phrases[Math.floor(Math.random() * phrases.length)], 3000);
+    }
+
+    function assistantOnLowLife(livesLeft) {
+        if (livesLeft === 1) {
+            assistantSay("⚠️ Осталась всего 1 жизнь! Смотри рекламу или будь осторожнее! ❤️", 3500);
+        }
+    }
+
+    function assistantOnHintUsed() {
+        assistantSay("🔍 Подсказка активирована! Два неверных ответа убраны. Используй знания!", 3000);
+    }
+
+    function assistantOnBonusLife() {
+        assistantSay("❤️ Ура! +1 жизнь получена. Продолжай игру!", 2500);
+    }
+
+    function assistantOnGameOver() {
+        assistantSay("💀 Игра окончена. Нажми «Начать заново» или выбери другой предмет. Я верю в тебя!", 4000);
+    }
+
+    // Инициализация VK
     async function initVK() {
         if (!isVK || !vkBridge) return;
         try {
@@ -527,10 +670,12 @@
             console.warn('VK init error', e);
             isVK = false;
         }
+        // Приветствие после загрузки юзера
+        assistantWelcome();
     }
 
     // ------------------------------------------------------------------
-    // 2. БАЗА ВОПРОСОВ (расширенная, без ошибок)
+    // 2. БАЗА ВОПРОСОВ (та же, расширенная)
     // ------------------------------------------------------------------
     const questionDB = {
         math: [
@@ -645,7 +790,7 @@
     subjects.forEach(s => leaderboard[s] = []);
 
     // ------------------------------------------------------------------
-    // 4. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+    // 4. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (с вызовами помощника)
     // ------------------------------------------------------------------
     function shuffleArray(arr) {
         for (let i = arr.length - 1; i > 0; i--) {
@@ -798,10 +943,11 @@
     }
 
     // ------------------------------------------------------------------
-    // 5. ОТРИСОВКА ИГРЫ
+    // 5. ОТРИСОВКА ИГРЫ (с интеграцией помощника)
     // ------------------------------------------------------------------
     function renderGame() {
         if (lives <= 0) {
+            assistantOnGameOver();
             document.getElementById('gameArea').innerHTML = `
                 <div class="result-area">
                     <div class="result-score">💀 ПОРАЖЕНИЕ</div>
@@ -871,6 +1017,7 @@
             if (waitingNext) return;
             if (!selectedAnswer) {
                 showFeedback('⚠️ Выберите ответ!', true);
+                assistantSay('👆 Сначала выбери вариант ответа!', 2000);
                 return;
             }
             checkAnswer();
@@ -879,14 +1026,15 @@
         document.getElementById('bonusLifeBtn')?.addEventListener('click', async () => {
             if (lives >= 3) {
                 showFeedback('У вас максимум жизней!', false);
+                assistantSay('❤️ У тебя уже полные жизни! Продолжай отвечать.', 2500);
                 return;
             }
-            // Имитация рекламы (в VK замените на VKWebAppShowNativeAds)
             if (confirm('Посмотреть рекламу и получить +1 жизнь?')) {
                 lives = Math.min(3, lives + 1);
                 updateUIStats();
                 renderGame();
                 showFeedback('❤️ +1 жизнь получена!');
+                assistantOnBonusLife();
                 saveProgress();
             }
         });
@@ -894,6 +1042,7 @@
         document.getElementById('hintBtn')?.addEventListener('click', () => {
             if (hintUsed) {
                 showFeedback('Подсказка уже использована', true);
+                assistantSay('🔍 Ты уже использовал подсказку в этом вопросе!', 2500);
                 return;
             }
             const correct = q.correct;
@@ -906,9 +1055,11 @@
                 });
                 hintUsed = true;
                 showFeedback('🔍 Два неверных ответа убраны!');
+                assistantOnHintUsed();
                 document.getElementById('hintBtn').disabled = true;
             } else {
                 showFeedback('Недостаточно вариантов для подсказки', true);
+                assistantSay('⚠️ Не хватает вариантов для подсказки, но ты справишься сам!', 2500);
             }
         });
     }
@@ -923,6 +1074,7 @@
             score += add;
             combo++;
             showFeedback(`✅ Верно! +${add} очков (комбо x${combo})`);
+            assistantOnCorrect(combo);
             updateUIStats();
             setTimeout(() => {
                 currentIndex++;
@@ -937,6 +1089,8 @@
             combo = 0;
             updateUIStats();
             showFeedback(`❌ Ошибка! Правильно: ${q.correct}. Осталось жизней: ${lives}`, true);
+            assistantOnWrong(q.correct);
+            assistantOnLowLife(lives);
             if (lives <= 0) {
                 setTimeout(() => {
                     renderGame();
@@ -959,6 +1113,7 @@
         combo = 0;
         updateUIStats();
         showFeedback(`🎉 УРОВЕНЬ ${level}! +50 бонусов!`);
+        assistantSay(`🎉 Поздравляю! Ты достиг ${level} уровня! +50 бонусов. Так держать!`, 4000);
         currentQuestions = loadQuestionsForSubject(currentSubject);
         currentIndex = 0;
         waitingNext = false;
@@ -980,6 +1135,7 @@
         currentQuestions = loadQuestionsForSubject(currentSubject);
         saveProgress();
         renderGame();
+        assistantSay('🔄 Прогресс сброшен. Начинай сначала, я с тобой!', 3000);
     }
 
     function switchSubject(subject) {
@@ -1001,6 +1157,7 @@
             if (btn.dataset.subj === subject) btn.classList.add('active');
             else btn.classList.remove('active');
         });
+        assistantOnSubjectChange(subject);
     }
 
     function saveProgress() {
@@ -1090,7 +1247,7 @@
     }
 
     // ------------------------------------------------------------------
-    // 6. ЗАПУСК
+    // 6. ЗАПУСК (с дополнительной инициализацией помощника)
     // ------------------------------------------------------------------
     window.addEventListener('load', async () => {
         if (isVK && vkBridge) {
@@ -1098,11 +1255,25 @@
             await loadFromVKStorage();
         } else {
             loadProgressFromLocal();
+            // Если нет VK, всё равно приветствуем
+            setTimeout(() => assistantWelcome(), 1000);
         }
         if (!currentQuestions.length) currentQuestions = loadQuestionsForSubject(currentSubject);
         buildSubjectsUI();
         renderGame();
         updateUIStats();
+
+        // Обработчик клика по аватару помощника (можно получать случайный совет)
+        document.getElementById('assistantAvatar')?.addEventListener('click', () => {
+            const tips = [
+                "💡 Совет: используй подсказку, если сомневаешься!",
+                "🏆 Комбо даёт бонусные очки! Отвечай правильно подряд.",
+                "❤️ Если жизни кончились, посмотри рекламу — я помогу!",
+                "📚 Старайся учить новые вопросы, они повторяются редко.",
+                "👑 Топ-10 по каждому предмету — покажи всем свой уровень!"
+            ];
+            assistantSay(tips[Math.floor(Math.random() * tips.length)], 3500);
+        });
 
         document.getElementById('leaderboardBtn').onclick = showLeaderboard;
         document.getElementById('termsLink').onclick = () => showModalMessage(
