@@ -303,7 +303,7 @@
             transform: scale(1.02);
             box-shadow: 0 6px 16px rgba(0,0,0,0.4);
         }
-        /* Помощник с реальным мальчиком */
+        /* ПОМОЩНИК (мальчик) – теперь виден всегда */
         .assistant {
             position: fixed;
             bottom: 20px;
@@ -357,7 +357,7 @@
             pointer-events: auto;
             transition: 0.2s;
             overflow: hidden;
-            background-color: #f5e6d3; /* тёплый фон на случай, если картинка не загрузится */
+            background-color: #f5e6d3;
         }
         .assistant-avatar img {
             width: 100%;
@@ -368,7 +368,6 @@
             transform: scale(1.05);
             box-shadow: 0 8px 20px rgba(245,107,44,0.5);
         }
-        /* Затемнение для туториала */
         .tutorial-overlay {
             position: fixed;
             top: 0;
@@ -578,7 +577,7 @@
     </footer>
 </div>
 
-<!-- Помощник (мальчик из вашей картинки) -->
+<!-- МАЛЬЧИК-ПОМОЩНИК (реальная картинка) -->
 <div class="assistant" id="assistant">
     <div class="assistant-bubble" id="assistantBubble">✨ Привет! Я твой умный помощник</div>
     <div class="assistant-avatar" id="assistantAvatar">
@@ -630,7 +629,6 @@
     // 2. ПОМОЩНИК (обучение, перемещение)
     // ------------------------------------------------------------------
     let assistantTimeout = null;
-    let tutorialStep = 0;
     let tutorialSubjects = ['math', 'russian', 'geo'];
     let currentTutorialSubjectIndex = 0;
     let tutorialOverlay = null;
@@ -708,7 +706,7 @@
     }
 
     // ------------------------------------------------------------------
-    // 3. БАЗА ВОПРОСОВ
+    // 3. БАЗА ВОПРОСОВ (расширенная, без ошибок)
     // ------------------------------------------------------------------
     const questionDB = {
         math: [
