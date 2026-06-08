@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Битва знаний — с живым помощником</title>
+    <title>Битва знаний — с помощником</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -13,7 +13,7 @@
             -webkit-tap-highlight-color: transparent;
         }
         body {
-            background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
             font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
             padding: 12px;
             min-height: 100vh;
@@ -25,18 +25,18 @@
         .app {
             max-width: 650px;
             width: 100%;
-            background: rgba(18, 25, 45, 0.85);
-            backdrop-filter: blur(8px);
-            border-radius: 56px;
-            box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.15);
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 48px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1);
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
         }
         .header {
             background: linear-gradient(135deg, #6e2cf5, #a742f5, #f56b2c);
             background-size: 200% 200%;
             animation: gradientShift 6s ease infinite;
-            padding: 28px 24px;
+            padding: 24px 20px;
             text-align: center;
             color: white;
         }
@@ -45,12 +45,12 @@
             100% { background-position: 100% 50%; }
         }
         .header h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         .header h1 span {
@@ -62,13 +62,13 @@
         .score-board {
             display: flex;
             justify-content: space-between;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.4);
             backdrop-filter: blur(8px);
-            border-radius: 80px;
-            padding: 12px 24px;
-            margin-top: 20px;
-            font-weight: 700;
-            font-size: 1rem;
+            border-radius: 60px;
+            padding: 10px 20px;
+            margin-top: 16px;
+            font-weight: bold;
+            font-size: 0.9rem;
         }
         .score-item {
             display: flex;
@@ -76,7 +76,7 @@
             gap: 8px;
         }
         .level-progress {
-            margin: 20px 24px 0;
+            margin: 16px 20px 0;
             background: rgba(255,255,255,0.2);
             border-radius: 20px;
             height: 8px;
@@ -87,78 +87,69 @@
             background: linear-gradient(90deg, #ffd966, #ffb347);
             border-radius: 20px;
             transition: width 0.3s;
-            box-shadow: 0 0 6px #ffb347;
         }
         .subjects-wrapper {
-            padding: 20px 16px;
-            background: rgba(0,0,0,0.3);
+            padding: 16px 12px;
+            background: rgba(0,0,0,0.2);
             overflow-x: auto;
             white-space: nowrap;
-            scrollbar-width: thin;
         }
         .subjects-grid {
             display: inline-flex;
-            gap: 14px;
+            gap: 12px;
         }
         .subject-btn {
             background: linear-gradient(135deg, #2a3a60, #1a2a4a);
             border: none;
-            padding: 12px 28px;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 1rem;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.85rem;
             color: white;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            transition: 0.25s;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+            gap: 10px;
+            transition: 0.2s;
         }
         .subject-btn i {
-            font-size: 1.2rem;
+            font-size: 1rem;
         }
         .subject-btn.active {
             background: linear-gradient(135deg, #f56b2c, #ff9040);
-            box-shadow: 0 8px 20px rgba(245,107,44,0.5);
-            transform: scale(1.02);
-        }
-        .subject-btn:hover {
-            transform: translateY(-2px);
-            background: linear-gradient(135deg, #3a4a70, #2a3a60);
+            box-shadow: 0 4px 12px rgba(245,107,44,0.4);
         }
         .game-area {
-            padding: 28px 24px;
-            min-height: 540px;
+            padding: 24px 20px;
+            min-height: 480px;
         }
         .quest-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
         }
         .level-badge {
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.5);
             backdrop-filter: blur(8px);
-            padding: 8px 20px;
-            border-radius: 60px;
-            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.8rem;
             color: #ffd966;
-            font-size: 0.9rem;
         }
         .lives {
             display: flex;
             gap: 8px;
         }
         .heart {
-            font-size: 32px;
-            transition: 0.2s;
+            font-size: 28px;
         }
         .heart-full {
             color: #ff3366;
-            filter: drop-shadow(0 0 6px #ff6699);
+            filter: drop-shadow(0 0 4px #ff6699);
         }
         .heart-lost {
             color: #888;
@@ -166,52 +157,46 @@
             filter: grayscale(0.6);
         }
         .question-card {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
             backdrop-filter: blur(20px);
-            border-radius: 48px;
-            padding: 32px 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 40px;
+            padding: 24px 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
         }
         .question-text {
-            font-size: 1.6rem;
-            font-weight: 700;
+            font-size: 1.3rem;
+            font-weight: bold;
             text-align: center;
             color: white;
-            margin-bottom: 32px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 28px;
             word-break: break-word;
         }
         .answers {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
         .answer-btn {
             background: linear-gradient(95deg, #2a3a60, #1a2a4a);
             border: none;
-            border-radius: 100px;
-            padding: 16px 24px;
+            border-radius: 60px;
+            padding: 14px 20px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #f0f0f0;
             text-align: left;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 18px;
             transition: 0.2s;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
         }
         .answer-btn:before {
             content: "🔘";
-            font-size: 1.4rem;
-            opacity: 0.9;
+            margin-right: 12px;
+            font-size: 1.2rem;
         }
         .answer-btn.selected {
             background: linear-gradient(95deg, #6e2cf5, #9b4dff);
-            box-shadow: 0 8px 20px rgba(110,44,245,0.5);
+            box-shadow: 0 4px 12px rgba(110,44,245,0.4);
         }
         .answer-btn.selected:before {
             content: "✅";
@@ -220,66 +205,51 @@
             opacity: 0.35;
             filter: blur(1px);
             pointer-events: none;
-            text-decoration: line-through;
         }
         .feedback {
             text-align: center;
-            padding: 14px;
-            background: rgba(0,0,0,0.8);
-            border-radius: 60px;
-            margin-top: 24px;
-            font-weight: 600;
+            padding: 12px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 40px;
+            margin-top: 20px;
+            font-weight: bold;
             color: #ffecb3;
             display: none;
-            border-left: 5px solid #f56b2c;
-            font-size: 0.95rem;
+            border-left: 4px solid #f56b2c;
+            font-size: 0.9rem;
         }
         .next-btn, .bonus-btn, .hint-btn {
             width: 100%;
             border: none;
-            padding: 16px;
-            border-radius: 80px;
-            font-weight: 800;
-            font-size: 1rem;
+            padding: 14px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 0.9rem;
             cursor: pointer;
-            margin-top: 14px;
+            margin-top: 12px;
             transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 8px;
         }
         .next-btn {
             background: linear-gradient(90deg, #6e2cf5, #a742f5);
             color: white;
-            box-shadow: 0 6px 14px rgba(110,44,245,0.4);
-        }
-        .next-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 22px rgba(110,44,245,0.6);
         }
         .bonus-btn {
             background: linear-gradient(90deg, #ff9800, #ffbc3c);
             color: #1a1a2e;
-            box-shadow: 0 6px 14px rgba(255,152,0,0.4);
-        }
-        .bonus-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
         }
         .bonus-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            filter: grayscale(0.2);
         }
         .hint-btn {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.12);
             backdrop-filter: blur(8px);
             color: #ffd966;
             border: 1px solid #ffd966;
-        }
-        .hint-btn:hover:not(:disabled) {
-            background: rgba(255,217,102,0.25);
-            transform: translateY(-2px);
         }
         .hidden {
             display: none;
@@ -288,22 +258,16 @@
             background: linear-gradient(135deg, #f5b042, #ff8c2c);
             border: none;
             color: white;
-            padding: 10px 20px;
-            border-radius: 60px;
+            padding: 8px 16px;
+            border-radius: 40px;
             font-weight: bold;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            transition: 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            gap: 8px;
         }
-        .leaderboard-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-        }
-        /* ПОМОЩНИК (мальчик) – теперь виден всегда */
+        /* Помощник */
         .assistant {
             position: fixed;
             bottom: 20px;
@@ -322,51 +286,38 @@
             pointer-events: auto;
         }
         .assistant-bubble {
-            background: rgba(255,255,255,0.98);
-            backdrop-filter: blur(8px);
+            background: white;
             border-radius: 28px;
-            padding: 12px 18px;
-            max-width: 260px;
+            padding: 10px 16px;
+            max-width: 250px;
             margin-bottom: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,215,0,0.6);
-            transition: all 0.3s ease;
-            transform-origin: bottom right;
-            animation: bubblePop 0.3s ease-out;
-            font-size: 0.9rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border: 1px solid #ffd966;
+            font-size: 0.85rem;
             line-height: 1.4;
-            color: #1a1a2e;
+            color: #1e293b;
             font-weight: 500;
             pointer-events: none;
-        }
-        @keyframes bubblePop {
-            0% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); }
+            transition: all 0.2s;
         }
         .assistant-avatar {
-            width: 70px;
-            height: 70px;
-            background: transparent;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #f5b042, #ff8c2c);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-            border: 3px solid #ffd966;
+            border: 2px solid #ffd966;
             cursor: pointer;
             pointer-events: auto;
             transition: 0.2s;
-            overflow: hidden;
-            background-color: #f5e6d3;
-        }
-        .assistant-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            font-size: 32px;
+            color: white;
         }
         .assistant-avatar:hover {
             transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(245,107,44,0.5);
         }
         .tutorial-overlay {
             position: fixed;
@@ -374,20 +325,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
             z-index: 1500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
         }
         .tutorial-highlight {
             position: relative;
             z-index: 1600;
             box-shadow: 0 0 0 4px #ffd966, 0 0 0 8px rgba(255,217,102,0.3);
             border-radius: 60px;
-            transition: all 0.2s;
         }
         .modal {
             position: fixed;
@@ -403,150 +349,88 @@
             z-index: 2000;
         }
         .modal-content {
-            background: #12192c;
-            border-radius: 48px;
+            background: #1e293b;
+            border-radius: 40px;
             max-width: 500px;
             width: 90%;
-            padding: 28px;
+            padding: 24px;
             color: white;
             border: 1px solid rgba(255,255,255,0.2);
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 40px rgba(0,0,0,0.5);
-        }
-        .modal-content h3 {
-            margin-bottom: 16px;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .modal-content p {
-            margin-bottom: 24px;
-            line-height: 1.4;
-        }
-        .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 24px;
-        }
-        .tab-btn {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 60px;
-            color: white;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.2s;
-        }
-        .tab-btn.active-tab {
-            background: #f56b2c;
-            color: white;
-            box-shadow: 0 4px 12px rgba(245,107,44,0.4);
         }
         .leaderboard-list {
             list-style: none;
             margin: 20px 0;
         }
         .leaderboard-list li {
-            padding: 12px;
+            padding: 10px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
         .leaderboard-avatar {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
             background: #2a3a5a;
-            border: 2px solid #ffaa66;
         }
         .close-modal {
             background: #6e2cf5;
             border: none;
-            padding: 14px;
+            padding: 12px;
             border-radius: 60px;
             width: 100%;
             color: white;
             font-weight: bold;
             cursor: pointer;
             margin-top: 16px;
-            transition: 0.2s;
-        }
-        .close-modal:hover {
-            background: #8a4cff;
         }
         footer {
-            padding: 20px;
+            padding: 16px;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: #ccc;
             border-top: 1px solid rgba(255,255,255,0.1);
         }
         .footer-links {
             display: flex;
             justify-content: center;
-            gap: 28px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
+            gap: 20px;
+            margin-bottom: 10px;
         }
         .footer-links a {
             color: #ffaa66;
             text-decoration: none;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        .footer-links a:hover {
-            color: #ffcc88;
         }
         .result-area {
             text-align: center;
-            background: rgba(0,0,0,0.8);
-            border-radius: 48px;
-            padding: 36px 24px;
-            border: 1px solid rgba(255,215,0,0.5);
-            box-shadow: 0 0 30px rgba(255,215,0,0.3);
+            background: rgba(0,0,0,0.7);
+            border-radius: 40px;
+            padding: 30px 20px;
         }
         .result-score {
-            font-size: 2.5rem;
-            font-weight: 800;
+            font-size: 2rem;
+            font-weight: bold;
             color: #ffcc00;
-            text-shadow: 0 0 12px #ff9900;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
         .share-btn, .reset-btn {
             border: none;
-            padding: 14px 28px;
-            border-radius: 80px;
-            font-weight: 800;
-            margin: 8px;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: bold;
+            margin: 6px;
             cursor: pointer;
-            font-size: 1rem;
-            transition: 0.2s;
         }
-        .share-btn {
-            background: linear-gradient(95deg, #2688eb, #40a0ff);
-            color: white;
-        }
-        .reset-btn {
-            background: linear-gradient(95deg, #f56b2c, #ff9040);
-            color: white;
-        }
-        .share-btn:hover, .reset-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.3);
-        }
+        .share-btn { background: linear-gradient(95deg, #2688eb, #40a0ff); color: white; }
+        .reset-btn { background: linear-gradient(95deg, #f56b2c, #ff9040); color: white; }
         @media (max-width: 500px) {
-            .question-text { font-size: 1.3rem; }
-            .answer-btn { padding: 12px 18px; font-size: 0.9rem; }
-            .subject-btn { padding: 8px 18px; font-size: 0.85rem; }
-            .heart { font-size: 26px; }
-            .assistant-bubble { max-width: 200px; font-size: 0.8rem; padding: 8px 14px; }
-            .assistant-avatar { width: 55px; height: 55px; }
+            .question-text { font-size: 1.1rem; }
+            .answer-btn { padding: 12px 16px; font-size: 0.8rem; }
+            .subject-btn { padding: 8px 14px; font-size: 0.75rem; }
+            .assistant-avatar { width: 50px; height: 50px; font-size: 26px; }
         }
     </style>
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
@@ -554,7 +438,7 @@
 <body>
 <div class="app">
     <div class="header">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
             <h1>⚡БИТВА ЗНАНИЙ <span>2026</span></h1>
             <button class="leaderboard-btn" id="leaderboardBtn"><i class="fas fa-trophy"></i> Топ-10</button>
         </div>
@@ -573,141 +457,107 @@
             <a id="privacyLink">🔒 Политика</a>
             <a id="deleteDataLink" style="color:#ff6b6b">🗑 Удалить данные</a>
         </div>
-        <div style="margin-top: 8px;">📧 vova_polyakov_94@mail.ru</div>
+        <div>📧 vova_polyakov_94@mail.ru</div>
     </footer>
 </div>
 
-<!-- МАЛЬЧИК-ПОМОЩНИК (реальная картинка) -->
+<!-- Помощник (мальчик) -->
 <div class="assistant" id="assistant">
-    <div class="assistant-bubble" id="assistantBubble">✨ Привет! Я твой умный помощник</div>
+    <div class="assistant-bubble" id="assistantBubble">✨ Привет! Я твой помощник</div>
     <div class="assistant-avatar" id="assistantAvatar">
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAADfklEQVR4nO2aT2gTQRTGf7u7SVOTJtVUiB5EPIgXwZsHoXgQ6kFQ8CJ48CJ4EEQEQaEUPIiIeBAURVAQ8aCIBxFB8CAKovQgHrz1Dyh4EFFQEIQQxJh9s2lmNptdupukm+nmAfHAsu3OzvfevJk3800oxWvAGoA9AE4AOArgNIBiAOWYdQBoBvACwEsALwBcjcO/J4BTMftcB3Alpv9LAPMB/dYhLrf2AelZgJ0AVgC4AuAagOE4/bNcAiz5TMFOp/3ArE8XEm0J0AcgD+A+wAGAfQCeO52PwFcCej2m/zZj/h0F0OSzPp0rsBJAi/7mMoAdANZ5rE8FCUwC2Augy2Pdhw7P+wDgakgbS5DZ43SWAJgC8BDAAMAzAIect6VfglytU1lUmA8A9AI4GqJdK8BmAGcBzDnAtwBcBfA0QJvDAG7HaJMFsM9jXVAAmQB2A9gP4BqAWzH51QNw12PfcQCHYvJvAHDAQ/9vAcxGbTMBQ6H0TzvgywDmAbwBMGq13XJgfr1OZzGAywCeOJ94r9PqTAK4B2DYo/0GpzMXoP8uh312pkF/WuWw3+cA/1yM/n0u+4dD+l/nso/21N/tdB4D+OCz/t6h/3mXfW3uB1Dvsv+0Zf+jE31ucT6B3wC+OOx7GdF/OoB1Lvv6Aeyw7I8B+NKhvyTA+iL6zwL4atkfLaK/OII/NS77pSD4YJ7vCKAyIP9STP/LQfAvif5SAGzvBkC1C/oP+Nw/AeCTqP3LHeI/8/n/DcC6mH4eC+LY/+2I/RTAbgCeC+z/Q7R/BsBeET8d8H8r0t8RsP81APeK6D8G4HHM/hogBvvqEeMfAfhVRD8D4N0S+pcC4o8A+B+j/zki/lMAWovofxHBR5bjX/0AWhH53wA4lCT/SlhjB76nAPwL0G8V0v8+hH+3gP4CgMsl9FdHeDcAWD2A2lj/hWr4DgsI8r3y+a8y6yJSCPL6FyF1HhP5feA+gCoAfRJ+7i+hfxHAlSL6RwE8k/HfrqT/gl1vlvBXDeCngB+poP/UC/5IAf0rAM5L+PlMxr8TSH+Py38DwC8F/Dr0nwPwywO+EwJ+FcBjD/gGAZQH6GcA/PaAryVAvwvgpQd8LQH6WQDfPOAbDVAr4P+NhP9agP4pgAUP+BoC9FcBvHnA1xLgNYCjEn73A/wTP2q/o40/+VAAAAAASUVORK5CYII=" alt="Мальчик">
+        <i class="fas fa-user-graduate"></i>
     </div>
 </div>
 
 <script>
-    // ------------------------------------------------------------------
-    // 1. ОКРУЖЕНИЕ (VK или браузер)
-    // ------------------------------------------------------------------
-    let isVK = false;
-    let vkBridge = null;
-    if (typeof window.vkBridge !== 'undefined') {
-        vkBridge = window.vkBridge;
-        isVK = true;
-    }
-
+    // ------------------------------------------------------------
+    // 1. ОКРУЖЕНИЕ
+    // ------------------------------------------------------------
+    let isVK = false, vkBridge = null;
+    if (typeof window.vkBridge !== 'undefined') { vkBridge = window.vkBridge; isVK = true; }
     let currentUser = { id: 'guest', name: 'Игрок', photo: '' };
     let appShareUrl = 'https://vk.com/app';
-
     async function initVK() {
         if (!isVK || !vkBridge) return;
         try {
             await vkBridge.send('VKWebAppInit');
             const user = await vkBridge.send('VKWebAppGetUserInfo');
-            if (user && user.id) {
-                currentUser = {
-                    id: user.id.toString(),
-                    name: user.first_name || 'Игрок',
-                    photo: user.photo_100 || ''
-                };
-            }
-            const launchParams = await vkBridge.send('VKWebAppGetLaunchParams').catch(() => null);
-            if (launchParams && launchParams.vk_app_id) {
-                appShareUrl = `https://vk.com/app${launchParams.vk_app_id}`;
-                localStorage.setItem('vk_app_share_url', appShareUrl);
-            } else {
-                const saved = localStorage.getItem('vk_app_share_url');
-                if (saved) appShareUrl = saved;
-            }
-        } catch (e) {
-            console.warn('VK init error', e);
-            isVK = false;
-        }
+            if (user && user.id) currentUser = { id: user.id.toString(), name: user.first_name || 'Игрок', photo: user.photo_100 || '' };
+            const lp = await vkBridge.send('VKWebAppGetLaunchParams').catch(() => null);
+            if (lp && lp.vk_app_id) appShareUrl = `https://vk.com/app${lp.vk_app_id}`;
+            else { const saved = localStorage.getItem('vk_app_share_url'); if (saved) appShareUrl = saved; }
+        } catch(e) { console.warn(e); isVK = false; }
     }
 
-    // ------------------------------------------------------------------
-    // 2. ПОМОЩНИК (обучение, перемещение)
-    // ------------------------------------------------------------------
+    // ------------------------------------------------------------
+    // 2. ПОМОЩНИК + ОБУЧЕНИЕ
+    // ------------------------------------------------------------
     let assistantTimeout = null;
-    let tutorialSubjects = ['math', 'russian', 'geo'];
-    let currentTutorialSubjectIndex = 0;
-    let tutorialOverlay = null;
-
-    function assistantSay(message, duration = 4000) {
+    function assistantSay(msg, duration = 4000) {
         const bubble = document.getElementById('assistantBubble');
         if (!bubble) return;
-        bubble.innerText = message;
+        bubble.innerText = msg;
         bubble.style.opacity = '1';
         if (assistantTimeout) clearTimeout(assistantTimeout);
         assistantTimeout = setTimeout(() => {
             bubble.style.opacity = '0';
-            setTimeout(() => {
-                if (bubble.innerText === message) bubble.innerText = '✨ Нажми на меня для совета';
-            }, 300);
+            setTimeout(() => { if (bubble.innerText === msg) bubble.innerText = '✨ Нажми на меня'; }, 300);
         }, duration);
     }
-
-    function moveAssistantToCorner() {
-        const assistant = document.getElementById('assistant');
-        assistant.classList.remove('centered');
-        assistant.style.bottom = '20px';
-        assistant.style.right = '20px';
-        assistant.style.transform = '';
+    function moveToCorner() {
+        const a = document.getElementById('assistant');
+        a.classList.remove('centered');
+        a.style.bottom = '20px'; a.style.right = '20px'; a.style.transform = '';
     }
-
-    function moveAssistantToCenter() {
-        const assistant = document.getElementById('assistant');
-        assistant.classList.add('centered');
-        assistant.style.bottom = '50%';
-        assistant.style.right = '50%';
-        assistant.style.transform = 'translate(50%, 50%)';
+    function moveToCenter() {
+        const a = document.getElementById('assistant');
+        a.classList.add('centered');
+        a.style.bottom = '50%'; a.style.right = '50%'; a.style.transform = 'translate(50%, 50%)';
     }
-
+    let tutorialSubjects = ['math', 'russian', 'geo'];
+    let tutorialIndex = 0;
+    let overlay = null;
     function startTutorial() {
-        if (localStorage.getItem('tutorialCompleted') === 'true') {
-            moveAssistantToCorner();
-            assistantSay(`✨ С возвращением, ${currentUser.name !== 'Гость' ? currentUser.name : 'друг'}! Я всегда рядом.`);
+        if (localStorage.getItem('tutor_v2') === 'true') {
+            moveToCorner();
+            assistantSay(`✨ С возвращением, ${currentUser.name !== 'Гость' ? currentUser.name : 'друг'}!`);
             return;
         }
-        tutorialOverlay = document.createElement('div');
-        tutorialOverlay.className = 'tutorial-overlay';
-        document.body.appendChild(tutorialOverlay);
-        moveAssistantToCenter();
-        assistantSay('👋 Привет! Я твой репетитор. Давай я покажу, как пользоваться приложением.', 5000);
-        setTimeout(() => {
-            nextTutorialStep();
-        }, 5000);
+        overlay = document.createElement('div'); overlay.className = 'tutorial-overlay';
+        document.body.appendChild(overlay);
+        moveToCenter();
+        assistantSay('👋 Привет! Я Макс, твой репетитор. Давай научу выбирать предметы.', 5000);
+        setTimeout(() => nextTutorStep(), 5000);
     }
-
-    function nextTutorialStep() {
-        if (currentTutorialSubjectIndex >= tutorialSubjects.length) {
-            if (tutorialOverlay) tutorialOverlay.remove();
-            moveAssistantToCorner();
-            assistantSay('🎉 Отлично! Ты всё усвоил. Теперь я буду в уголке, помогать советами. Удачи в битве знаний!', 5000);
-            localStorage.setItem('tutorialCompleted', 'true');
+    function nextTutorStep() {
+        if (tutorialIndex >= tutorialSubjects.length) {
+            if (overlay) overlay.remove();
+            moveToCorner();
+            assistantSay('🎉 Отлично! Теперь ты готов. Я буду в уголке, помогать советом!', 5000);
+            localStorage.setItem('tutor_v2', 'true');
             return;
         }
-        const subjectKey = tutorialSubjects[currentTutorialSubjectIndex];
-        const subjectName = subjectNames[subjectKey];
-        const subjectBtn = document.querySelector(`.subject-btn[data-subj="${subjectKey}"]`);
-        if (subjectBtn) {
-            subjectBtn.classList.add('tutorial-highlight');
-            setTimeout(() => subjectBtn.classList.remove('tutorial-highlight'), 2000);
+        const subj = tutorialSubjects[tutorialIndex];
+        const subjName = subjectNames[subj];
+        const btn = document.querySelector(`.subject-btn[data-subj="${subj}"]`);
+        if (btn) {
+            btn.classList.add('tutorial-highlight');
+            setTimeout(() => btn.classList.remove('tutorial-highlight'), 2000);
         }
-        assistantSay(`👉 Нажми на предмет «${subjectName}», чтобы выбрать его.`, 4000);
+        assistantSay(`👉 Нажми на предмет «${subjName}», чтобы выбрать его.`, 4000);
         const handler = (e) => {
-            if (e.currentTarget.dataset.subj === subjectKey) {
-                subjectBtn.removeEventListener('click', handler);
-                currentTutorialSubjectIndex++;
-                nextTutorialStep();
+            if (e.currentTarget.dataset.subj === subj) {
+                btn.removeEventListener('click', handler);
+                tutorialIndex++;
+                nextTutorStep();
             }
         };
-        subjectBtn.addEventListener('click', handler);
+        btn.addEventListener('click', handler);
     }
 
-    // ------------------------------------------------------------------
-    // 3. БАЗА ВОПРОСОВ (расширенная, без ошибок)
-    // ------------------------------------------------------------------
+    // ------------------------------------------------------------
+    // 3. БАЗА ВОПРОСОВ
+    // ------------------------------------------------------------
     const questionDB = {
         math: [
             { text: "5 + 7 = ?", options: ["10","11","12","13"], correct: "12" },
@@ -715,83 +565,62 @@
             { text: "3 × 6 = ?", options: ["15","16","17","18"], correct: "18" },
             { text: "20 ÷ 4 = ?", options: ["4","5","6","7"], correct: "5" },
             { text: "Корень из 64", options: ["6","7","8","9"], correct: "8" },
-            { text: "Сколько градусов в прямом угле?", options: ["45°","60°","90°","120°"], correct: "90°" },
-            { text: "Площадь квадрата со стороной 5 см", options: ["20 см²","25 см²","30 см²","10 см²"], correct: "25 см²" },
-            { text: "Чему равно 2³?", options: ["4","6","8","10"], correct: "8" }
+            { text: "Сколько градусов в прямом угле?", options: ["45°","60°","90°","120°"], correct: "90°" }
         ],
         russian: [
             { text: "Как правильно пишется?", options: ["прекрасный","прекрастный","прикрасный","прекрасны"], correct: "прекрасный" },
             { text: "Укажите слово без ошибки", options: ["компромисс","компромиc","компромис","кампромисс"], correct: "компромисс" },
             { text: "В каком слове ударение падает на второй слог?", options: ["звонит","каталог","красивее","торты"], correct: "каталог" },
-            { text: "Найди фразеологизм", options: ["бить баклуши","идти в школу","петь песню","любить маму"], correct: "бить баклуши" },
-            { text: "Какое слово лишнее?", options: ["бежать","мчаться","нестись","ползти"], correct: "ползти" },
-            { text: "Укажите род существительного 'тюль'", options: ["мужской","женский","средний","общий"], correct: "мужской" },
-            { text: "Как правильно: 'одеть' или 'надеть' пальто?", options: ["одеть","надеть","оба варианта","ни один"], correct: "надеть" }
+            { text: "Найди фразеологизм", options: ["бить баклуши","идти в школу","петь песню","любить маму"], correct: "бить баклуши" }
         ],
         geo: [
             { text: "Столица Франции?", options: ["Берлин","Лондон","Париж","Мадрид"], correct: "Париж" },
             { text: "Самая длинная река в мире?", options: ["Нил","Амазонка","Волга","Янцзы"], correct: "Нил" },
             { text: "Самая высокая гора?", options: ["Эверест","Килиманджаро","Эльбрус","Монблан"], correct: "Эверест" },
-            { text: "Какая страна называется 'Поднебесной'?", options: ["Япония","Китай","Корея","Вьетнам"], correct: "Китай" },
-            { text: "Сколько материков на Земле?", options: ["5","6","7","4"], correct: "6" },
-            { text: "Самое глубокое озеро в мире?", options: ["Байкал","Виктория","Танганьика","Мичиган"], correct: "Байкал" }
+            { text: "Сколько материков на Земле?", options: ["5","6","7","4"], correct: "6" }
         ],
         history: [
             { text: "Кто был первым императором России?", options: ["Иван Грозный","Пётр I","Николай II","Александр I"], correct: "Пётр I" },
-            { text: "В каком году началась Великая Отечественная война?", options: ["1939","1940","1941","1942"], correct: "1941" },
+            { text: "В каком году началась ВОВ?", options: ["1939","1940","1941","1942"], correct: "1941" },
             { text: "Кто открыл Америку?", options: ["Магеллан","Колумб","Васко да Гама","Кук"], correct: "Колумб" },
-            { text: "Кто написал 'Капитал'?", options: ["Ленин","Маркс","Энгельс","Сталин"], correct: "Маркс" },
-            { text: "Кто был первым космонавтом?", options: ["Титов","Гагарин","Леонов","Армстронг"], correct: "Гагарин" },
-            { text: "В каком году отменили крепостное право в России?", options: ["1861","1905","1917","1825"], correct: "1861" }
+            { text: "Кто был первым космонавтом?", options: ["Титов","Гагарин","Леонов","Армстронг"], correct: "Гагарин" }
         ],
         literature: [
             { text: "Кто написал 'Война и мир'?", options: ["Достоевский","Толстой","Чехов","Пушкин"], correct: "Толстой" },
-            { text: "Главный герой 'Евгения Онегина'", options: ["Ленский","Онегин","Печорин","Базаров"], correct: "Онегин" },
             { text: "Автор 'Мастер и Маргарита'", options: ["Булгаков","Набоков","Солженицын","Пастернак"], correct: "Булгаков" },
-            { text: "Кто написал 'Преступление и наказание'?", options: ["Тургенев","Достоевский","Гончаров","Лесков"], correct: "Достоевский" },
-            { text: "Как звали собаку из 'Каштанки'?", options: ["Белка","Каштанка","Стрелка","Жучка"], correct: "Каштанка" },
-            { text: "Кто автор 'Герой нашего времени'?", options: ["Лермонтов","Пушкин","Гоголь","Тургенев"], correct: "Лермонтов" }
+            { text: "Кто написал 'Преступление и наказание'?", options: ["Тургенев","Достоевский","Гончаров","Лесков"], correct: "Достоевский" }
         ],
         english: [
             { text: "Как будет 'собака'?", options: ["dog","cat","bird","fish"], correct: "dog" },
             { text: "Перевод 'красный'", options: ["green","blue","red","yellow"], correct: "red" },
-            { text: "Английское 'apple' – это...", options: ["груша","апельсин","яблоко","слива"], correct: "яблоко" },
-            { text: "Как сказать 'привет'?", options: ["bye","hello","good","morning"], correct: "hello" },
-            { text: "Прошедшее время go", options: ["goed","went","gone","going"], correct: "went" },
-            { text: "Множественное число 'child'", options: ["childs","childes","children","child's"], correct: "children" }
+            { text: "Английское 'apple' – это...", options: ["груша","апельсин","яблоко","слива"], correct: "яблоко" }
         ],
         obzh: [
             { text: "Номер пожарной службы?", options: ["101","102","103","112"], correct: "101" },
             { text: "Как тушить горящий бензин?", options: ["Водой","Песком","Огнетушителем","Накрыть тканью"], correct: "Огнетушителем" },
-            { text: "Что делать при землетрясении?", options: ["Выбежать на улицу","Встать в дверной проем","Спрятаться под кровать","Включить газ"], correct: "Встать в дверной проем" },
-            { text: "Что означает зелёный знак с бегущим человеком?", options: ["Выход","Туалет","Запасный выход","Эвакуация"], correct: "Выход" }
+            { text: "Что делать при землетрясении?", options: ["Выбежать на улицу","Встать в дверной проем","Спрятаться под кровать","Включить газ"], correct: "Встать в дверной проем" }
         ],
         society: [
             { text: "Высший орган власти в РФ?", options: ["Правительство","Президент","Госдума","Совет Федерации"], correct: "Президент" },
             { text: "Нижняя палата парламента РФ?", options: ["Совет Федерации","Госдума","Правительство","Конституционный суд"], correct: "Госдума" },
-            { text: "Срок президентства в РФ?", options: ["4 года","5 лет","6 лет","7 лет"], correct: "6 лет" },
-            { text: "Что такое инфляция?", options: ["Рост цен","Снижение налогов","Увеличение ВВП","Дефицит бюджета"], correct: "Рост цен" }
+            { text: "Срок президентства в РФ?", options: ["4 года","5 лет","6 лет","7 лет"], correct: "6 лет" }
         ],
         biology: [
             { text: "Самый большой орган человека?", options: ["Печень","Кожа","Сердце","Легкие"], correct: "Кожа" },
             { text: "Сколько костей у взрослого человека?", options: ["200","206","210","215"], correct: "206" },
-            { text: "Фотосинтез происходит в ...", options: ["Ядре","Хлоропластах","Вакуолях","Цитоплазме"], correct: "Хлоропластах" },
-            { text: "Какая клетка передаёт нервные импульсы?", options: ["Нейрон","Эритроцит","Лейкоцит","Тромбоцит"], correct: "Нейрон" }
+            { text: "Фотосинтез происходит в ...", options: ["Ядре","Хлоропластах","Вакуолях","Цитоплазме"], correct: "Хлоропластах" }
         ],
         chemistry: [
             { text: "Химический символ кислорода", options: ["O","O2","K","C"], correct: "O" },
             { text: "Формула воды", options: ["H2O","CO2","O2","H2"], correct: "H2O" },
-            { text: "Самый лёгкий газ", options: ["Кислород","Водород","Азот","Гелий"], correct: "Водород" },
             { text: "Химический символ золота", options: ["Go","Au","Ag","Fe"], correct: "Au" }
         ],
         physics: [
             { text: "Единица измерения силы?", options: ["Ватт","Ньютон","Джоуль","Паскаль"], correct: "Ньютон" },
             { text: "Скорость света в вакууме (км/с)?", options: ["300 000","150 000","400 000","250 000"], correct: "300 000" },
-            { text: "Закон всемирного тяготения открыл?", options: ["Эйнштейн","Ньютон","Галилей","Коперник"], correct: "Ньютон" },
             { text: "Что измеряет вольтметр?", options: ["Силу тока","Напряжение","Сопротивление","Мощность"], correct: "Напряжение" }
         ]
     };
-
     const subjects = Object.keys(questionDB);
     const subjectNames = {
         math:"Математика", russian:"Русский язык", geo:"География", history:"История",
@@ -804,527 +633,199 @@
         biology:"fa-dna", chemistry:"fa-flask", physics:"fa-atom"
     };
 
-    // ------------------------------------------------------------------
+    // ------------------------------------------------------------
     // 4. СОСТОЯНИЕ ИГРЫ
-    // ------------------------------------------------------------------
+    // ------------------------------------------------------------
     let currentSubject = 'math';
     let currentQuestions = [];
-    let currentIndex = 0;
-    let score = 0;
-    let level = 1;
-    let combo = 0;
-    let lives = 3;
-    let selectedAnswer = null;
-    let waitingNext = false;
-    let hintUsed = false;
-    let leaderboard = {};
-    subjects.forEach(s => leaderboard[s] = []);
-
-    // ------------------------------------------------------------------
-    // 5. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
-    // ------------------------------------------------------------------
-    function shuffleArray(arr) {
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-    }
-
-    function loadQuestionsForSubject(subject) {
-        let qs = questionDB[subject] || [];
-        return shuffleArray([...qs]);
-    }
-
-    function updateUIStats() {
+    let currentIndex = 0, score = 0, level = 1, combo = 0, lives = 3;
+    let selectedAnswer = null, waitingNext = false, hintUsed = false;
+    let leaderboard = {}; subjects.forEach(s => leaderboard[s] = []);
+    function shuffle(arr) { for (let i=arr.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+    function loadQuestions(subject) { return shuffle([...questionDB[subject]]); }
+    function updateUI() {
         document.getElementById('scoreValue').innerText = score;
         document.getElementById('levelValue').innerText = level;
         document.getElementById('comboValue').innerText = combo;
-        if (currentQuestions.length) {
-            const percent = (currentIndex / currentQuestions.length) * 100;
-            document.getElementById('levelProgressFill').style.width = percent + '%';
-        } else {
-            document.getElementById('levelProgressFill').style.width = '0%';
+        let percent = currentQuestions.length ? (currentIndex/currentQuestions.length)*100 : 0;
+        document.getElementById('levelProgressFill').style.width = percent+'%';
+    }
+    function showFeedback(msg, isErr=false) {
+        let fb = document.getElementById('feedbackMsg');
+        if(fb) { fb.style.display='block'; fb.innerHTML=msg; fb.style.color=isErr?'#ffaaaa':'#aaffaa';
+            setTimeout(()=>{ if(fb) fb.style.display='none'; },2000); }
+    }
+    function showAdOffer(cb) {
+        let modal = document.createElement('div'); modal.className='modal';
+        modal.innerHTML=`<div class="modal-content"><h3>❤️ Жизни кончились!</h3><p>Посмотреть рекламу и получить +1 жизнь?</p><div style="display:flex; gap:16px; margin-top:20px;"><button id="adYes" style="background:#f56b2c; flex:1; padding:12px; border-radius:60px; color:white; font-weight:bold;">Да, смотреть</button><button id="adNo" style="background:#555; flex:1; padding:12px; border-radius:60px; color:white; font-weight:bold;">Нет, закончить</button></div></div>`;
+        document.body.appendChild(modal); document.body.style.overflow='hidden';
+        let close=()=>{ modal.remove(); document.body.style.overflow=''; };
+        modal.querySelector('#adYes').onclick=()=>{ close(); cb(true); };
+        modal.querySelector('#adNo').onclick=()=>{ close(); cb(false); };
+        modal.onclick=(e)=> { if(e.target===modal) { close(); cb(false); } };
+    }
+    function saveProgress() {
+        let toSave = { currentSubject, currentIndex, score, level, combo, lives, leaderboard };
+        localStorage.setItem('quiz_saved', JSON.stringify(toSave));
+        if(isVK && vkBridge) vkBridge.send('VKWebAppStorageSet', { key:'quiz_saved', value:JSON.stringify(toSave) }).catch(e=>{});
+    }
+    function loadProgress() {
+        let saved = localStorage.getItem('quiz_saved');
+        if(saved) {
+            try { let d=JSON.parse(saved); currentSubject=d.currentSubject||'math'; currentIndex=d.currentIndex||0; score=d.score||0; level=d.level||1; combo=d.combo||0; lives=d.lives||3; if(d.leaderboard) leaderboard=d.leaderboard; } catch(e){}
         }
+        currentQuestions = loadQuestions(currentSubject);
     }
-
-    function showFeedback(msg, isError = false) {
-        const fb = document.getElementById('feedbackMsg');
-        if (!fb) return;
-        fb.style.display = 'block';
-        fb.innerHTML = msg;
-        fb.style.color = isError ? '#ffaaaa' : '#aaffaa';
-        setTimeout(() => {
-            if (fb) {
-                fb.style.display = 'none';
-                fb.innerHTML = '';
-            }
-        }, 2000);
-    }
-
-    function showAdOffer(callback) {
-        const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <h3>❤️ Жизни кончились!</h3>
-                <p>Посмотреть рекламу и получить +1 жизнь?</p>
-                <div style="display: flex; gap: 16px; margin-top: 20px;">
-                    <button id="adYesBtn" style="background:#f56b2c; flex:1; padding:12px; border:none; border-radius:60px; color:white; font-weight:bold; cursor:pointer;">Да, смотреть</button>
-                    <button id="adNoBtn" style="background:#555; flex:1; padding:12px; border:none; border-radius:60px; color:white; font-weight:bold; cursor:pointer;">Нет, закончить</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        document.body.style.overflow = 'hidden';
-        const yesBtn = modal.querySelector('#adYesBtn');
-        const noBtn = modal.querySelector('#adNoBtn');
-        const closeModal = () => { modal.remove(); document.body.style.overflow = ''; };
-        yesBtn.onclick = () => { closeModal(); callback(true); };
-        noBtn.onclick = () => { closeModal(); callback(false); };
-        modal.onclick = (e) => { if (e.target === modal) { closeModal(); callback(false); } };
-    }
-
-    function saveProgressLocally() {
-        const save = {
-            currentSubject, currentIndex, score, level, combo, lives,
-            currentQuestionsIds: currentQuestions.map(q => q.text),
-            leaderboard: leaderboard
-        };
-        localStorage.setItem('quiz_progress_premium', JSON.stringify(save));
-    }
-
-    function loadProgressFromLocal() {
-        const saved = localStorage.getItem('quiz_progress_premium');
-        if (!saved) return false;
-        try {
-            const data = JSON.parse(saved);
-            currentSubject = data.currentSubject || 'math';
-            currentIndex = data.currentIndex || 0;
-            score = data.score || 0;
-            level = data.level || 1;
-            combo = data.combo || 0;
-            lives = data.lives || 3;
-            if (data.leaderboard) leaderboard = data.leaderboard;
-            currentQuestions = loadQuestionsForSubject(currentSubject);
-            return true;
-        } catch(e) { return false; }
-    }
-
-    async function saveToVKStorage() {
-        if (!isVK || !vkBridge) return;
-        try {
-            await vkBridge.send('VKWebAppStorageSet', {
-                key: 'quizProgressPremium',
-                value: JSON.stringify({ score, level, combo, lives, currentSubject, currentIndex, leaderboard })
-            });
-        } catch(e) {}
-    }
-
-    async function loadFromVKStorage() {
-        if (!isVK || !vkBridge) return;
-        try {
-            const res = await vkBridge.send('VKWebAppStorageGet', { keys: ['quizProgressPremium'] });
-            if (res && res.keys && res.keys[0] && res.keys[0].value) {
-                const data = JSON.parse(res.keys[0].value);
-                score = data.score || 0;
-                level = data.level || 1;
-                combo = data.combo || 0;
-                lives = data.lives || 3;
-                currentSubject = data.currentSubject || 'math';
-                currentIndex = data.currentIndex || 0;
-                if (data.leaderboard) leaderboard = data.leaderboard;
-            }
-        } catch(e) {}
-        currentQuestions = loadQuestionsForSubject(currentSubject);
-    }
-
     function updateLeaderboard() {
-        if (!leaderboard[currentSubject]) leaderboard[currentSubject] = [];
-        const existing = leaderboard[currentSubject].findIndex(e => e.id === currentUser.id);
-        const entry = { id: currentUser.id, name: currentUser.name, photo: currentUser.photo, score: score, level: level, timestamp: Date.now() };
-        if (existing !== -1) {
-            if (score > leaderboard[currentSubject][existing].score) leaderboard[currentSubject][existing] = entry;
-        } else {
-            leaderboard[currentSubject].push(entry);
-        }
-        leaderboard[currentSubject].sort((a,b) => b.score - a.score);
-        leaderboard[currentSubject] = leaderboard[currentSubject].slice(0,10);
-        saveProgressLocally();
-        if (isVK && vkBridge) saveToVKStorage();
+        if(!leaderboard[currentSubject]) leaderboard[currentSubject]=[];
+        let idx = leaderboard[currentSubject].findIndex(e=>e.id===currentUser.id);
+        let entry = { id:currentUser.id, name:currentUser.name, photo:currentUser.photo, score, level, ts:Date.now() };
+        if(idx!==-1) { if(score>leaderboard[currentSubject][idx].score) leaderboard[currentSubject][idx]=entry; }
+        else leaderboard[currentSubject].push(entry);
+        leaderboard[currentSubject].sort((a,b)=>b.score-a.score);
+        leaderboard[currentSubject]=leaderboard[currentSubject].slice(0,10);
+        saveProgress();
     }
-
-    // ------------------------------------------------------------------
-    // 6. ОТРИСОВКА ИГРЫ
-    // ------------------------------------------------------------------
     function renderGame() {
-        if (lives <= 0) {
-            document.getElementById('gameArea').innerHTML = `
-                <div class="result-area">
-                    <div class="result-score">💀 ПОРАЖЕНИЕ</div>
-                    <p style="margin:12px 0; font-size:1.1rem;">Очки: ${score} | Уровень: ${level}</p>
-                    <button class="share-btn" id="shareBtn">📢 ПОДЕЛИТЬСЯ</button>
-                    <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
-                    <button class="reset-btn" id="selectSubjectBtn" style="background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
-                </div>
-            `;
+        if(lives<=0) {
+            document.getElementById('gameArea').innerHTML = `<div class="result-area"><div class="result-score">💀 ПОРАЖЕНИЕ</div><p>Очки: ${score} | Уровень: ${level}</p><button class="share-btn" id="shareBtn">📢 ПОДЕЛИТЬСЯ</button><button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button><button class="reset-btn" id="selectSubjectBtn" style="background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button></div>`;
             document.getElementById('shareBtn')?.addEventListener('click', shareGame);
-            document.getElementById('resetBtn')?.addEventListener('click', () => resetGame());
-            document.getElementById('selectSubjectBtn')?.addEventListener('click', () => {
-                document.querySelector('.subjects-wrapper').scrollIntoView({ behavior: 'smooth' });
-            });
+            document.getElementById('resetBtn')?.addEventListener('click', ()=>{ resetGame(); });
+            document.getElementById('selectSubjectBtn')?.addEventListener('click', ()=>{ document.querySelector('.subjects-wrapper').scrollIntoView({behavior:'smooth'}); });
             return;
         }
-
-        if (!currentQuestions.length) {
-            currentQuestions = loadQuestionsForSubject(currentSubject);
-            currentIndex = 0;
-        }
-        if (currentIndex >= currentQuestions.length) {
-            levelUp();
-            return;
-        }
-
-        const q = currentQuestions[currentIndex];
-        const heartsHtml = [];
-        for (let i = 0; i < 3; i++) {
-            heartsHtml.push(`<span class="heart ${i < lives ? 'heart-full' : 'heart-lost'}">❤️</span>`);
-        }
-
+        if(!currentQuestions.length) { currentQuestions = loadQuestions(currentSubject); currentIndex=0; }
+        if(currentIndex >= currentQuestions.length) { levelUp(); return; }
+        let q = currentQuestions[currentIndex];
+        let hearts = ''; for(let i=0;i<3;i++) hearts += `<span class="heart ${i<lives?'heart-full':'heart-lost'}">❤️</span>`;
         let answersHtml = '';
-        q.options.forEach(opt => {
-            const selectedClass = (selectedAnswer === opt) ? 'selected' : '';
-            answersHtml += `<button class="answer-btn ${selectedClass}" data-answer="${escapeHtml(opt)}">${escapeHtml(opt)}</button>`;
-        });
-
-        const html = `
-            <div class="quest-header">
-                <div class="level-badge">⚡ Уровень ${level} · ${subjectNames[currentSubject]}</div>
-                <div class="lives">${heartsHtml.join('')}</div>
-            </div>
-            <div class="question-card">
-                <div class="question-text">${escapeHtml(q.text)}</div>
-                <div class="answers" id="answersContainer">${answersHtml}</div>
-                <div class="feedback" id="feedbackMsg" style="display:none;"></div>
-                <button class="next-btn hidden" id="nextBtn">➡️ ДАЛЕЕ</button>
-                <button class="bonus-btn" id="bonusLifeBtn">❤️ +1 ЖИЗНЬ ЗА РЕКЛАМУ</button>
-                <button class="hint-btn" id="hintBtn"><i class="fas fa-robot"></i> Подсказка</button>
-            </div>
-        `;
+        q.options.forEach(opt => { answersHtml += `<button class="answer-btn ${selectedAnswer===opt?'selected':''}" data-answer="${escapeHtml(opt)}">${escapeHtml(opt)}</button>`; });
+        let html = `<div class="quest-header"><div class="level-badge">⚡ Уровень ${level} · ${subjectNames[currentSubject]}</div><div class="lives">${hearts}</div></div>
+            <div class="question-card"><div class="question-text">${escapeHtml(q.text)}</div><div class="answers" id="answersContainer">${answersHtml}</div>
+            <div class="feedback" id="feedbackMsg" style="display:none;"></div>
+            <button class="next-btn hidden" id="nextBtn">➡️ ДАЛЕЕ</button>
+            <button class="bonus-btn" id="bonusLifeBtn">❤️ +1 ЖИЗНЬ ЗА РЕКЛАМУ</button>
+            <button class="hint-btn" id="hintBtn"><i class="fas fa-robot"></i> Подсказка</button></div>`;
         document.getElementById('gameArea').innerHTML = html;
-
         document.querySelectorAll('.answer-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                if (waitingNext) return;
+                if(waitingNext) return;
                 selectedAnswer = btn.getAttribute('data-answer');
-                document.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+                document.querySelectorAll('.answer-btn').forEach(b=>b.classList.remove('selected'));
                 btn.classList.add('selected');
                 document.getElementById('nextBtn')?.classList.remove('hidden');
             });
         });
-
         document.getElementById('nextBtn')?.addEventListener('click', () => {
-            if (waitingNext) return;
-            if (!selectedAnswer) {
-                showFeedback('⚠️ Выберите ответ!', true);
-                assistantSay('👆 Сначала выбери вариант ответа!', 2000);
-                return;
-            }
+            if(waitingNext) return;
+            if(!selectedAnswer) { showFeedback('⚠️ Выберите ответ!', true); assistantSay('👆 Сначала выбери ответ!', 2000); return; }
             checkAnswer();
         });
-
-        document.getElementById('bonusLifeBtn')?.addEventListener('click', async () => {
-            if (lives >= 3) {
-                showFeedback('У вас максимум жизней!', false);
-                assistantSay('❤️ У тебя уже полные жизни! Продолжай отвечать.', 2500);
-                return;
-            }
-            showAdOffer((accepted) => {
-                if (accepted) {
-                    lives = Math.min(3, lives + 1);
-                    updateUIStats();
-                    renderGame();
-                    showFeedback('❤️ +1 жизнь получена!');
-                    assistantSay('❤️ Ура! +1 жизнь. Теперь можно продолжать!', 2500);
-                    saveProgress();
-                } else {
-                    assistantSay('❌ Жаль. Но ты можешь начать заново или выбрать другой предмет.', 3000);
-                }
-            });
+        document.getElementById('bonusLifeBtn')?.addEventListener('click', () => {
+            if(lives>=3) { showFeedback('Максимум жизней'); assistantSay('❤️ У тебя уже полные жизни!', 2000); return; }
+            showAdOffer((ok)=>{ if(ok) { lives=Math.min(3,lives+1); updateUI(); renderGame(); showFeedback('❤️ +1 жизнь!'); assistantSay('❤️ +1 жизнь! Продолжай!',2000); saveProgress(); } });
         });
-
         document.getElementById('hintBtn')?.addEventListener('click', () => {
-            if (hintUsed) {
-                showFeedback('Подсказка уже использована', true);
-                assistantSay('🔍 Ты уже использовал подсказку в этом вопросе!', 2500);
-                return;
-            }
-            const correct = q.correct;
-            const wrongBtns = Array.from(document.querySelectorAll('.answer-btn')).filter(btn => btn.getAttribute('data-answer') !== correct);
-            if (wrongBtns.length >= 2) {
-                const toRemove = wrongBtns.slice(0, 2);
-                toRemove.forEach(btn => {
-                    btn.classList.add('disabled-hint');
-                    btn.disabled = true;
-                });
-                hintUsed = true;
-                showFeedback('🔍 Два неверных ответа убраны!');
-                assistantSay('🔍 Подсказка активирована! Два неверных ответа убраны.', 3000);
-                document.getElementById('hintBtn').disabled = true;
-            } else {
-                showFeedback('Недостаточно вариантов для подсказки', true);
-                assistantSay('⚠️ Не хватает вариантов для подсказки, но ты справишься сам!', 2500);
-            }
+            if(hintUsed) { showFeedback('Подсказка уже использована', true); return; }
+            let correct = q.correct;
+            let wrongs = Array.from(document.querySelectorAll('.answer-btn')).filter(b=>b.getAttribute('data-answer')!==correct);
+            if(wrongs.length>=2) {
+                wrongs.slice(0,2).forEach(b=>{ b.classList.add('disabled-hint'); b.disabled=true; });
+                hintUsed=true; showFeedback('🔍 Два неверных ответа убраны!'); assistantSay('🔍 Подсказка активирована!',2500);
+                document.getElementById('hintBtn').disabled=true;
+            } else { showFeedback('Недостаточно вариантов для подсказки', true); }
         });
     }
-
     function checkAnswer() {
-        const q = currentQuestions[currentIndex];
-        if (!q) return;
-        const isCorrect = (selectedAnswer === q.correct);
+        let q = currentQuestions[currentIndex];
+        let isCorrect = (selectedAnswer === q.correct);
         waitingNext = true;
-        if (isCorrect) {
-            let add = 10 + (combo >= 2 ? 5 : 0);
-            score += add;
-            combo++;
+        if(isCorrect) {
+            let add = 10 + (combo>=2?5:0);
+            score += add; combo++;
             showFeedback(`✅ Верно! +${add} очков (комбо x${combo})`);
-            assistantSay(`🎉 Отлично! +${add} очков. Комбо x${combo}! Так держать!`, 2500);
-            updateUIStats();
-            setTimeout(() => {
-                currentIndex++;
-                selectedAnswer = null;
-                waitingNext = false;
-                hintUsed = false;
-                saveProgress();
-                renderGame();
-            }, 700);
+            assistantSay(`🎉 Отлично! +${add} очков!`, 2500);
+            updateUI();
+            setTimeout(()=>{ currentIndex++; selectedAnswer=null; waitingNext=false; hintUsed=false; saveProgress(); renderGame(); },700);
         } else {
-            lives--;
-            combo = 0;
-            updateUIStats();
-            showFeedback(`❌ Ошибка! Правильно: ${q.correct}. Осталось жизней: ${lives}`, true);
+            lives--; combo=0; updateUI();
+            showFeedback(`❌ Ошибка! Правильно: ${q.correct}. Жизней: ${lives}`, true);
             assistantSay(`❌ Неправильно. Правильный ответ: ${q.correct}. Осталось жизней: ${lives}`, 3000);
-            if (lives <= 0) {
-                setTimeout(() => {
-                    renderGame();
-                }, 1500);
-            } else {
-                setTimeout(() => {
-                    waitingNext = false;
-                    selectedAnswer = null;
-                    hintUsed = false;
-                    saveProgress();
-                    renderGame();
-                }, 1200);
-            }
+            if(lives<=0) setTimeout(()=>renderGame(),1500);
+            else setTimeout(()=>{ waitingNext=false; selectedAnswer=null; hintUsed=false; saveProgress(); renderGame(); },1200);
         }
     }
-
     function levelUp() {
-        level++;
-        score += 50;
-        combo = 0;
-        updateUIStats();
+        level++; score+=50; combo=0; updateUI();
         showFeedback(`🎉 УРОВЕНЬ ${level}! +50 бонусов!`);
-        assistantSay(`🎉 Поздравляю! Ты достиг ${level} уровня! +50 бонусов. Так держать!`, 4000);
-        currentQuestions = loadQuestionsForSubject(currentSubject);
-        currentIndex = 0;
-        waitingNext = false;
-        selectedAnswer = null;
-        hintUsed = false;
-        saveProgress();
-        setTimeout(() => renderGame(), 600);
+        assistantSay(`🎉 Поздравляю! Уровень ${level}!`, 3500);
+        currentQuestions = loadQuestions(currentSubject);
+        currentIndex = 0; waitingNext=false; selectedAnswer=null; hintUsed=false;
+        saveProgress(); setTimeout(()=>renderGame(),500);
     }
-
-    function resetGame() {
-        score = 0;
-        level = 1;
-        combo = 0;
-        lives = 3;
-        currentIndex = 0;
-        selectedAnswer = null;
-        waitingNext = false;
-        hintUsed = false;
-        currentQuestions = loadQuestionsForSubject(currentSubject);
-        saveProgress();
-        renderGame();
-        assistantSay('🔄 Прогресс сброшен. Начинай сначала, я с тобой!', 3000);
+    function resetGame() { score=0; level=1; combo=0; lives=3; currentIndex=0; selectedAnswer=null; waitingNext=false; hintUsed=false; currentQuestions=loadQuestions(currentSubject); saveProgress(); renderGame(); assistantSay('🔄 Прогресс сброшен. Начнём заново!',2500); }
+    function switchSubject(subj) {
+        if(subj===currentSubject) return;
+        currentSubject=subj; score=0; level=1; combo=0; lives=3; currentIndex=0; selectedAnswer=null; waitingNext=false; hintUsed=false;
+        currentQuestions = loadQuestions(currentSubject);
+        saveProgress(); updateUI(); renderGame();
+        document.querySelectorAll('.subject-btn').forEach(btn=>{ if(btn.dataset.subj===subj) btn.classList.add('active'); else btn.classList.remove('active'); });
+        assistantSay(`📚 Теперь предмет: ${subjectNames[subj]}. Удачи!`, 2500);
     }
-
-    function switchSubject(subject) {
-        if (subject === currentSubject) return;
-        currentSubject = subject;
-        score = 0;
-        level = 1;
-        combo = 0;
-        lives = 3;
-        currentIndex = 0;
-        selectedAnswer = null;
-        waitingNext = false;
-        hintUsed = false;
-        currentQuestions = loadQuestionsForSubject(currentSubject);
-        saveProgress();
-        updateUIStats();
-        renderGame();
-        document.querySelectorAll('.subject-btn').forEach(btn => {
-            if (btn.dataset.subj === subject) btn.classList.add('active');
-            else btn.classList.remove('active');
-        });
-        assistantSay(`📚 Теперь ты изучаешь "${subjectNames[subject]}". Удачи!`, 3000);
-    }
-
-    function saveProgress() {
-        saveProgressLocally();
-        if (isVK && vkBridge) saveToVKStorage();
-        updateLeaderboard();
-    }
-
     function shareGame() {
-        const text = `🔥 Я набрал ${score} очков в «${subjectNames[currentSubject]}» на уровне ${level} в игре «Битва знаний»! Сможешь побить рекорд? 🧠⚡`;
-        if (isVK && vkBridge) {
-            vkBridge.send('VKWebAppShare', { link: appShareUrl, attachment: text }).catch(() => {
-                alert('Не удалось открыть диалог. Скопируйте ссылку:\n' + appShareUrl);
-            });
-        } else {
-            alert(text + '\n\nСсылка: ' + appShareUrl);
-        }
+        let text = `🔥 Я набрал ${score} очков в «${subjectNames[currentSubject]}» на уровне ${level} в Битве знаний! Сможешь побить рекорд?`;
+        if(isVK && vkBridge) vkBridge.send('VKWebAppShare',{ link:appShareUrl, attachment:text }).catch(()=>alert('Ссылка: '+appShareUrl));
+        else alert(text+'\n\nСсылка: '+appShareUrl);
     }
-
     function showLeaderboard() {
-        const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <h3><i class="fas fa-trophy"></i> Топ-10 игроков</h3>
-                <div class="tabs" id="leaderTabs"></div>
-                <div id="leaderboardContent"></div>
-                <button class="close-modal">Закрыть</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        document.body.style.overflow = 'hidden';
-
-        const tabsDiv = modal.querySelector('#leaderTabs');
-        const contentDiv = modal.querySelector('#leaderboardContent');
-
-        function renderForSubject(subject) {
-            const lb = leaderboard[subject] || [];
-            if (lb.length === 0) {
-                contentDiv.innerHTML = '<p style="text-align:center; margin:20px;">Пока нет рекордов. Стань первым!</p>';
-                return;
-            }
-            const ul = document.createElement('ul'); ul.className = 'leaderboard-list';
-            ul.innerHTML = lb.map((u, idx) => `
-                <li>
-                    ${u.photo ? `<img class="leaderboard-avatar" src="${u.photo}" alt="avatar">` : '<div class="leaderboard-avatar" style="background:#6e2cf5; display:flex; align-items:center; justify-content:center;"><i class="fas fa-user"></i></div>'}
-                    <div><strong>${idx+1}. ${escapeHtml(u.name)}</strong><br>🎯 ${u.score} очков | Уровень ${u.level}</div>
-                </li>
-            `).join('');
-            contentDiv.innerHTML = '';
-            contentDiv.appendChild(ul);
+        let modal=document.createElement('div'); modal.className='modal';
+        modal.innerHTML=`<div class="modal-content"><h3><i class="fas fa-trophy"></i> Топ-10</h3><div id="lbContent"></div><button class="close-modal">Закрыть</button></div>`;
+        document.body.appendChild(modal); document.body.style.overflow='hidden';
+        let lb = leaderboard[currentSubject]||[];
+        let content = modal.querySelector('#lbContent');
+        if(lb.length===0) content.innerHTML='<p style="text-align:center;">Пока нет рекордов. Стань первым!</p>';
+        else {
+            let ul=document.createElement('ul'); ul.className='leaderboard-list';
+            ul.innerHTML=lb.map((u,i)=>`<li>${u.photo?`<img class="leaderboard-avatar" src="${u.photo}">`:'<div class="leaderboard-avatar" style="background:#6e2cf5; display:flex; align-items:center; justify-content:center;"><i class="fas fa-user"></i></div>'}<div><strong>${i+1}. ${escapeHtml(u.name)}</strong><br>🎯 ${u.score} очков | Уровень ${u.level}</div></li>`).join('');
+            content.appendChild(ul);
         }
-
-        subjects.forEach(subj => {
-            const btn = document.createElement('button');
-            btn.className = 'tab-btn';
-            if (subj === currentSubject) btn.classList.add('active-tab');
-            btn.innerText = subjectNames[subj];
-            btn.onclick = () => {
-                document.querySelectorAll('#leaderTabs .tab-btn').forEach(b => b.classList.remove('active-tab'));
-                btn.classList.add('active-tab');
-                renderForSubject(subj);
-            };
-            tabsDiv.appendChild(btn);
-        });
-        renderForSubject(currentSubject);
-
-        const closeBtn = modal.querySelector('.close-modal');
-        closeBtn.onclick = () => { modal.remove(); document.body.style.overflow = ''; };
-        modal.onclick = (e) => { if (e.target === modal) { modal.remove(); document.body.style.overflow = ''; } };
+        modal.querySelector('.close-modal').onclick=()=>{ modal.remove(); document.body.style.overflow=''; };
+        modal.onclick=(e)=>{ if(e.target===modal){ modal.remove(); document.body.style.overflow=''; } };
     }
-
-    function buildSubjectsUI() {
-        const grid = document.getElementById('subjectsGrid');
-        grid.innerHTML = '';
-        subjects.forEach(subj => {
-            const btn = document.createElement('button');
-            btn.className = 'subject-btn' + (subj === currentSubject ? ' active' : '');
-            btn.innerHTML = `<i class="fas ${subjectIcons[subj]}"></i> ${subjectNames[subj]}`;
-            btn.dataset.subj = subj;
-            btn.addEventListener('click', () => switchSubject(subj));
+    function buildSubjects() {
+        let grid = document.getElementById('subjectsGrid'); grid.innerHTML='';
+        subjects.forEach(s=>{
+            let btn=document.createElement('button'); btn.className='subject-btn'+(s===currentSubject?' active':'');
+            btn.innerHTML=`<i class="fas ${subjectIcons[s]}"></i> ${subjectNames[s]}`;
+            btn.dataset.subj=s; btn.addEventListener('click',()=>switchSubject(s));
             grid.appendChild(btn);
         });
     }
-
-    function escapeHtml(str) {
-        return String(str).replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
+    function escapeHtml(str) { return String(str).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+    function showModal(title,text) {
+        let m=document.createElement('div'); m.className='modal';
+        m.innerHTML=`<div class="modal-content"><h3>${title}</h3><p>${text}</p><button class="close-modal">Закрыть</button></div>`;
+        document.body.appendChild(m); document.body.style.overflow='hidden';
+        m.querySelector('.close-modal').onclick=()=>{ m.remove(); document.body.style.overflow=''; };
+        m.onclick=(e)=>{ if(e.target===m){ m.remove(); document.body.style.overflow=''; } };
     }
-
-    function showModalMessage(title, text, onClose = null) {
-        const modal = document.createElement('div'); modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <h3>${title}</h3>
-                <p>${text}</p>
-                <button class="close-modal">Закрыть</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        document.body.style.overflow = 'hidden';
-        const closeBtn = modal.querySelector('.close-modal');
-        closeBtn.onclick = () => {
-            modal.remove();
-            document.body.style.overflow = '';
-            if (onClose) onClose();
-        };
-        modal.onclick = (e) => { if (e.target === modal) { modal.remove(); document.body.style.overflow = ''; if (onClose) onClose(); } };
-    }
-
-    // ------------------------------------------------------------------
-    // 7. ЗАПУСК
-    // ------------------------------------------------------------------
+    // ------------------------------------------------------------
+    // ЗАПУСК
+    // ------------------------------------------------------------
     window.addEventListener('load', async () => {
-        if (isVK && vkBridge) {
-            await initVK();
-            await loadFromVKStorage();
-        } else {
-            loadProgressFromLocal();
-        }
-        if (!currentQuestions.length) currentQuestions = loadQuestionsForSubject(currentSubject);
-        buildSubjectsUI();
-        renderGame();
-        updateUIStats();
-
-        document.getElementById('assistantAvatar')?.addEventListener('click', () => {
-            const tips = [
-                "💡 Совет: используй подсказку, если сомневаешься!",
-                "🏆 Комбо даёт бонусные очки! Отвечай правильно подряд.",
-                "❤️ Если жизни кончились, нажми +1 жизнь за рекламу — я помогу!",
-                "📚 Старайся учить новые вопросы, они повторяются редко.",
-                "👑 Топ-10 по каждому предмету — покажи всем свой уровень!"
-            ];
-            assistantSay(tips[Math.floor(Math.random() * tips.length)], 3500);
+        if(isVK && vkBridge) { await initVK(); await loadProgress(); }
+        else loadProgress();
+        if(!currentQuestions.length) currentQuestions = loadQuestions(currentSubject);
+        buildSubjects(); renderGame(); updateUI();
+        document.getElementById('assistantAvatar')?.addEventListener('click',()=>{
+            let tips=['💡 Используй подсказку!','🏆 Комбо даёт бонус!','❤️ Реклама даёт жизнь','👑 Топ-10 ждёт тебя'];
+            assistantSay(tips[Math.floor(Math.random()*tips.length)],3000);
         });
-
         startTutorial();
-
-        document.getElementById('leaderboardBtn').onclick = showLeaderboard;
-        document.getElementById('termsLink').onclick = () => showModalMessage(
-            '📜 Пользовательское соглашение',
-            'Используя приложение, вы соглашаетесь с условиями VK Mini Apps. Ваши данные (ID, имя, аватар) используются для рейтинга и хранятся в VK Storage или локально. Контакты: vova_polyakov_94@mail.ru.<br><br>Подробнее: <a href="https://vk.com/terms" target="_blank" style="color:#ffaa66;">https://vk.com/terms</a>'
-        );
-        document.getElementById('privacyLink').onclick = () => showModalMessage(
-            '🔒 Политика конфиденциальности',
-            'Мы обрабатываем только открытые данные VK ID, имя, фото для игровой статистики. Данные не передаются третьим лицам. Вы можете удалить прогресс кнопкой ниже.<br><br>Хранение данных соответствует 152-ФЗ. Контакты: vova_polyakov_94@mail.ru.'
-        );
-        document.getElementById('deleteDataLink').onclick = () => {
-            if (confirm('🗑️ Удалить весь прогресс безвозвратно?')) {
-                localStorage.clear();
-                if (isVK && vkBridge) {
-                    vkBridge.send('VKWebAppStorageSet', { key: 'quizProgressPremium', value: '' });
-                }
-                alert('Данные удалены. Перезагрузите страницу.');
-                location.reload();
-            }
-        };
+        document.getElementById('leaderboardBtn').onclick=showLeaderboard;
+        document.getElementById('termsLink').onclick=()=>showModal('Пользовательское соглашение','Используя приложение, вы соглашаетесь с условиями VK. Данные ID, имя, фото для рейтинга. Контакты: vova_polyakov_94@mail.ru.<br><a href="https://vk.com/terms" target="_blank">vk.com/terms</a>');
+        document.getElementById('privacyLink').onclick=()=>showModal('Политика конфиденциальности','Мы храним только VK ID, имя, фото для статистики. Вы можете удалить прогресс кнопкой ниже.');
+        document.getElementById('deleteDataLink').onclick=()=>{ if(confirm('Удалить весь прогресс?')){ localStorage.clear(); if(isVK && vkBridge) vkBridge.send('VKWebAppStorageSet',{key:'quiz_saved',value:''}); location.reload(); } };
     });
 </script>
 </body>
