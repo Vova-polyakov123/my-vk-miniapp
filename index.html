@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Битва знаний — премиум версия</title>
+    <title>Битва знаний — премиум версия (исправлено)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -532,7 +532,7 @@
     // ------------------------------------------------------------------
     // 2. БАЗА ВОПРОСОВ (расширенная, без ошибок)
     // ------------------------------------------------------------------
-    const questionDB = {
+    const rawQuestionDB = {
         math: [
             { text: "5 + 7 = ?", options: ["10","11","12","13"], correct: "12" },
             { text: "12 - 4 = ?", options: ["6","7","8","9"], correct: "8" },
@@ -616,7 +616,7 @@
         ]
     };
 
-    const subjects = Object.keys(questionDB);
+    const subjects = Object.keys(rawQuestionDB);
     const subjectNames = {
         math:"Математика", russian:"Русский язык", geo:"География", history:"История",
         literature:"Литература", english:"Английский", obzh:"ОБЖ", society:"Обществознание",
@@ -629,7 +629,7 @@
     };
 
     // ------------------------------------------------------------------
-    // 3. СОСТОЯНИЕ ИГРЫ
+    // 3. СОСТОЯНИЕ ИГРЫ + Прогресс по предметам (ИСПРАВЛЕНИЕ БАГА №1)
     // ------------------------------------------------------------------
     let currentSubject = 'math';
     let currentQuestions = [];
@@ -644,6 +644,14 @@
     let leaderboard = {};
     subjects.forEach(s => leaderboard[s] = []);
 
+    // Хранилище прогресса по каждому предмету
+    let progressBySubject = {};
+
+    // Таймер для рекламы (баг №3)
+    let adCooldown = false;
+    let adCooldownTimer = null;
+    let adButton = null;
+
     // ------------------------------------------------------------------
     // 4. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
     // ------------------------------------------------------------------
@@ -655,9 +663,62 @@
         return arr;
     }
 
+    // Перемешиваем варианты ответов внутри вопроса (ИСПРАВЛЕНИЕ БАГА №2)
+    function shuffleQuestionOptions(question) {
+        const shuffled = { ...question };
+        shuffled.options = shuffleArray([...question.options]);
+        return shuffled;
+    }
+
     function loadQuestionsForSubject(subject) {
-        let qs = questionDB[subject] || [];
-        return shuffleArray([...qs]);
+        let qs = rawQuestionDB[subject] || [];
+        // Перемешиваем порядок вопросов И перемешиваем варианты внутри каждого вопроса
+        qs = shuffleArray([...qs]);
+        return qs.map(q => shuffleQuestionOptions(q));
+    }
+
+    // Сохранение текущего прогресса в progressBySubject
+    function saveCurrentProgressToSubject() {
+        if (!progressBySubject[currentSubject]) progressBySubject[currentSubject] = {};
+        progressBySubject[currentSubject] = {
+            score: score,
+            level: level,
+            combo: combo,
+            lives: lives,
+            currentIndex: currentIndex,
+            // сохраняем только тексты вопросов, чтобы восстановить позже (id достаточно)
+            currentQuestionTexts: currentQuestions.map(q => q.text),
+            // также сохраняем сами вопросы (сериализуем)
+            currentQuestionsSerialized: currentQuestions,
+            leaderboard: leaderboard  // общий рейтинг
+        };
+    }
+
+    // Загрузка прогресса для выбранного предмета
+    function loadProgressForSubject(subject) {
+        const saved = progressBySubject[subject];
+        if (saved) {
+            score = saved.score !== undefined ? saved.score : 0;
+            level = saved.level !== undefined ? saved.level : 1;
+            combo = saved.combo !== undefined ? saved.combo : 0;
+            lives = saved.lives !== undefined ? saved.lives : 3;
+            currentIndex = saved.currentIndex !== undefined ? saved.currentIndex : 0;
+            if (saved.currentQuestionsSerialized && saved.currentQuestionsSerialized.length) {
+                currentQuestions = saved.currentQuestionsSerialized;
+            } else {
+                currentQuestions = loadQuestionsForSubject(subject);
+            }
+            if (saved.leaderboard) leaderboard = saved.leaderboard;
+        } else {
+            // стандартный сброс для нового предмета
+            score = 0;
+            level = 1;
+            combo = 0;
+            lives = 3;
+            currentIndex = 0;
+            currentQuestions = loadQuestionsForSubject(subject);
+        }
+        updateUIStats();
     }
 
     function updateUIStats() {
@@ -706,7 +767,37 @@
         modal.onclick = (e) => { if (e.target === modal) { modal.remove(); document.body.style.overflow = ''; if (onClose) onClose(); } };
     }
 
-    function showAdOffer(callback) {
+    // Реклама с таймером (ИСПРАВЛЕНИЕ БАГА №3)
+    function startAdCooldown(btnElement) {
+        if (adCooldown) return;
+        adCooldown = true;
+        let seconds = 30;
+        if (btnElement) {
+            btnElement.disabled = true;
+            const originalText = btnElement.innerHTML;
+            const updateTimer = () => {
+                if (seconds <= 0) {
+                    btnElement.disabled = false;
+                    btnElement.innerHTML = originalText;
+                    adCooldown = false;
+                    if (adCooldownTimer) clearInterval(adCooldownTimer);
+                    showFeedback('✅ Реклама снова доступна!');
+                } else {
+                    btnElement.innerHTML = `⏳ ${seconds} сек`;
+                }
+                seconds--;
+            };
+            updateTimer();
+            adCooldownTimer = setInterval(updateTimer, 1000);
+        }
+    }
+
+    function showAdOffer(callback, btnElement = null) {
+        if (adCooldown) {
+            showFeedback('Пожалуйста, подождите 30 секунд перед следующим просмотром рекламы', true);
+            if (callback) callback(false);
+            return;
+        }
         const modal = document.createElement('div'); modal.className = 'modal';
         modal.innerHTML = `
             <div class="modal-content">
@@ -723,15 +814,20 @@
         const yesBtn = modal.querySelector('#adYesBtn');
         const noBtn = modal.querySelector('#adNoBtn');
         const closeModal = () => { modal.remove(); document.body.style.overflow = ''; };
-        yesBtn.onclick = () => { closeModal(); callback(true); };
-        noBtn.onclick = () => { closeModal(); callback(false); };
-        modal.onclick = (e) => { if (e.target === modal) { closeModal(); callback(false); } };
+        yesBtn.onclick = () => {
+            closeModal();
+            if (btnElement) startAdCooldown(btnElement);
+            if (callback) callback(true);
+        };
+        noBtn.onclick = () => { closeModal(); if (callback) callback(false); };
+        modal.onclick = (e) => { if (e.target === modal) { closeModal(); if (callback) callback(false); } };
     }
 
     function saveProgressLocally() {
+        saveCurrentProgressToSubject();
         const save = {
-            currentSubject, currentIndex, score, level, combo, lives,
-            currentQuestionsIds: currentQuestions.map(q => q.text),
+            currentSubject: currentSubject,
+            progressBySubject: progressBySubject,
             leaderboard: leaderboard
         };
         localStorage.setItem('quiz_progress_premium', JSON.stringify(save));
@@ -743,13 +839,9 @@
         try {
             const data = JSON.parse(saved);
             currentSubject = data.currentSubject || 'math';
-            currentIndex = data.currentIndex || 0;
-            score = data.score || 0;
-            level = data.level || 1;
-            combo = data.combo || 0;
-            lives = data.lives || 3;
+            progressBySubject = data.progressBySubject || {};
             if (data.leaderboard) leaderboard = data.leaderboard;
-            currentQuestions = loadQuestionsForSubject(currentSubject);
+            loadProgressForSubject(currentSubject);
             return true;
         } catch(e) { return false; }
     }
@@ -757,9 +849,14 @@
     async function saveToVKStorage() {
         if (!isVK || !vkBridge) return;
         try {
+            const storeData = {
+                currentSubject: currentSubject,
+                progressBySubject: progressBySubject,
+                leaderboard: leaderboard
+            };
             await vkBridge.send('VKWebAppStorageSet', {
                 key: 'quizProgressPremium',
-                value: JSON.stringify({ score, level, combo, lives, currentSubject, currentIndex, leaderboard })
+                value: JSON.stringify(storeData)
             });
         } catch(e) {}
     }
@@ -770,15 +867,16 @@
             const res = await vkBridge.send('VKWebAppStorageGet', { keys: ['quizProgressPremium'] });
             if (res && res.keys && res.keys[0] && res.keys[0].value) {
                 const data = JSON.parse(res.keys[0].value);
-                score = data.score || 0;
-                level = data.level || 1;
-                combo = data.combo || 0;
-                lives = data.lives || 3;
                 currentSubject = data.currentSubject || 'math';
-                currentIndex = data.currentIndex || 0;
+                progressBySubject = data.progressBySubject || {};
                 if (data.leaderboard) leaderboard = data.leaderboard;
+                loadProgressForSubject(currentSubject);
+            } else {
+                loadProgressFromLocal(); // fallback
             }
-        } catch(e) {}
+        } catch(e) {
+            loadProgressFromLocal();
+        }
         currentQuestions = loadQuestionsForSubject(currentSubject);
     }
 
@@ -876,20 +974,30 @@
             checkAnswer();
         });
 
-        document.getElementById('bonusLifeBtn')?.addEventListener('click', async () => {
-            if (lives >= 3) {
-                showFeedback('У вас максимум жизней!', false);
-                return;
-            }
-            // Имитация рекламы (в VK замените на VKWebAppShowNativeAds)
-            if (confirm('Посмотреть рекламу и получить +1 жизнь?')) {
-                lives = Math.min(3, lives + 1);
-                updateUIStats();
-                renderGame();
-                showFeedback('❤️ +1 жизнь получена!');
-                saveProgress();
-            }
-        });
+        const bonusBtn = document.getElementById('bonusLifeBtn');
+        if (bonusBtn) {
+            if (adCooldown) bonusBtn.disabled = true;
+            else bonusBtn.disabled = false;
+            bonusBtn.addEventListener('click', async () => {
+                if (adCooldown) {
+                    showFeedback('Подождите 30 секунд перед следующим просмотром рекламы', true);
+                    return;
+                }
+                if (lives >= 3) {
+                    showFeedback('У вас максимум жизней!', false);
+                    return;
+                }
+                showAdOffer((success) => {
+                    if (success) {
+                        lives = Math.min(3, lives + 1);
+                        updateUIStats();
+                        renderGame();
+                        showFeedback('❤️ +1 жизнь получена!');
+                        saveProgress();
+                    }
+                }, bonusBtn);
+            });
+        }
 
         document.getElementById('hintBtn')?.addEventListener('click', () => {
             if (hintUsed) {
@@ -951,6 +1059,8 @@
                 }, 1200);
             }
         }
+        saveProgress();
+        updateLeaderboard();
     }
 
     function levelUp() {
@@ -984,18 +1094,15 @@
 
     function switchSubject(subject) {
         if (subject === currentSubject) return;
+        // Сохраняем прогресс текущего предмета перед уходом
+        saveCurrentProgressToSubject();
         currentSubject = subject;
-        score = 0;
-        level = 1;
-        combo = 0;
-        lives = 3;
-        currentIndex = 0;
+        // Загружаем прогресс нового предмета
+        loadProgressForSubject(currentSubject);
         selectedAnswer = null;
         waitingNext = false;
         hintUsed = false;
-        currentQuestions = loadQuestionsForSubject(currentSubject);
         saveProgress();
-        updateUIStats();
         renderGame();
         document.querySelectorAll('.subject-btn').forEach(btn => {
             if (btn.dataset.subj === subject) btn.classList.add('active');
@@ -1004,6 +1111,7 @@
     }
 
     function saveProgress() {
+        saveCurrentProgressToSubject();
         saveProgressLocally();
         if (isVK && vkBridge) saveToVKStorage();
         updateLeaderboard();
