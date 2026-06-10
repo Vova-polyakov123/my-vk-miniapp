@@ -1188,36 +1188,56 @@
     }
 
     // ------------------------------------------------------------------
-    // НОВАЯ ФУНКЦИЯ ШЕРИНГА — ИСПОЛЬЗУЕТ VKWebAppSendMessage (без ошибок)
+    // ФИНАЛЬНАЯ ФУНКЦИЯ ШЕРИНГА — ТОЛЬКО VKWebAppShare, БЕЗ ОШИБОК
     // ------------------------------------------------------------------
     async function shareGame() {
         const text = `🎉 Я набрал ${score} очков в «${subjectNames[currentSubject]}» на уровне ${level} в игре «Битва знаний»! Сможешь побить рекорд? 🎉 🏅`;
         const shareLink = appShareUrl || window.location.href;
-        const fullMessage = `${text}\n\n${shareLink}`;
         
         if (isVK && vkBridge) {
             try {
-                // Прямой вызов отправки сообщения (открывает диалог выбора получателя)
-                await vkBridge.send("VKWebAppSendMessage", { message: fullMessage });
-                showFeedback('✅ Сообщение отправлено!');
+                // Используем только официальный метод VKWebAppShare
+                await vkBridge.send("VKWebAppShare", { link: shareLink });
+                showFeedback('✅ Окно отправки открыто!');
             } catch (error) {
-                console.error('SendMessage error:', error);
-                // Если не получилось — пробуем старый метод
-                try {
-                    await vkBridge.send("VKWebAppShare", { link: shareLink });
-                    showFeedback('✅ Окно отправки открыто!');
-                } catch (shareErr) {
-                    showModalMessage(
-                        'Не удалось отправить',
-                        `Пожалуйста, скопируйте ссылку и поделитесь вручную:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}`
-                    );
-                }
+                console.error('Share error:', error);
+                // Если ошибка, показываем окно с копированием ссылки
+                showModalMessage(
+                    'Поделиться',
+                    `Пожалуйста, скопируйте ссылку и поделитесь вручную:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}<br><br><button id="copyLinkBtn" style="background:#2688eb; border:none; padding:10px 20px; border-radius:40px; color:white; margin-top:10px; cursor:pointer;">📋 Копировать ссылку</button>`
+                );
+                // Добавляем обработчик копирования
+                setTimeout(() => {
+                    const copyBtn = document.getElementById('copyLinkBtn');
+                    if (copyBtn) {
+                        copyBtn.onclick = () => {
+                            navigator.clipboard.writeText(shareLink).then(() => {
+                                showFeedback('✅ Ссылка скопирована!');
+                            }).catch(() => {
+                                alert('Не удалось скопировать, скопируйте вручную: ' + shareLink);
+                            });
+                        };
+                    }
+                }, 100);
             }
         } else {
+            // Вне VK показываем модальное окно с копированием
             showModalMessage(
                 'Поделиться',
-                `Скопируйте ссылку: ${shareLink}<br><br>Текст: ${text.replace(/\n/g, '<br>')}`
+                `Скопируйте ссылку: ${shareLink}<br><br>Текст: ${text.replace(/\n/g, '<br>')}<br><br><button id="copyLinkBtn" style="background:#2688eb; border:none; padding:10px 20px; border-radius:40px; color:white; margin-top:10px; cursor:pointer;">📋 Копировать ссылку</button>`
             );
+            setTimeout(() => {
+                const copyBtn = document.getElementById('copyLinkBtn');
+                if (copyBtn) {
+                    copyBtn.onclick = () => {
+                        navigator.clipboard.writeText(shareLink).then(() => {
+                            showFeedback('✅ Ссылка скопирована!');
+                        }).catch(() => {
+                            alert('Не удалось скопировать, скопируйте вручную: ' + shareLink);
+                        });
+                    };
+                }
+            }, 100);
         }
     }
 
