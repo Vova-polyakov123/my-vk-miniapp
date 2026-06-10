@@ -877,7 +877,7 @@
         modal.onclick = (e) => { if (e.target === modal) { closeModal(); if (onResult) onResult(false); } };
     }
 
-    // Функция восстановления жизни через рекламу (вызывается только по кнопке на экране поражения)
+    // Функция восстановления жизни через рекламу
     function reviveWithAd() {
         if (adCooldown) {
             showFeedback('Подождите 30 секунд перед следующим просмотром рекламы', true);
@@ -885,13 +885,12 @@
         }
         showAdOffer((success) => {
             if (success) {
-                lives = 1; // даём одну жизнь, чтобы продолжить
+                lives = 1;
                 updateUIStats();
-                renderGame(); // переходим обратно в игру
+                renderGame();
                 saveProgress();
             } else {
-                // пользователь отказался — остаёмся на экране поражения
-                renderGame(); // перерисуем экран поражения (без повторного вызова рекламы)
+                renderGame();
             }
         }, true);
     }
@@ -972,7 +971,6 @@
     // 5. ОТРИСОВКА ИГРЫ
     // ------------------------------------------------------------------
     function renderGame() {
-        // 1. Если жизни кончились – показываем экран поражения с кнопкой восстановления
         if (lives <= 0) {
             document.getElementById('gameArea').innerHTML = `
                 <div class="result-area">
@@ -993,7 +991,6 @@
             return;
         }
 
-        // 2. Нормальная игра
         if (!currentQuestions.length) {
             currentQuestions = loadQuestionsForSubject(currentSubject);
             currentIndex = 0;
@@ -1122,7 +1119,7 @@
             showFeedback(`❌ Ошибка! Правильно: ${q.correct}. Осталось жизней: ${lives}`, true);
             if (lives <= 0) {
                 setTimeout(() => {
-                    renderGame(); // покажет экран поражения без автоматической рекламы
+                    renderGame();
                 }, 1500);
             } else {
                 setTimeout(() => {
@@ -1190,70 +1187,25 @@
         updateLeaderboard();
     }
 
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ ШЕРИНГА (НАДЁЖНАЯ РАБОТА)
+    // ------------------------------------------------------------------
+    // ФУНКЦИЯ ШЕРИНГА — ТОЛЬКО VKWebAppShare, БЕЗ ОШИБОК
+    // ------------------------------------------------------------------
     async function shareGame() {
         const text = `🎉 Я набрал ${score} очков в «${subjectNames[currentSubject]}» на уровне ${level} в игре «Битва знаний»! Сможешь побить рекорд? 🎉 🏅`;
         const shareLink = appShareUrl || window.location.href;
         
         if (isVK && vkBridge) {
-            // Создаём кнопки выбора способа отправки
-            const modal = document.createElement('div'); modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <h3>📤 Поделиться результатом</h3>
-                    <p>Выберите, как хотите поделиться:</p>
-                    <div style="display: flex; flex-direction: column; gap: 12px; margin: 20px 0;">
-                        <button id="shareWallBtn" style="background:#2688eb; padding:14px; border:none; border-radius:60px; color:white; font-weight:bold; cursor:pointer;">📢 Опубликовать на стене</button>
-                        <button id="shareMsgBtn" style="background:#4caf50; padding:14px; border:none; border-radius:60px; color:white; font-weight:bold; cursor:pointer;">✉️ Отправить в личное сообщение</button>
-                        <button id="shareCancelBtn" style="background:#555; padding:14px; border:none; border-radius:60px; color:white; font-weight:bold; cursor:pointer;">❌ Отмена</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            document.body.style.overflow = 'hidden';
-            
-            const closeModal = () => { modal.remove(); document.body.style.overflow = ''; };
-            
-            // Обработчик для публикации на стене
-            modal.querySelector('#shareWallBtn').onclick = async () => {
-                closeModal();
-                try {
-                    await vkBridge.send("VKWebAppShowWallPostBox", {
-                        message: text,
-                        attachment: shareLink
-                    });
-                    showFeedback('✅ Опубликовано на стене!');
-                } catch (err) {
-                    console.error('Wall post error:', err);
-                    showModalMessage(
-                        'Не удалось открыть диалог',
-                        `Поделитесь вручную скопировав ссылку:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}`
-                    );
-                }
-            };
-            
-            // Обработчик для отправки в личное сообщение
-            modal.querySelector('#shareMsgBtn').onclick = async () => {
-                closeModal();
-                try {
-                    await vkBridge.send("VKWebAppSendMessage", {
-                        message: `${text}\n\n${shareLink}`
-                    });
-                    showFeedback('✅ Сообщение отправлено!');
-                } catch (err) {
-                    console.error('Send message error:', err);
-                    showModalMessage(
-                        'Не удалось открыть диалог',
-                        `Поделитесь вручную скопировав ссылку:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}`
-                    );
-                }
-            };
-            
-            modal.querySelector('#shareCancelBtn').onclick = closeModal;
-            modal.onclick = (e) => { if (e.target === modal) closeModal(); };
-            
+            try {
+                await vkBridge.send("VKWebAppShare", { link: shareLink });
+                showFeedback('✅ Окно отправки открыто!');
+            } catch (error) {
+                console.error('Share error:', error);
+                showModalMessage(
+                    'Не удалось открыть диалог',
+                    `Поделитесь вручную скопировав ссылку:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}`
+                );
+            }
         } else {
-            // Вне VK показываем модальное окно с копированием
             showModalMessage(
                 'Поделиться',
                 `Скопируйте ссылку: ${shareLink}<br><br>Текст: ${text.replace(/\n/g, '<br>')}`
