@@ -508,7 +508,7 @@
     let appShareUrl = 'https://vk.com/app';
 
     // ------------------------------------------------------------------
-    // 2. БАЗА ВОПРОСОВ (расширенная, все ошибки из трекера исправлены)
+    // 2. БАЗА ВОПРОСОВ (расширенная — минимум 12 вопросов в каждом предмете)
     // ------------------------------------------------------------------
     const rawQuestionDB = {
         math: [
@@ -564,7 +564,8 @@
             { text: "В каком году произошла Октябрьская революция?", options: ["1905","1917","1918","1922"], correct: "1917" },
             { text: "Кто был президентом США во время Второй мировой войны?", options: ["Трумэн","Рузвельт","Эйзенхауэр","Гувер"], correct: "Рузвельт" },
             { text: "Какое сражение стало коренным переломом в ВОВ?", options: ["Курская битва","Сталинградская битва","Битва за Москву","Ржевская битва"], correct: "Сталинградская битва" },
-            { text: "Кто написал 'Историю государства Российского'?", options: ["Карамзин","Соловьёв","Ключевский","Татищев"], correct: "Карамзин" }
+            { text: "Кто написал 'Историю государства Российского'?", options: ["Карамзин","Соловьёв","Ключевский","Татищев"], correct: "Карамзин" },
+            { text: "В каком году произошло крещение Руси?", options: ["862","988","1054","1242"], correct: "988" }
         ],
         literature: [
             { text: "Кто написал 'Война и мир'?", options: ["Достоевский","Толстой","Чехов","Пушкин"], correct: "Толстой" },
@@ -577,7 +578,8 @@
             { text: "Как звали кота из повести Булгакова?", options: ["Бегемот","Маяковский","Филипп","Воланд"], correct: "Бегемот" },
             { text: "Кто автор 'Грозы'?", options: ["Островский","Чехов","Тургенев","Гончаров"], correct: "Островский" },
             { text: "Какое произведение написал Радищев?", options: ["Путешествие из Петербурга в Москву","Недоросль","Бедная Лиза","Горе от ума"], correct: "Путешествие из Петербурга в Москву" },
-            { text: "Кто такая Анна Каренина?", options: ["героиня Толстого","героиня Достоевского","героиня Чехова","героиня Пушкина"], correct: "героиня Толстого" }
+            { text: "Кто такая Анна Каренина?", options: ["героиня Толстого","героиня Достоевского","героиня Чехова","героиня Пушкина"], correct: "героиня Толстого" },
+            { text: "Кто написал 'Отцы и дети'?", options: ["Тургенев","Чернышевский","Гончаров","Писемский"], correct: "Тургенев" }
         ],
         english: [
             { text: "Как будет 'собака'?", options: ["dog","cat","bird","fish"], correct: "dog" },
@@ -590,7 +592,8 @@
             { text: "Как сказать 'я люблю тебя'?", options: ["I love you","I like you","I hate you","I miss you"], correct: "I love you" },
             { text: "Какое время используется для действий, происходящих сейчас?", options: ["Present Simple","Present Continuous","Past Simple","Future Simple"], correct: "Present Continuous" },
             { text: "Перевод 'дружба'", options: ["love","friendship","family","hate"], correct: "friendship" },
-            { text: "Как будет 'машина'?", options: ["car","bus","train","plane"], correct: "car" }
+            { text: "Как будет 'машина'?", options: ["car","bus","train","plane"], correct: "car" },
+            { text: "Как сказать 'спасибо'?", options: ["please","sorry","thank you","you're welcome"], correct: "thank you" }
         ],
         obzh: [
             { text: "Номер пожарной службы?", options: ["101","102","103","112"], correct: "101" },
@@ -604,7 +607,9 @@
             { text: "Какая служба по номеру 112?", options: ["Единая служба спасения","Полиция","Скорая","Пожарная"], correct: "Единая служба спасения" },
             { text: "Что нужно иметь при себе для защиты от радиации?", options: ["Дозиметр","Противохимпакет","Аптечка","Компас"], correct: "Дозиметр" },
             { text: "Как правильно переходить дорогу?", options: ["На зелёный свет","На красный свет","Где удобно","По подземному переходу"], correct: "На зелёный свет" },
-            { text: "Что делать при укусе клеща?", options: ["Удалить и обработать","Прижечь","Помазать маслом","Не трогать"], correct: "Удалить и обработать" }
+            { text: "Что делать при укусе клеща?", options: ["Удалить и обработать","Прижечь","Помазать маслом","Не трогать"], correct: "Удалить и обработать" },
+            { text: "Как оказать первую помощь при ожоге?", options: ["Смазать маслом","Приложить лёд","Обильно полить холодной водой","Наклеить пластырь"], correct: "Обильно полить холодной водой" },
+            { text: "Что запрещено делать при химической аварии?", options: ["Закрыть окна","Включить вентиляцию","Использовать ватно-марлевую повязку","Отключить газ"], correct: "Включить вентиляцию" }
         ],
         society: [
             { text: "Высший орган власти в РФ?", options: ["Правительство","Президент","Госдума","Совет Федерации"], correct: "Президент" },
@@ -616,7 +621,9 @@
             { text: "Кто является главой правительства РФ?", options: ["Президент","Председатель Правительства","Министр финансов","Секретарь Совбеза"], correct: "Председатель Правительства" },
             { text: "Что из перечисленного является политической партией?", options: ["Единая Россия","Газпром","РПЦ","Торгово-промышленная палата"], correct: "Единая Россия" },
             { text: "Сколько чтений проходит закон в Госдуме?", options: ["2","3","4","1"], correct: "3" },
-            { text: "Что такое Конституция?", options: ["Основной закон","Свод указов","Международный договор","Уголовный кодекс"], correct: "Основной закон" }
+            { text: "Что такое Конституция?", options: ["Основной закон","Свод указов","Международный договор","Уголовный кодекс"], correct: "Основной закон" },
+            { text: "Кто является верховным главнокомандующим?", options: ["Министр обороны","Президент","Начальник Генштаба","Премьер-министр"], correct: "Президент" },
+            { text: "Что такое ВВП?", options: ["Валовой внутренний продукт","Высокий вклад в производство","Валюта государства","Налоговый сбор"], correct: "Валовой внутренний продукт" }
         ],
         biology: [
             { text: "Самый большой орган человека?", options: ["Печень","Кожа","Сердце","Легкие"], correct: "Кожа" },
@@ -628,7 +635,9 @@
             { text: "Кровеносная система человека замкнутая?", options: ["Да","Нет","Частично","Только у эмбриона"], correct: "Да" },
             { text: "Что вырабатывает поджелудочная железа?", options: ["Инсулин","Адреналин","Тироксин","Тестостерон"], correct: "Инсулин" },
             { text: "Сколько камер в сердце человека?", options: ["2","3","4","5"], correct: "4" },
-            { text: "Как называются клетки крови, отвечающие за иммунитет?", options: ["Лейкоциты","Эритроциты","Тромбоциты","Нейтроциты"], correct: "Лейкоциты" }
+            { text: "Как называются клетки крови, отвечающие за иммунитет?", options: ["Лейкоциты","Эритроциты","Тромбоциты","Нейтроциты"], correct: "Лейкоциты" },
+            { text: "Какой орган вырабатывает желчь?", options: ["Печень","Желчный пузырь","Поджелудочная железа","Почки"], correct: "Печень" },
+            { text: "Сколько зубов у взрослого человека?", options: ["28","30","32","34"], correct: "32" }
         ],
         chemistry: [
             { text: "Химический символ кислорода", options: ["O","O2","K","C"], correct: "O" },
@@ -641,7 +650,8 @@
             { text: "Формула поваренной соли", options: ["NaCl","KCl","CaCO3","NaOH"], correct: "NaCl" },
             { text: "Кислота, содержащаяся в лимоне", options: ["Лимонная","Уксусная","Серная","Аскорбиновая"], correct: "Лимонная" },
             { text: "Какой элемент самый распространённый в земной коре?", options: ["Кислород","Кремний","Алюминий","Железо"], correct: "Кислород" },
-            { text: "Нейтральная среда — это pH ...", options: ["7","<7",">7","0"], correct: "7" }
+            { text: "Нейтральная среда — это pH ...", options: ["7","<7",">7","0"], correct: "7" },
+            { text: "Что такое щёлочь?", options: ["Растворимое основание","Кислота","Соль","Оксид"], correct: "Растворимое основание" }
         ],
         physics: [
             { text: "Единица измерения силы?", options: ["Ватт","Ньютон","Джоуль","Паскаль"], correct: "Ньютон" },
@@ -655,7 +665,9 @@
             { text: "Какое явление объясняет радугу?", options: ["Дисперсия","Отражение","Преломление","Интерференция"], correct: "Дисперсия" },
             { text: "Кто открыл радиоактивность?", options: ["Беккерель","Резерфорд","Кюри","Бор"], correct: "Беккерель" },
             { text: "Что измеряют в Джоулях?", options: ["Энергию","Мощность","Силу","Давление"], correct: "Энергию" },
-            { text: "Какая сила удерживает планеты на орбитах?", options: ["Гравитация","Магнетизм","Центробежная","Ядерная"], correct: "Гравитация" }
+            { text: "Какая сила удерживает планеты на орбитах?", options: ["Гравитация","Магнетизм","Центробежная","Ядерная"], correct: "Гравитация" },
+            { text: "Как называется переход вещества из жидкого состояния в газообразное?", options: ["Конденсация","Испарение","Сублимация","Кипение"], correct: "Испарение" },
+            { text: "Что такое инерция?", options: ["Сохранение скорости","Ускорение","Сила трения","Падение тел"], correct: "Сохранение скорости" }
         ]
     };
 
@@ -1189,55 +1201,83 @@
     }
 
     // ------------------------------------------------------------------
-    // ПРОСТАЯ И НАДЁЖНАЯ ФУНКЦИЯ ШЕРИНГА — ТОЛЬКО VKWebAppShare
+    // ПРОСТАЯ И НАДЁЖНАЯ ФУНКЦИЯ ШЕРИНГА (БЕЗ ALERT)
     // ------------------------------------------------------------------
     async function shareGame() {
-        const text = `🎉 Я набрал ${score} очков в «${subjectNames[currentSubject]}» на уровне ${level} в игре «Битва знаний»! Сможешь побить рекорд? 🎉 🏅`;
+        const text = `🐝 Я набрал ${score} очков в «${subjectNames[currentSubject]}» на уровне ${level} в игре «Битва знаний»! Сможешь побить рекорд? 🐝`;
         const shareLink = appShareUrl || window.location.href;
         
         if (isVK && vkBridge) {
             try {
-                // Самый надёжный метод — VKWebAppShare. Он сам предлагает отправить в ЛС, на стену, в историю.
                 await vkBridge.send("VKWebAppShare", { link: shareLink });
                 showFeedback('✅ Окно отправки открыто!');
             } catch (error) {
                 console.error('Share error:', error);
-                // Если не сработало — показываем окно с кнопкой копирования ссылки
-                showModalMessage(
-                    'Поделиться',
-                    `Пожалуйста, скопируйте ссылку и поделитесь вручную:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}<br><br><button id="copyLinkBtn" style="background:#2688eb; border:none; padding:10px 20px; border-radius:40px; color:white; margin-top:10px; cursor:pointer;">📋 Копировать ссылку</button>`
-                );
-                setTimeout(() => {
-                    const copyBtn = document.getElementById('copyLinkBtn');
-                    if (copyBtn) {
-                        copyBtn.onclick = () => {
-                            navigator.clipboard.writeText(shareLink).then(() => {
-                                showFeedback('✅ Ссылка скопирована!');
-                            }).catch(() => {
-                                alert('Не удалось скопировать, скопируйте вручную: ' + shareLink);
-                            });
-                        };
+                // Показываем модальное окно с возможностью копирования (без alert)
+                const modal = document.createElement('div'); modal.className = 'modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <h3>Поделиться</h3>
+                        <p>Пожалуйста, скопируйте ссылку и поделитесь вручную:</p>
+                        <p><strong>${shareLink}</strong></p>
+                        <p>Текст: ${text.replace(/\n/g, '<br>')}</p>
+                        <button id="copyLinkBtn" style="background:#2688eb; border:none; padding:12px; border-radius:40px; color:white; margin:10px 0; cursor:pointer; width:100%;">📋 Копировать ссылку</button>
+                        <button id="closeModalBtn" style="background:#555; border:none; padding:12px; border-radius:40px; color:white; cursor:pointer; width:100%;">Закрыть</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                document.body.style.overflow = 'hidden';
+                const copyBtn = modal.querySelector('#copyLinkBtn');
+                const closeBtn = modal.querySelector('#closeModalBtn');
+                const closeModal = () => {
+                    modal.remove();
+                    document.body.style.overflow = '';
+                };
+                copyBtn.onclick = async () => {
+                    try {
+                        await navigator.clipboard.writeText(shareLink);
+                        showFeedback('✅ Ссылка скопирована!');
+                        closeModal();
+                    } catch (err) {
+                        // Вместо alert показываем уведомление внутри приложения
+                        showFeedback('❌ Не удалось скопировать, скопируйте вручную', true);
                     }
-                }, 100);
+                };
+                closeBtn.onclick = closeModal;
+                modal.onclick = (e) => { if (e.target === modal) closeModal(); };
             }
         } else {
-            // Вне VK
-            showModalMessage(
-                'Поделиться',
-                `Скопируйте ссылку: ${shareLink}<br><br>Текст: ${text.replace(/\n/g, '<br>')}<br><br><button id="copyLinkBtn" style="background:#2688eb; border:none; padding:10px 20px; border-radius:40px; color:white; margin-top:10px; cursor:pointer;">📋 Копировать ссылку</button>`
-            );
-            setTimeout(() => {
-                const copyBtn = document.getElementById('copyLinkBtn');
-                if (copyBtn) {
-                    copyBtn.onclick = () => {
-                        navigator.clipboard.writeText(shareLink).then(() => {
-                            showFeedback('✅ Ссылка скопирована!');
-                        }).catch(() => {
-                            alert('Не удалось скопировать, скопируйте вручную: ' + shareLink);
-                        });
-                    };
+            // Вне VK показываем модальное окно с копированием (без alert)
+            const modal = document.createElement('div'); modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>Поделиться</h3>
+                    <p>Скопируйте ссылку и поделитесь:</p>
+                    <p><strong>${shareLink}</strong></p>
+                    <p>Текст: ${text.replace(/\n/g, '<br>')}</p>
+                    <button id="copyLinkBtn" style="background:#2688eb; border:none; padding:12px; border-radius:40px; color:white; margin:10px 0; cursor:pointer; width:100%;">📋 Копировать ссылку</button>
+                    <button id="closeModalBtn" style="background:#555; border:none; padding:12px; border-radius:40px; color:white; cursor:pointer; width:100%;">Закрыть</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            const copyBtn = modal.querySelector('#copyLinkBtn');
+            const closeBtn = modal.querySelector('#closeModalBtn');
+            const closeModal = () => {
+                modal.remove();
+                document.body.style.overflow = '';
+            };
+            copyBtn.onclick = async () => {
+                try {
+                    await navigator.clipboard.writeText(shareLink);
+                    showFeedback('✅ Ссылка скопирована!');
+                    closeModal();
+                } catch (err) {
+                    showFeedback('❌ Не удалось скопировать, скопируйте вручную', true);
                 }
-            }, 100);
+            };
+            closeBtn.onclick = closeModal;
+            modal.onclick = (e) => { if (e.target === modal) closeModal(); };
         }
     }
 
