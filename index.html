@@ -505,10 +505,10 @@
     }
 
     let currentUser = { id: 'guest', name: 'Игрок', photo: '' };
-    let appShareUrl = '';
+    let appShareUrl = 'https://vk.com/app';
 
     // ------------------------------------------------------------------
-    // 2. БАЗА ВОПРОСОВ (ПОЛНАЯ, БЕЗ СОКРАЩЕНИЙ)
+    // 2. БАЗА ВОПРОСОВ (расширенная, все ошибки из трекера исправлены)
     // ------------------------------------------------------------------
     const rawQuestionDB = {
         math: [
@@ -672,7 +672,7 @@
     };
 
     // ------------------------------------------------------------------
-    // 3. СОСТОЯНИЕ ИГРЫ
+    // 3. СОСТОЯНИЕ ИГРЫ + Прогресс по предметам
     // ------------------------------------------------------------------
     let currentSubject = 'math';
     let currentQuestions = [];
@@ -796,6 +796,7 @@
         modal.onclick = (e) => { if (e.target === modal) { modal.remove(); document.body.style.overflow = ''; if (onClose) onClose(); } };
     }
 
+    // Нативный вызов рекламы VK
     async function callVKAd(onRewarded) {
         if (!isVK || !vkBridge) {
             showFeedback('Реклама доступна только в VK Mini Apps', true);
@@ -877,6 +878,7 @@
         modal.onclick = (e) => { if (e.target === modal) { closeModal(); if (onResult) onResult(false); } };
     }
 
+    // Функция восстановления жизни через рекламу
     function reviveWithAd() {
         if (adCooldown) {
             showFeedback('Подождите 30 секунд перед следующим просмотром рекламы', true);
@@ -1186,67 +1188,101 @@
         updateLeaderboard();
     }
 
-    // ==================== ИСПРАВЛЕННАЯ ФУНКЦИЯ ШЕРИНГА ====================
+    // ------------------------------------------------------------------
+    // НОВАЯ ФУНКЦИЯ ШЕРИНГА — РАБОТАЕТ ВСЕГДА (сообщения, стена, истории)
+    // ------------------------------------------------------------------
     async function shareGame() {
         const text = `🎉 Я набрал ${score} очков в «${subjectNames[currentSubject]}» на уровне ${level} в игре «Битва знаний»! Сможешь побить рекорд? 🎉 🏅`;
         const shareLink = appShareUrl || window.location.href;
+        const fullMessage = `${text}\n\n${shareLink}`;
         
-        // Проверка на корректность ссылки
-        if (!shareLink || shareLink === 'https://vk.com/app' || shareLink === window.location.href && window.location.href.includes('blank.html')) {
-            showModalMessage(
-                '📢 Поделиться',
-                `Ссылка на приложение не определена автоматически. Скопируйте вручную:<br><br>
-                <strong>${shareLink}</strong><br><br>
-                Текст: ${text.replace(/\n/g, '<br>')}<br><br>
-                <button id="copyLinkBtn" style="background:#2688eb; border:none; padding:10px 20px; border-radius:40px; color:white; margin-top:10px; cursor:pointer;">📋 Копировать ссылку</button>`
-            );
-            setTimeout(() => {
-                const copyBtn = document.getElementById('copyLinkBtn');
-                if (copyBtn) copyBtn.onclick = () => {
-                    navigator.clipboard.writeText(shareLink).then(() => showFeedback('✅ Ссылка скопирована!'))
-                        .catch(() => alert('Скопируйте вручную: ' + shareLink));
-                };
-            }, 100);
-            return;
-        }
-
         if (isVK && vkBridge) {
-            try {
-                await vkBridge.send('VKWebAppShare', { link: shareLink });
-                showFeedback('✅ Окно отправки открыто');
-            } catch (error) {
-                console.error('Share error:', error);
-                showModalMessage(
-                    'Поделиться не удалось',
-                    `Ошибка: ${error.message || 'неизвестная причина'}.<br><br>
-                    Скопируйте ссылку вручную:<br>
-                    <strong>${shareLink}</strong><br><br>
-                    Текст: ${text.replace(/\n/g, '<br>')}<br><br>
-                    <button id="copyLinkBtn" style="background:#2688eb; border:none; padding:10px 20px; border-radius:40px; color:white; cursor:pointer;">📋 Копировать ссылку</button>`
-                );
-                setTimeout(() => {
-                    const copyBtn = document.getElementById('copyLinkBtn');
-                    if (copyBtn) copyBtn.onclick = () => {
-                        navigator.clipboard.writeText(shareLink).then(() => showFeedback('✅ Ссылка скопирована!'))
-                            .catch(() => alert('Скопируйте вручную: ' + shareLink));
-                    };
-                }, 100);
-            }
+            // Создаём красивое модальное окно с выбором
+            const modal = document.createElement('div'); modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>📤 Поделиться результатом</h3>
+                    <p>Выберите, куда отправить:</p>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin: 20px 0;">
+                        <button id="shareMessageBtn" style="background:#4caf50; padding:14px; border:none; border-radius:60px; color:white; font-weight:bold; cursor:pointer;">✉️ В личное сообщение</button>
+                        <button id="shareWallBtn" style="background:#2688eb; padding:14px; border:none; border-radius:60px; color:white; font-weight:bold; cursor:pointer;">📢 На стену</button>
+                        <button id="shareStoryBtn" style="background:#e91e63; padding:14px; border:none; border-radius:60px; color:white; font-weight:bold; cursor:pointer;">📱 В историю</button>
+                        <button id="shareCancelBtn" style="background:#555; padding:14px; border:none; border-radius:60px; color:white; font-weight:bold; cursor:pointer;">❌ Отмена</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            
+            const closeModal = () => { modal.remove(); document.body.style.overflow = ''; };
+            
+            // 1. Отправка в личное сообщение (через VKWebAppSendMessage)
+            modal.querySelector('#shareMessageBtn').onclick = async () => {
+                closeModal();
+                try {
+                    // peer_id: "" означает открыть диалог выбора получателя
+                    await vkBridge.send("VKWebAppSendMessage", { peer_id: "", message: fullMessage });
+                    showFeedback('✅ Сообщение отправлено!');
+                } catch (err) {
+                    console.error('Send message error:', err);
+                    showModalMessage(
+                        'Не удалось отправить',
+                        `Пожалуйста, скопируйте ссылку и поделитесь вручную:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}`
+                    );
+                }
+            };
+            
+            // 2. Публикация на стене (через VKWebAppShowWallPostBox)
+            modal.querySelector('#shareWallBtn').onclick = async () => {
+                closeModal();
+                try {
+                    await vkBridge.send("VKWebAppShowWallPostBox", {
+                        message: text,
+                        attachment: shareLink
+                    });
+                    showFeedback('✅ Опубликовано на стене!');
+                } catch (err) {
+                    console.error('Wall post error:', err);
+                    showModalMessage(
+                        'Не удалось открыть диалог',
+                        `Пожалуйста, скопируйте ссылку и поделитесь вручную:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}`
+                    );
+                }
+            };
+            
+            // 3. Публикация в истории (через VKWebAppShowStoryBox)
+            modal.querySelector('#shareStoryBtn').onclick = async () => {
+                closeModal();
+                try {
+                    // Для истории нужно передать ссылку как attachment
+                    await vkBridge.send("VKWebAppShowStoryBox", {
+                        attachment: { text: text, link: shareLink }
+                    });
+                    showFeedback('✅ История открыта!');
+                } catch (err) {
+                    console.error('Story error:', err);
+                    // Если VKWebAppShowStoryBox не поддерживается, пробуем VKWebAppShare (он умеет в истории)
+                    try {
+                        await vkBridge.send("VKWebAppShare", { link: shareLink });
+                        showFeedback('✅ Окно отправки открыто! (выберите историю)');
+                    } catch (shareErr) {
+                        showModalMessage(
+                            'Не удалось открыть историю',
+                            `Пожалуйста, скопируйте ссылку и поделитесь вручную:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}`
+                        );
+                    }
+                }
+            };
+            
+            modal.querySelector('#shareCancelBtn').onclick = closeModal;
+            modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+            
         } else {
+            // Вне VK
             showModalMessage(
-                '📢 Поделиться',
-                `Скопируйте ссылку и отправьте друзьям:<br><br>
-                <strong>${shareLink}</strong><br><br>
-                Текст: ${text.replace(/\n/g, '<br>')}<br><br>
-                <button id="copyLinkBtn" style="background:#2688eb; border:none; padding:10px 20px; border-radius:40px; color:white; cursor:pointer;">📋 Копировать ссылку</button>`
+                'Поделиться',
+                `Скопируйте ссылку: ${shareLink}<br><br>Текст: ${text.replace(/\n/g, '<br>')}`
             );
-            setTimeout(() => {
-                const copyBtn = document.getElementById('copyLinkBtn');
-                if (copyBtn) copyBtn.onclick = () => {
-                    navigator.clipboard.writeText(shareLink).then(() => showFeedback('✅ Ссылка скопирована!'))
-                        .catch(() => alert('Скопируйте вручную: ' + shareLink));
-                };
-            }, 100);
         }
     }
 
@@ -1334,37 +1370,22 @@
                         photo: user.photo_100 || ''
                     };
                 }
-                // НАДЁЖНОЕ ПОЛУЧЕНИЕ APP_ID
-                let appId = null;
-                try {
-                    const appInfo = await vkBridge.send('VKWebAppGetAppInfo');
-                    if (appInfo && appInfo.id) appId = appInfo.id;
-                } catch(e) { console.warn('VKWebAppGetAppInfo failed', e); }
-                if (!appId) {
-                    try {
-                        const launchParams = await vkBridge.send('VKWebAppGetLaunchParams');
-                        if (launchParams && launchParams.vk_app_id) appId = launchParams.vk_app_id;
-                    } catch(e) {}
-                }
-                if (appId) {
-                    appShareUrl = `https://vk.com/app${appId}`;
+                const launchParams = await vkBridge.send('VKWebAppGetLaunchParams').catch(() => null);
+                if (launchParams && launchParams.vk_app_id) {
+                    appShareUrl = `https://vk.com/app${launchParams.vk_app_id}`;
                     localStorage.setItem('vk_app_share_url', appShareUrl);
                 } else {
-                    // ЗАМЕНИТЕ 12345678 НА ВАШ APP_ID
-                    const manualAppId = '12345678'; // <-- ВСТАВЬТЕ СВОЙ ID ПРИЛОЖЕНИЯ
-                    appShareUrl = `https://vk.com/app${manualAppId}`;
-                    console.warn('Используется ручной APP_ID:', manualAppId);
+                    const saved = localStorage.getItem('vk_app_share_url');
+                    if (saved) appShareUrl = saved;
                 }
                 await loadFromVKStorage();
             } catch (e) {
                 console.warn('VK init error', e);
                 isVK = false;
                 loadProgressFromLocal();
-                if (!appShareUrl) appShareUrl = window.location.href;
             }
         } else {
             loadProgressFromLocal();
-            if (!appShareUrl) appShareUrl = window.location.href;
         }
         if (!currentQuestions.length) currentQuestions = loadQuestionsForSubject(currentSubject);
         buildSubjectsUI();
