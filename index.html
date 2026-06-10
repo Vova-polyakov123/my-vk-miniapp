@@ -1188,22 +1188,30 @@
     }
 
     // ------------------------------------------------------------------
-    // ФУНКЦИЯ ШЕРИНГА — ТОЛЬКО VKWebAppShare, БЕЗ ОШИБОК
+    // НОВАЯ ФУНКЦИЯ ШЕРИНГА — ИСПОЛЬЗУЕТ VKWebAppSendMessage (без ошибок)
     // ------------------------------------------------------------------
     async function shareGame() {
         const text = `🎉 Я набрал ${score} очков в «${subjectNames[currentSubject]}» на уровне ${level} в игре «Битва знаний»! Сможешь побить рекорд? 🎉 🏅`;
         const shareLink = appShareUrl || window.location.href;
+        const fullMessage = `${text}\n\n${shareLink}`;
         
         if (isVK && vkBridge) {
             try {
-                await vkBridge.send("VKWebAppShare", { link: shareLink });
-                showFeedback('✅ Окно отправки открыто!');
+                // Прямой вызов отправки сообщения (открывает диалог выбора получателя)
+                await vkBridge.send("VKWebAppSendMessage", { message: fullMessage });
+                showFeedback('✅ Сообщение отправлено!');
             } catch (error) {
-                console.error('Share error:', error);
-                showModalMessage(
-                    'Не удалось открыть диалог',
-                    `Поделитесь вручную скопировав ссылку:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}`
-                );
+                console.error('SendMessage error:', error);
+                // Если не получилось — пробуем старый метод
+                try {
+                    await vkBridge.send("VKWebAppShare", { link: shareLink });
+                    showFeedback('✅ Окно отправки открыто!');
+                } catch (shareErr) {
+                    showModalMessage(
+                        'Не удалось отправить',
+                        `Пожалуйста, скопируйте ссылку и поделитесь вручную:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}`
+                    );
+                }
             }
         } else {
             showModalMessage(
