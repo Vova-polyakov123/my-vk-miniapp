@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Битва знаний — премиум версия (исправлено)</title>
+    <title>Битва знаний — премиум версия</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -503,32 +503,6 @@
     let currentUser = { id: 'guest', name: 'Игрок', photo: '' };
     let appShareUrl = 'https://vk.com/app';
 
-    async function initVK() {
-        if (!isVK || !vkBridge) return;
-        try {
-            await vkBridge.send('VKWebAppInit');
-            const user = await vkBridge.send('VKWebAppGetUserInfo');
-            if (user && user.id) {
-                currentUser = {
-                    id: user.id.toString(),
-                    name: user.first_name || 'Игрок',
-                    photo: user.photo_100 || ''
-                };
-            }
-            const launchParams = await vkBridge.send('VKWebAppGetLaunchParams').catch(() => null);
-            if (launchParams && launchParams.vk_app_id) {
-                appShareUrl = `https://vk.com/app${launchParams.vk_app_id}`;
-                localStorage.setItem('vk_app_share_url', appShareUrl);
-            } else {
-                const saved = localStorage.getItem('vk_app_share_url');
-                if (saved) appShareUrl = saved;
-            }
-        } catch (e) {
-            console.warn('VK init error', e);
-            isVK = false;
-        }
-    }
-
     // ------------------------------------------------------------------
     // 2. БАЗА ВОПРОСОВ (расширенная, минимум 10–12 вопросов на предмет)
     // ------------------------------------------------------------------
@@ -817,6 +791,30 @@
         modal.onclick = (e) => { if (e.target === modal) { modal.remove(); document.body.style.overflow = ''; if (onClose) onClose(); } };
     }
 
+    // НАТИВНЫЙ ВЫЗОВ РЕКЛАМЫ VK (ИСПРАВЛЕНИЕ)
+    async function callVKAd(onRewarded) {
+        if (!isVK || !vkBridge) {
+            showFeedback('Реклама доступна только в VK Mini Apps', true);
+            if (onRewarded) onRewarded(false);
+            return;
+        }
+
+        try {
+            // ВАЖНО! Показываем рекламу через VK Bridge
+            const result = await vkBridge.send("VKWebAppShowNativeAds", { ad_format: "reward" });
+            // Если реклама успешно показана и награда получена
+            if (result && result.result === true) {
+                if (onRewarded) onRewarded(true);
+            } else {
+                if (onRewarded) onRewarded(false);
+            }
+        } catch (error) {
+            console.error('Ad error:', error);
+            showFeedback('Не удалось загрузить рекламу', true);
+            if (onRewarded) onRewarded(false);
+        }
+    }
+
     function startAdCooldown(btnElement) {
         if (adCooldown) return;
         adCooldown = true;
@@ -841,12 +839,8 @@
         }
     }
 
-    function showAdOffer(callback, btnElement = null) {
-        if (adCooldown) {
-            showFeedback('Пожалуйста, подождите 30 секунд перед следующим просмотром рекламы', true);
-            if (callback) callback(false);
-            return;
-        }
+    function showAdOffer(onResult) {
+        // Создаем модальное окно выбора
         const modal = document.createElement('div'); modal.className = 'modal';
         modal.innerHTML = `
             <div class="modal-content">
@@ -863,13 +857,38 @@
         const yesBtn = modal.querySelector('#adYesBtn');
         const noBtn = modal.querySelector('#adNoBtn');
         const closeModal = () => { modal.remove(); document.body.style.overflow = ''; };
-        yesBtn.onclick = () => {
+        
+        yesBtn.onclick = async () => {
             closeModal();
-            if (btnElement) startAdCooldown(btnElement);
-            if (callback) callback(true);
+            // Вызываем нативную рекламу VK
+            await callVKAd((success) => {
+                if (success) {
+                    showFeedback('❤️ +1 жизнь получена за просмотр рекламы!');
+                    if (onResult) onResult(true);
+                } else {
+                    showFeedback('Реклама не была завершена или произошла ошибка', true);
+                    if (onResult) onResult(false);
+                }
+            });
         };
-        noBtn.onclick = () => { closeModal(); if (callback) callback(false); };
-        modal.onclick = (e) => { if (e.target === modal) { closeModal(); if (callback) callback(false); } };
+        noBtn.onclick = () => { closeModal(); if (onResult) onResult(false); };
+        modal.onclick = (e) => { if (e.target === modal) { closeModal(); if (onResult) onResult(false); } };
+    }
+
+    // Новая функция для показа рекламы при потере жизней (из любого места)
+    function showAdOnGameOver() {
+        showAdOffer((success) => {
+            if (success) {
+                lives = Math.min(3, lives + 1);
+                updateUIStats();
+                renderGame();
+            } else {
+                // Если пользователь отказался или реклама не показана, показываем экран поражения
+                if (lives <= 0) {
+                    renderGame(); // Покажет экран поражения
+                }
+            }
+        });
     }
 
     function saveProgressLocally() {
@@ -949,20 +968,8 @@
     // ------------------------------------------------------------------
     function renderGame() {
         if (lives <= 0) {
-            document.getElementById('gameArea').innerHTML = `
-                <div class="result-area">
-                    <div class="result-score">💀 ПОРАЖЕНИЕ</div>
-                    <p style="margin:12px 0; font-size:1.1rem;">Очки: ${score} | Уровень: ${level}</p>
-                    <button class="share-btn" id="shareBtn">📢 ПОДЕЛИТЬСЯ</button>
-                    <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
-                    <button class="reset-btn" id="selectSubjectBtn" style="background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
-                </div>
-            `;
-            document.getElementById('shareBtn')?.addEventListener('click', shareGame);
-            document.getElementById('resetBtn')?.addEventListener('click', () => resetGame());
-            document.getElementById('selectSubjectBtn')?.addEventListener('click', () => {
-                document.querySelector('.subjects-wrapper').scrollIntoView({ behavior: 'smooth' });
-            });
+            // При нуле жизней показываем предложение рекламы
+            setTimeout(() => showAdOnGameOver(), 100);
             return;
         }
 
@@ -1040,10 +1047,8 @@
                         lives = Math.min(3, lives + 1);
                         updateUIStats();
                         renderGame();
-                        showFeedback('❤️ +1 жизнь получена!');
-                        saveProgress();
                     }
-                }, bonusBtn);
+                });
             });
         }
 
@@ -1095,8 +1100,10 @@
             showFeedback(`❌ Ошибка! Правильно: ${q.correct}. Осталось жизней: ${lives}`, true);
             if (lives <= 0) {
                 setTimeout(() => {
-                    renderGame();
+                    // При нуле жизней показываем рекламу
+                    showAdOnGameOver();
                 }, 1500);
+                return;
             } else {
                 setTimeout(() => {
                     waitingNext = false;
@@ -1163,21 +1170,29 @@
         updateLeaderboard();
     }
 
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ ШЕРИНГА (БЕЗ ALERT)
     function shareGame() {
         const text = `🔥 Я набрал ${score} очков в «${subjectNames[currentSubject]}» на уровне ${level} в игре «Битва знаний»! Сможешь побить рекорд? 🧠⚡`;
+        const shareLink = appShareUrl || window.location.href;
+        
         if (isVK && vkBridge) {
-            vkBridge.send('VKWebAppShare', { link: appShareUrl, attachment: text }).catch(() => {
-                // Вместо alert показываем красивое модальное окно
-                showModalMessage(
-                    'Не удалось открыть диалог',
-                    `Поделитесь вручную скопировав ссылку:<br><br><strong>${appShareUrl}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}`
-                );
-            });
+            // Нативный шеринг VK с возможностью выбрать "В личном сообщении"
+            vkBridge.send("VKWebAppShare", { link: shareLink })
+                .then(() => {
+                    showFeedback('✅ Сообщение успешно отправлено!');
+                })
+                .catch((error) => {
+                    console.error('Share error:', error);
+                    showModalMessage(
+                        'Не удалось открыть диалог',
+                        `Поделитесь вручную скопировав ссылку:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}`
+                    );
+                });
         } else {
-            // В браузере тоже модальное окно, а не alert
+            // В веб-версии показываем модальное окно с копированием
             showModalMessage(
                 'Поделиться',
-                `Скопируйте ссылку: ${appShareUrl}<br><br>Текст: ${text.replace(/\n/g, '<br>')}`
+                `Скопируйте ссылку: ${shareLink}<br><br>Текст: ${text.replace(/\n/g, '<br>')}`
             );
         }
     }
@@ -1256,8 +1271,30 @@
     // ------------------------------------------------------------------
     window.addEventListener('load', async () => {
         if (isVK && vkBridge) {
-            await initVK();
-            await loadFromVKStorage();
+            try {
+                await vkBridge.send('VKWebAppInit');
+                const user = await vkBridge.send('VKWebAppGetUserInfo');
+                if (user && user.id) {
+                    currentUser = {
+                        id: user.id.toString(),
+                        name: user.first_name || 'Игрок',
+                        photo: user.photo_100 || ''
+                    };
+                }
+                const launchParams = await vkBridge.send('VKWebAppGetLaunchParams').catch(() => null);
+                if (launchParams && launchParams.vk_app_id) {
+                    appShareUrl = `https://vk.com/app${launchParams.vk_app_id}`;
+                    localStorage.setItem('vk_app_share_url', appShareUrl);
+                } else {
+                    const saved = localStorage.getItem('vk_app_share_url');
+                    if (saved) appShareUrl = saved;
+                }
+                await loadFromVKStorage();
+            } catch (e) {
+                console.warn('VK init error', e);
+                isVK = false;
+                loadProgressFromLocal();
+            }
         } else {
             loadProgressFromLocal();
         }
