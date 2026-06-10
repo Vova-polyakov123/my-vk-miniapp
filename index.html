@@ -432,7 +432,7 @@
             text-shadow: 0 0 12px #ff9900;
             margin-bottom: 20px;
         }
-        .share-btn, .reset-btn {
+        .share-btn, .reset-btn, .revive-btn {
             border: none;
             padding: 14px 28px;
             border-radius: 80px;
@@ -450,7 +450,11 @@
             background: linear-gradient(95deg, #f56b2c, #ff9040);
             color: white;
         }
-        .share-btn:hover, .reset-btn:hover {
+        .revive-btn {
+            background: linear-gradient(95deg, #ff9800, #ffbc3c);
+            color: #1a1a2e;
+        }
+        .share-btn:hover, .reset-btn:hover, .revive-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 18px rgba(0,0,0,0.3);
         }
@@ -504,7 +508,7 @@
     let appShareUrl = 'https://vk.com/app';
 
     // ------------------------------------------------------------------
-    // 2. БАЗА ВОПРОСОВ (расширенная, минимум 10–12 вопросов на предмет)
+    // 2. БАЗА ВОПРОСОВ (расширенная)
     // ------------------------------------------------------------------
     const rawQuestionDB = {
         math: [
@@ -667,7 +671,7 @@
     };
 
     // ------------------------------------------------------------------
-    // 3. СОСТОЯНИЕ ИГРЫ + Прогресс по предметам (сохраняется)
+    // 3. СОСТОЯНИЕ ИГРЫ + Прогресс по предметам
     // ------------------------------------------------------------------
     let currentSubject = 'math';
     let currentQuestions = [];
@@ -791,18 +795,15 @@
         modal.onclick = (e) => { if (e.target === modal) { modal.remove(); document.body.style.overflow = ''; if (onClose) onClose(); } };
     }
 
-    // НАТИВНЫЙ ВЫЗОВ РЕКЛАМЫ VK (ИСПРАВЛЕНИЕ)
+    // Нативный вызов рекламы VK
     async function callVKAd(onRewarded) {
         if (!isVK || !vkBridge) {
             showFeedback('Реклама доступна только в VK Mini Apps', true);
             if (onRewarded) onRewarded(false);
             return;
         }
-
         try {
-            // ВАЖНО! Показываем рекламу через VK Bridge
             const result = await vkBridge.send("VKWebAppShowNativeAds", { ad_format: "reward" });
-            // Если реклама успешно показана и награда получена
             if (result && result.result === true) {
                 if (onRewarded) onRewarded(true);
             } else {
@@ -839,8 +840,7 @@
         }
     }
 
-    function showAdOffer(onResult) {
-        // Создаем модальное окно выбора
+    function showAdOffer(onResult, forRevive = false) {
         const modal = document.createElement('div'); modal.className = 'modal';
         modal.innerHTML = `
             <div class="modal-content">
@@ -860,7 +860,6 @@
         
         yesBtn.onclick = async () => {
             closeModal();
-            // Вызываем нативную рекламу VK
             await callVKAd((success) => {
                 if (success) {
                     showFeedback('❤️ +1 жизнь получена за просмотр рекламы!');
@@ -871,24 +870,30 @@
                 }
             });
         };
-        noBtn.onclick = () => { closeModal(); if (onResult) onResult(false); };
+        noBtn.onclick = () => { 
+            closeModal(); 
+            if (onResult) onResult(false);
+        };
         modal.onclick = (e) => { if (e.target === modal) { closeModal(); if (onResult) onResult(false); } };
     }
 
-    // Новая функция для показа рекламы при потере жизней (из любого места)
-    function showAdOnGameOver() {
+    // Функция восстановления жизни через рекламу (вызывается только по кнопке на экране поражения)
+    function reviveWithAd() {
+        if (adCooldown) {
+            showFeedback('Подождите 30 секунд перед следующим просмотром рекламы', true);
+            return;
+        }
         showAdOffer((success) => {
             if (success) {
-                lives = Math.min(3, lives + 1);
+                lives = 1; // даём одну жизнь, чтобы продолжить
                 updateUIStats();
-                renderGame();
+                renderGame(); // переходим обратно в игру
+                saveProgress();
             } else {
-                // Если пользователь отказался или реклама не показана, показываем экран поражения
-                if (lives <= 0) {
-                    renderGame(); // Покажет экран поражения
-                }
+                // пользователь отказался — остаёмся на экране поражения
+                renderGame(); // перерисуем экран поражения (без повторного вызова рекламы)
             }
-        });
+        }, true);
     }
 
     function saveProgressLocally() {
@@ -967,12 +972,28 @@
     // 5. ОТРИСОВКА ИГРЫ
     // ------------------------------------------------------------------
     function renderGame() {
+        // 1. Если жизни кончились – показываем экран поражения с кнопкой восстановления
         if (lives <= 0) {
-            // При нуле жизней показываем предложение рекламы
-            setTimeout(() => showAdOnGameOver(), 100);
+            document.getElementById('gameArea').innerHTML = `
+                <div class="result-area">
+                    <div class="result-score">💀 ПОРАЖЕНИЕ</div>
+                    <p style="margin:12px 0; font-size:1.1rem;">Очки: ${score} | Уровень: ${level}</p>
+                    <button class="revive-btn" id="reviveAdBtn">❤️ ПОЛУЧИТЬ ЖИЗНЬ ЗА РЕКЛАМУ</button>
+                    <button class="share-btn" id="shareBtn">📢 ПОДЕЛИТЬСЯ</button>
+                    <button class="reset-btn" id="resetBtn">🔄 НАЧАТЬ ЗАНОВО</button>
+                    <button class="reset-btn" id="selectSubjectBtn" style="background:#6e2cf5;">📚 ВЫБРАТЬ ДРУГОЙ ПРЕДМЕТ</button>
+                </div>
+            `;
+            document.getElementById('reviveAdBtn')?.addEventListener('click', reviveWithAd);
+            document.getElementById('shareBtn')?.addEventListener('click', shareGame);
+            document.getElementById('resetBtn')?.addEventListener('click', () => resetGame());
+            document.getElementById('selectSubjectBtn')?.addEventListener('click', () => {
+                document.querySelector('.subjects-wrapper').scrollIntoView({ behavior: 'smooth' });
+            });
             return;
         }
 
+        // 2. Нормальная игра
         if (!currentQuestions.length) {
             currentQuestions = loadQuestionsForSubject(currentSubject);
             currentIndex = 0;
@@ -1047,6 +1068,7 @@
                         lives = Math.min(3, lives + 1);
                         updateUIStats();
                         renderGame();
+                        saveProgress();
                     }
                 });
             });
@@ -1100,10 +1122,8 @@
             showFeedback(`❌ Ошибка! Правильно: ${q.correct}. Осталось жизней: ${lives}`, true);
             if (lives <= 0) {
                 setTimeout(() => {
-                    // При нуле жизней показываем рекламу
-                    showAdOnGameOver();
+                    renderGame(); // покажет экран поражения без автоматической рекламы
                 }, 1500);
-                return;
             } else {
                 setTimeout(() => {
                     waitingNext = false;
@@ -1170,13 +1190,12 @@
         updateLeaderboard();
     }
 
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ ШЕРИНГА (БЕЗ ALERT)
+    // Функция шеринга без alert
     function shareGame() {
         const text = `🔥 Я набрал ${score} очков в «${subjectNames[currentSubject]}» на уровне ${level} в игре «Битва знаний»! Сможешь побить рекорд? 🧠⚡`;
         const shareLink = appShareUrl || window.location.href;
         
         if (isVK && vkBridge) {
-            // Нативный шеринг VK с возможностью выбрать "В личном сообщении"
             vkBridge.send("VKWebAppShare", { link: shareLink })
                 .then(() => {
                     showFeedback('✅ Сообщение успешно отправлено!');
@@ -1189,7 +1208,6 @@
                     );
                 });
         } else {
-            // В веб-версии показываем модальное окно с копированием
             showModalMessage(
                 'Поделиться',
                 `Скопируйте ссылку: ${shareLink}<br><br>Текст: ${text.replace(/\n/g, '<br>')}`
