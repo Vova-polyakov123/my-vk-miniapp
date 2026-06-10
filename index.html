@@ -1190,33 +1190,24 @@
         updateLeaderboard();
     }
 
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ ШЕРИНГА (РАБОТАЕТ БЕЗ ОШИБОК)
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ ШЕРИНГА (ТОЛЬКО VKWebAppShare, БЕЗ ОШИБОК)
     async function shareGame() {
         const text = `🎉 Я набрал ${score} очков в «${subjectNames[currentSubject]}» на уровне ${level} в игре «Битва знаний»! Сможешь побить рекорд? 🎉 🏅`;
         const shareLink = appShareUrl || window.location.href;
         
         if (isVK && vkBridge) {
-            try {
-                // Сначала пробуем отправить сообщение напрямую (работает в мобильных клиентах)
-                await vkBridge.send("VKWebAppSendMessage", {
-                    user_id: "",
-                    message: `${text}\n\n${shareLink}`
-                });
-                showFeedback('✅ Сообщение успешно отправлено!');
-            } catch (err) {
-                console.warn('SendMessage failed, fallback to share', err);
-                // Если не получилось, используем стандартный шеринг
-                try {
-                    await vkBridge.send("VKWebAppShare", { link: shareLink });
+            // Используем только VKWebAppShare — он открывает диалог с выбором "В личном сообщении" и работает без ошибок
+            vkBridge.send("VKWebAppShare", { link: shareLink })
+                .then(() => {
                     showFeedback('✅ Сообщение успешно отправлено!');
-                } catch (shareErr) {
-                    console.error('Share error:', shareErr);
+                })
+                .catch((error) => {
+                    console.error('Share error:', error);
                     showModalMessage(
                         'Не удалось открыть диалог',
                         `Поделитесь вручную скопировав ссылку:<br><br><strong>${shareLink}</strong><br><br>Текст: ${text.replace(/\n/g, '<br>')}`
                     );
-                }
-            }
+                });
         } else {
             // Вне VK показываем модальное окно с копированием
             showModalMessage(
